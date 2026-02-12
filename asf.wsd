@@ -1,0 +1,108 @@
+@startuml
+title Sistema de Triage y Gestión de Solicitudes Académicas
+
+' =========================
+' ENUMS
+' =========================
+
+enum EstadoSolicitud {
+  REGISTRADA
+  CLASIFICADA
+  EN_ATENCION
+  ATENDIDA
+  CERRADA
+}
+
+enum TipoAccion{
+    CREACION
+    ASIGNACION
+    CAMBIO_ESTADO
+    CIERRE
+}
+
+enum NivelPrioridad {
+  ALTA
+  MEDIA
+  BAJA
+}
+
+enum Rol {
+  ESTUDIANTE
+  ADMINISTRATIVO
+  COORDINADOR
+  ASEADOR
+}
+
+enum TipoSolicitud {
+    REGISTRO_ASIGNATURA
+    HOMOLOGACION
+    CANCELACION_ASIGNATURA
+    SOLICITUD_CUPOS
+    CONSULTA_ACADEMICA
+}
+
+' =========================
+' ENTIDADES
+' =========================
+
+class Usuario {
+  +id: Long
+  +rol: Rol
+  +nombre: String
+  +identificacion: String
+  +correo: String
+  +activo: Boolean
+}
+
+
+
+class Solicitud {
+  +id: Long
+  +descripcion: String
+  +fechaHoraRegistro: LocalDateTime
+  +estado: EstadoSolicitud
+  +justificacionPrioridad: String
+  +fechaCierre: LocalDateTime
+  +tipo: TipoSolicitud
+}
+
+
+
+class Prioridad {
+  +id: Long
+  +nivel: NivelPrioridad
+  +descripcion: String
+}
+
+class CanalOrigen {
+  +id: Long
+  +nombre: String
+}
+
+class HistorialSolicitud {
+  +id: Long
+  +responsable: Usuario
+  +fechaHora: LocalDateTime
+  +accion: TipoAccion
+  +observacion: String
+}
+
+
+
+' =========================
+' RELACIONES
+' =========================
+
+Usuario "1" -- "N" Solicitud : crea >
+
+Usuario "1" --"N" HistorialSolicitud
+
+Prioridad "1" -- "N" Solicitud : define >
+CanalOrigen "1" -- "N" Solicitud : registra >
+
+Solicitud "1" -- "N" HistorialSolicitud : tiene >
+
+
+
+
+@enduml
