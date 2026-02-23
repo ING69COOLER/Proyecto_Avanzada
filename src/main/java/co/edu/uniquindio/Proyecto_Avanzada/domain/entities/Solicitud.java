@@ -28,8 +28,6 @@ public class Solicitud {
     @Column(name = "fecha_hora_registro", nullable = false)
     private LocalDateTime fechaHoraRegistro;
     
-    @Column(name = "justificacion_prioridad", length = 500)
-    private String justificacionPrioridad;
     
     @Column(name = "fecha_cierre")
     private LocalDateTime fechaCierre;
@@ -44,7 +42,7 @@ public class Solicitud {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private Usuario usuarioResponsable;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prioridad_id", nullable = false)
