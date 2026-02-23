@@ -86,7 +86,7 @@ Usuario "1" -- "N" Solicitud : crea >
 Prioridad "1" -- "N" Solicitud : define <
 CanalOrigen "1" -- "N" Solicitud : registra <
 Solicitud "1" -- "N" HistorialSolicitud : tiene >
-HistorialSolicitud "1" -- "1" Usuario : responsable >
+HistorialSolicitud "N" -- "1" Usuario : responsable >
 
 ' =========================
 ' RELACIONES CON ENUMS (Value Objects)
