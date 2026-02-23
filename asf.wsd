@@ -2,7 +2,7 @@
 title Sistema de Triage y Gestión de Solicitudes Académicas
 
 ' =========================
-' ENUMS
+' ENUMS (Value Objects)
 ' =========================
 
 enum EstadoSolicitud {
@@ -13,7 +13,7 @@ enum EstadoSolicitud {
   CERRADA
 }
 
-enum TipoAccion{
+enum TipoAccion {
     CREACION
     ASIGNACION
     CAMBIO_ESTADO
@@ -47,30 +47,22 @@ enum TipoSolicitud {
 
 class Usuario {
   +id: Long
-  +rol: Rol
   +nombre: String
   +identificacion: String
   +correo: String
   +activo: Boolean
 }
 
-
-
 class Solicitud {
   +id: Long
   +descripcion: String
   +fechaHoraRegistro: LocalDateTime
-  +estado: EstadoSolicitud
   +justificacionPrioridad: String
   +fechaCierre: LocalDateTime
-  +tipo: TipoSolicitud
 }
-
-
 
 class Prioridad {
   +id: Long
-  +nivel: NivelPrioridad
   +descripcion: String
 }
 
@@ -83,26 +75,29 @@ class HistorialSolicitud {
   +id: Long
   +responsable: Usuario
   +fechaHora: LocalDateTime
-  +accion: TipoAccion
   +observacion: String
 }
-
-
 
 ' =========================
 ' RELACIONES
 ' =========================
 
 Usuario "1" -- "N" Solicitud : crea >
-
-Usuario "1" --"N" HistorialSolicitud
-
-Prioridad "1" -- "N" Solicitud : define >
-CanalOrigen "1" -- "N" Solicitud : registra >
-
+Prioridad "1" -- "N" Solicitud : define <
+CanalOrigen "1" -- "N" Solicitud : registra <
 Solicitud "1" -- "N" HistorialSolicitud : tiene >
+HistorialSolicitud "1" -- "1" Usuario : responsable >
 
+' =========================
+' RELACIONES CON ENUMS (Value Objects)
+' =========================
 
-
+Solicitud ..> EstadoSolicitud : estado
+Solicitud ..> TipoSolicitud : tipo
+Solicitud ..> Prioridad : prioridad
+HistorialSolicitud ..> EstadoSolicitud : estado
+HistorialSolicitud ..> TipoAccion : accion
+Usuario ..> Rol : rol
+Prioridad ..> NivelPrioridad
 
 @enduml
