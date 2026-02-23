@@ -1,10 +1,9 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 
 @Entity
 @Table(name = "prioridades")

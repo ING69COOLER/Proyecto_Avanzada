@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,10 +50,12 @@ public class Solicitud {
     @JoinColumn(name = "prioridad_id", nullable = false)
     private Prioridad prioridad;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "canal_origen_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "canal_origen", nullable = false)
     private CanalOrigen canalOrigen;
     
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialSolicitud> historial;
+
+
 }
