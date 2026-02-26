@@ -42,7 +42,7 @@ public class Usuario {
     @Column(name = "rol", nullable = false)
     private Rol rol;
     
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuarioResponsable", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Solicitud> solicitudes;
 
     public void crearSolicitud(String descripcion, 
