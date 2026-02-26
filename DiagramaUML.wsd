@@ -51,6 +51,12 @@ class Usuario {
   +identificacion: String
   +correo: String
   +activo: Boolean
+
+  +estaActivo(): boolean
+  +tieneRol(rol: Rol): boolean
+  +puedeRegistrar(): boolean
+  +puedeClasificar(): boolean
+  +puedeCerrar(): boolean
 }
 
 class Solicitud {
@@ -59,16 +65,33 @@ class Solicitud {
   +fechaHoraRegistro: LocalDateTime
   +justificacionPrioridad: String
   +fechaCierre: LocalDateTime
+
+  +clasificar(tipo: TipoSolicitud): void
+  +asignarPrioridad(nivel: NivelPrioridad, justificacion: String): void
+  +cambiarEstado(nuevoEstado: EstadoSolicitud): void
+  +asignarResponsable(responsable: Usuario): void
+  +registrarAtencion(observacion: String): void
+  +cerrarSolicitud(observacion: String): void
+  +estaCerrada(): boolean
+  -validarTransicion(nuevoEstado: EstadoSolicitud): boolean
 }
 
 class Prioridad {
   +id: Long
   +descripcion: String
+
+  +esAlta(): boolean
+  +esMedia(): boolean
+  +esBaja(): boolean
+  +obtenerNivel(): NivelPrioridad
 }
 
 class CanalOrigen {
   +id: Long
   +nombre: String
+
+  +esCanalDigital(): boolean
+  +esCanalPresencial(): boolean
 }
 
 class HistorialSolicitud {
@@ -76,6 +99,14 @@ class HistorialSolicitud {
   +responsable: Usuario
   +fechaHora: LocalDateTime
   +observacion: String
+
+  +registrarAccion(
+      accion: TipoAccion,
+      estado: EstadoSolicitud,
+      observacion: String
+  ): void
+
+  +obtenerResumen(): String
 }
 
 ' =========================
@@ -89,7 +120,7 @@ Solicitud "1" -- "N" HistorialSolicitud : tiene >
 HistorialSolicitud "N" -- "1" Usuario : responsable >
 
 ' =========================
-' RELACIONES CON ENUMS (Value Objects)
+' RELACIONES CON ENUMS
 ' =========================
 
 Solicitud ..> EstadoSolicitud : estado
