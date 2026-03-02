@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class HistorialSolicitud {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     
     @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime fechaHora;

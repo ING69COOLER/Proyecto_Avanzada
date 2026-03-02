@@ -18,9 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Solicitud {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    
     
     @Column(name = "descripcion", nullable = false, length = 1000)
     private String descripcion;

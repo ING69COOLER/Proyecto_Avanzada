@@ -22,10 +22,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Usuario {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
     @Column(name = "nombre", nullable = false)
     private String nombre;
     
@@ -60,7 +56,7 @@ public class Usuario {
 
         //requisito funcional
         if (!(tipo == null | descripcion == null | canalOrigen == null | fechaHoraRegistro == null | identificacion == null) ) {
-            solicitudes.add(new Solicitud(null, descripcion, fechaHoraRegistro, fechaCierre , EstadoSolicitud.REGISTRADA, tipo, usuarioResponsable, prioridad, canalOrigen, null));
+            solicitudes.add(new Solicitud(descripcion, fechaHoraRegistro, fechaCierre , EstadoSolicitud.REGISTRADA, tipo, usuarioResponsable, prioridad, canalOrigen, null));
         } else {
             System.err.print("debe de haber minimo: tipo de solicitud, descripcion, canal origen, fecha y hora, identificacion del solicitante");
         }

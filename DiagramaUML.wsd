@@ -46,7 +46,7 @@ enum TipoSolicitud {
 ' =========================
 
 class Usuario {
-  +id: Long
+  
   +nombre: String
   +identificacion: String
   +correo: String
@@ -60,7 +60,7 @@ class Usuario {
 }
 
 class Solicitud {
-  +id: Long
+  
   +descripcion: String
   +fechaHoraRegistro: LocalDateTime
   +justificacionPrioridad: String
@@ -77,7 +77,7 @@ class Solicitud {
 }
 
 class Prioridad {
-  +id: Long
+
   +descripcion: String
 
   +esAlta(): boolean
@@ -87,7 +87,6 @@ class Prioridad {
 }
 
 class CanalOrigen {
-  +id: Long
   +nombre: String
 
   +esCanalDigital(): boolean
@@ -95,7 +94,7 @@ class CanalOrigen {
 }
 
 class HistorialSolicitud {
-  +id: Long
+  
   +responsable: Usuario
   +fechaHora: LocalDateTime
   +observacion: String
@@ -114,7 +113,7 @@ class HistorialSolicitud {
 ' =========================
 
 Usuario "1" -- "N" Solicitud : crea >
-Prioridad "1" -- "N" Solicitud : define <
+Prioridad "1" -- "1" Solicitud : define <
 CanalOrigen "1" -- "N" Solicitud : registra <
 Solicitud "1" -- "N" HistorialSolicitud : tiene >
 HistorialSolicitud "N" -- "1" Usuario : responsable >
@@ -125,7 +124,6 @@ HistorialSolicitud "N" -- "1" Usuario : responsable >
 
 Solicitud ..> EstadoSolicitud : estado
 Solicitud ..> TipoSolicitud : tipo
-Solicitud ..> Prioridad : prioridad
 HistorialSolicitud ..> EstadoSolicitud : estado
 HistorialSolicitud ..> TipoAccion : accion
 Usuario ..> Rol : rol
