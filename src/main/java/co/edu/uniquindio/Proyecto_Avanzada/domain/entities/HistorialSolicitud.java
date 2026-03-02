@@ -14,26 +14,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HistorialSolicitud {
-    
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime fechaHora;
-    
+
     @Column(name = "observacion", length = 1000)
     private String observacion;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private EstadoSolicitud estado;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "accion", nullable = false)
     private TipoAccion accion;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_responsable_id", nullable = false)
     private Usuario responsable;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "solicitud_id", nullable = false)
     private Solicitud solicitud;

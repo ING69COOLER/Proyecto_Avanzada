@@ -1,5 +1,6 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,12 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Prioridad {
-    
-    
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "descripcion", nullable = false)
     private String descripcion;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "nivel", nullable = false)
     private NivelPrioridad nivel;
