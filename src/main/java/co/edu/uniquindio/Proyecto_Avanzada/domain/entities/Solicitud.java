@@ -79,6 +79,7 @@ public class Solicitud {
      * @param responsable  Usuario responsable de la acción
      * @param observacion  Descripción detallada de lo realizado
      */
+    
     public void crearHistorial(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
         if (responsable == null || observacion == null || observacion.isBlank()) {
             throw new IllegalArgumentException("El responsable y la observación no pueden ser nulos o vacíos.");
