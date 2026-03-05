@@ -8,6 +8,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 import java.time.LocalDateTime;
@@ -51,6 +52,9 @@ public class Usuario {
      * Campos obligatorios: tipo, descripción, canal de origen, fecha/hora de
      * registro
      * e identificación del solicitante (tomada del propio usuario).
+     * 
+     * 
+     * 
      *
      * @param tipo              Tipo de solicitud académica
      * @param descripcion       Descripción de la solicitud
@@ -90,33 +94,134 @@ public class Usuario {
     }
 
     /**
-     * Método original conservado para compatibilidad — usa registrarSolicitud
-     * internamente
+     * 
+     * RF-03. Priorización de solicitudes
+     * El sistema debe asignar una prioridad a cada solicitud con base en reglas
+     * definidas,
+     *
+     * @param nivel         Nivel de prioridad (NivelPrioridad)
+     * @param justificacion Justificación o descripción de la prioridad asignada
+     * @return El objeto Prioridad creado
      */
-    public void crearSolicitud(String descripcion,
-            LocalDateTime fechaHoraRegistro,
-            LocalDateTime fechaCierre,
-            TipoSolicitud tipo,
-            Usuario usuarioResponsable,
-            Prioridad prioridad,
-            CanalOrigen canalOrigen) {
-        registrarSolicitud(tipo, descripcion, canalOrigen, fechaHoraRegistro, prioridad);
+    public Prioridad asignarPrioridad(NivelPrioridad nivel, String justificacion) {
+        if (nivel == null || justificacion == null || justificacion.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Debe proporcionar el nivel de prioridad y una justificación.");
+        }
+
+        Prioridad prioridad = new Prioridad();
+        prioridad.setNivel(nivel);
+        prioridad.setDescripcion(justificacion);
+
+        return prioridad;
     }
 
     /**
-     * Establece el nivel de prioridad según tipo de solicitud y fecha límite.
+     * RF-02 : El sistema debe permitir clasificar una solicitud académica según su
+     * tipo
+     *
+     * @param solicitud Solicitud a clasificar
+     * @param tipo      Tipo de solicitud a asignar
      */
-    public NivelPrioridad establecePrioridad(TipoSolicitud tipo, LocalDateTime fechaCierre) {
+    public void clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipo, String observacion) {
 
-        double razonPrioridadTipo = 1.0 / ((double) (tipo.ordinal() + 1) / TipoSolicitud.values().length);
-        double razonPrioridadTiempo = 10.0 / ChronoUnit.DAYS.between(LocalDateTime.now(), fechaCierre);
-        double razonTotal = razonPrioridadTiempo + razonPrioridadTipo;
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula.");
+        }
+        if (tipo == null) {
+            throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo.");
+        }
+        if (!Boolean.TRUE.equals(this.activo)) {
+            throw new IllegalStateException("El usuario no está activo y no puede clasificar solicitudes.");
+        }
+        if (this.rol == Rol.ESTUDIANTE) {
+            throw new IllegalStateException("Un estudiante no tiene permisos para clasificar solicitudes.");
+        }
+        if (solicitud.getEstado() != EstadoSolicitud.REGISTRADA) {
+            throw new IllegalStateException(
+                    "Solo se pueden clasificar solicitudes registradas.");
+        }
 
-        if (razonTotal >= 8)
-            return NivelPrioridad.ALTA;
-        else if (razonTotal >= 3)
-            return NivelPrioridad.MEDIA;
-        else
-            return NivelPrioridad.BAJA;
+        solicitud.setTipo(tipo);
+        solicitud.setEstado(EstadoSolicitud.CLASIFICADA);
+        solicitud.crearHistorial(EstadoSolicitud.CLASIFICADA, TipoAccion.CAMBIO_ESTADO, this, observacion);
+    }
+
+    /**
+     * Atiende una solicitud académica cambiando su estado a EN_ATENCION
+     * Requiere que el usuario esté activo y que no sea estudiante
+     *
+     * @param solicitud   Solicitud a atender
+     * @param observacion Descripción detallada de la acción
+     */
+    public void inicioAtencionSolicitud(Solicitud solicitud, String observacion) {
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula.");
+        }
+        if (!Boolean.TRUE.equals(this.activo)) {
+            throw new IllegalStateException("El usuario no está activo y no puede atender solicitudes.");
+        }
+        if (this.rol == Rol.ESTUDIANTE) {
+            throw new IllegalStateException("Un estudiante no tiene permisos para atender solicitudes.");
+        }
+        if (!solicitud.getHistorial().stream()
+                .anyMatch(h -> h.getEstado() == EstadoSolicitud.CLASIFICADA)) {
+            throw new IllegalStateException("La solicitud no ha sido clasificada.");
+        }
+        solicitud.setEstado(EstadoSolicitud.EN_ATENCION);
+        solicitud.crearHistorial(EstadoSolicitud.EN_ATENCION, TipoAccion.CAMBIO_ESTADO, this, observacion);
+    }
+
+    /**
+     * Finaliza la atención de una solicitud académica cambiando su estado a
+     * ATENDIDA
+     * Requiere que el usuario esté activo y que no sea estudiante
+     *
+     * @param solicitud   Solicitud a finalizar
+     * @param observacion Descripción detallada de la acción
+     */
+    public void finalizarAtencionSolicitud(Solicitud solicitud, String observacion) {
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula.");
+        }
+        if (!Boolean.TRUE.equals(this.activo)) {
+            throw new IllegalStateException("El usuario no está activo y no puede finalizar solicitudes.");
+        }
+        if (this.rol == Rol.ESTUDIANTE) {
+            throw new IllegalStateException("Un estudiante no tiene permisos para finalizar solicitudes.");
+        }
+        if (!solicitud.getHistorial().stream()
+                .anyMatch(h -> h.getEstado() == EstadoSolicitud.EN_ATENCION)) {
+            throw new IllegalStateException("La solicitud no esta siendo atendida.");
+        }
+        solicitud.setEstado(EstadoSolicitud.ATENDIDA);
+        solicitud.crearHistorial(EstadoSolicitud.ATENDIDA, TipoAccion.CAMBIO_ESTADO, this, observacion);
+    }
+
+    /**
+     * Cierra una solicitud académica cambiando su estado a CERRADA
+     * Requiere que el usuario esté activo y que no sea estudiante
+     *
+     * @param solicitud   Solicitud a cerrar
+     * @param observacion Descripción detallada de la acción
+     */
+    public void cerrarSolicitud(Solicitud solicitud, String observacion) {
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula.");
+        }
+        if (!Boolean.TRUE.equals(this.activo)) {
+            throw new IllegalStateException("El usuario no está activo y no puede cerrar solicitudes.");
+        }
+        if (this.rol == Rol.ESTUDIANTE) {
+            throw new IllegalStateException("Un estudiante no tiene permisos para cerrar solicitudes.");
+        }
+        if (!solicitud.getHistorial().stream()
+                .anyMatch(h -> h.getEstado() == EstadoSolicitud.ATENDIDA)) {
+            throw new IllegalStateException("La solicitud no se ha acabado de atender.");
+        }
+
+        solicitud.setEstado(EstadoSolicitud.CERRADA);
+        solicitud.setFechaCierre(LocalDateTime.now());
+        solicitud.crearHistorial(EstadoSolicitud.CERRADA, TipoAccion.CAMBIO_ESTADO, this, observacion);
     }
 }

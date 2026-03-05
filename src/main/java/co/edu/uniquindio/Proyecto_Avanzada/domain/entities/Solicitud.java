@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,4 +70,28 @@ public class Solicitud {
 
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialSolicitud> historial;
+
+    /**
+     * Crea una entrada en el historial de la solicitud
+     *
+     * @param estado       Estado de la solicitud en el momento del evento
+     * @param accion       Tipo de acción realizada
+     * @param responsable  Usuario responsable de la acción
+     * @param observacion  Descripción detallada de lo realizado
+     */
+    public void crearHistorial(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
+        if (responsable == null || observacion == null || observacion.isBlank()) {
+            throw new IllegalArgumentException("El responsable y la observación no pueden ser nulos o vacíos.");
+        }
+
+        HistorialSolicitud entrada = new HistorialSolicitud();
+        entrada.setFechaHora(LocalDateTime.now());
+        entrada.setEstado(estado);
+        entrada.setAccion(accion);
+        entrada.setResponsable(responsable);
+        entrada.setSolicitud(this);
+        entrada.setObservacion(observacion);
+
+        this.historial.add(entrada);
+    }
 }
