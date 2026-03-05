@@ -92,7 +92,7 @@ class RF01_RegistroSolicitudTest {
                 ahora,
                 null));
     }
-
+ 
     @Test
     @DisplayName("RF-01 | Debe lanzar excepción si la fecha/hora de registro es nula")
     void registrarSolicitud_fechaNula_debeLanzarExcepcion() {
