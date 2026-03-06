@@ -7,10 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+
+import java.beans.DesignMode;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.cglib.core.Local;
 
 /**
  * RF-01: Entidad que representa una solicitud académica registrada en el
@@ -21,9 +26,6 @@ import java.util.List;
 @Entity
 @Table(name = "solicitudes")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Solicitud {
 
     @Id
@@ -62,7 +64,7 @@ public class Solicitud {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuarioResponsable;
+    private Usuario usuarioSolicitante;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prioridad_id")
@@ -70,6 +72,30 @@ public class Solicitud {
 
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialSolicitud> historial;
+
+    public Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen, 
+                    LocalDateTime fechaHoraRegisro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
+                    Usuario usuarioSolicitante, Prioridad prioridad){
+         // RF-01: validar campos obligatorios
+        if (tipo == null || descripcion == null || descripcion.isBlank()
+                || canalOrigen == null || fechaHoraRegistro == null
+                || identificacion == null || identificacion.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Debe proporcionar al menos: tipo de solicitud, descripción, " +
+                            "canal de origen, fecha/hora de registro e identificación del solicitante.");
+        }
+
+        this.tipo = tipo;
+        this.descripcion = descripcion;
+        this.canalOrigen = canalOrigen;
+        this.fechaHoraRegistro = fechaHoraRegisro;
+        this.identificacionSolicitante = identificacion;
+        this.id = null;
+        this.fechaCierre = fechaCierre;
+        this.estado = estado;
+        this.usuarioSolicitante = usuarioSolicitante;
+        this.prioridad = prioridad;
+    }
 
     /**
      * Crea una entrada en el historial de la solicitud
@@ -80,7 +106,7 @@ public class Solicitud {
      * @param observacion  Descripción detallada de lo realizado
      */
     
-    public void crearHistorial(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
+    public void crearHistoria(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
         if (responsable == null || observacion == null || observacion.isBlank()) {
             throw new IllegalArgumentException("El responsable y la observación no pueden ser nulos o vacíos.");
         }
@@ -95,4 +121,8 @@ public class Solicitud {
 
         this.historial.add(entrada);
     }
+
+    
+
+
 }

@@ -1,6 +1,5 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
