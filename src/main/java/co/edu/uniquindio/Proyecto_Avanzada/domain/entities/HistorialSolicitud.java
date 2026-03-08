@@ -12,6 +12,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
+// no se porque una observacion
 public class HistorialSolicitud {
 
     private Long id;

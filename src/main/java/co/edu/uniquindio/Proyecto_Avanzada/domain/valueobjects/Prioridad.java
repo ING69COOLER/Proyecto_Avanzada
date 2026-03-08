@@ -15,4 +15,11 @@ public class Prioridad {
     private String descripcion;
 
     private NivelPrioridad nivel;
+
+    public Prioridad(NivelPrioridad prioridad, String justificacion){
+        //RN3 debe de haber una justificacion
+        if (justificacion.isBlank() || justificacion.isEmpty()) {
+            throw new IllegalArgumentException("debe de haber una justificacion para poder registrar una prioridad");
+        }
+    }
 }

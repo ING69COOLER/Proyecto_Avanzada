@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 /**
  * Implementación del repositorio de solicitudes con patrón Singleton.
  * Almacena las solicitudes en memoria (lista).
  */
+
+@Service
 public class RepositorioSolicitud implements IRepositorioSolicitud {
 
     private static RepositorioSolicitud instancia;

@@ -3,6 +3,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 import lombok.Data;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
@@ -46,6 +47,8 @@ public class Solicitud {
 
     private List<HistorialSolicitud> historial;
 
+
+    // creo que prioridad, fechacierre y usuarioSolicitante no deben de meterse aunque mmm creo que eso va en el servicio de dominio
     public Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
             LocalDateTime fechaHoraRegisro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
             Usuario usuarioSolicitante, Prioridad prioridad) {
@@ -93,5 +96,16 @@ public class Solicitud {
 
         this.historial.add(entrada);
     }
-
+    //RN2
+    public void clasificarSolicitud(TipoSolicitud tipoSolicitud){
+        if (tipoSolicitud == null) {
+            throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
+        }
+        this.tipo = tipoSolicitud;
+    }
+    //RN3
+    public void priorizarSolicitud(NivelPrioridad prioridad, String justificacion){
+        this.prioridad = new Prioridad(prioridad, justificacion); 
+    }
+    
 }

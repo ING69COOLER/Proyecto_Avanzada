@@ -4,5 +4,6 @@ public enum TipoAccion {
     CREACION,
     ASIGNACION,
     CAMBIO_ESTADO,
-    CIERRE
+    CIERRE,
+    CLASIFICADA
 }

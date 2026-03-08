@@ -28,12 +28,22 @@ public class Usuario {
         return activo && (rol.equals(Rol.ESTUDIANTE) || rol.equals(Rol.ADMINISTRATIVO));
     }
 
+    // RN2
     public boolean puedeClasificarSolicitud() {
-        return activo && (rol.equals(Rol.COORDINADOR) || rol.equals(Rol.ADMINISTRATIVO));
+        return activo && (rol.equals(Rol.COORDINADOR));
     }
 
     public boolean puedeCerrarSolicitud() {
         return activo && rol.equals(Rol.COORDINADOR);
     }
+
+    //RN3
+    public boolean puedePriorizar(){
+        return activo && rol.equals(Rol.COORDINADOR);
+    }
+
+    //puede asignarResponsable
+
+    //puede atenderSolicitud
 
 }
