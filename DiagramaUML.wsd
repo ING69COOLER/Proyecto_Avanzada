@@ -30,7 +30,6 @@ enum Rol {
   ESTUDIANTE
   ADMINISTRATIVO
   COORDINADOR
-  ASEADOR
 }
 
 enum TipoSolicitud {
