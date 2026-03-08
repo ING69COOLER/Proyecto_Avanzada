@@ -18,8 +18,13 @@ public class Prioridad {
 
     public Prioridad(NivelPrioridad prioridad, String justificacion){
         //RN3 debe de haber una justificacion
-        if (justificacion.isBlank() || justificacion.isEmpty()) {
+        if (justificacion == null || justificacion.isBlank() || justificacion.isEmpty()) {
             throw new IllegalArgumentException("debe de haber una justificacion para poder registrar una prioridad");
         }
+        if (prioridad == null) {
+            throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
+        }
+        this.nivel = prioridad;
+        this.descripcion = justificacion;
     }
 }

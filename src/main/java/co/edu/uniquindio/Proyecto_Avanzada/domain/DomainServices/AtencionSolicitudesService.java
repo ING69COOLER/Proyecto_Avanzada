@@ -1,8 +1,14 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
+import org.springframework.stereotype.Service;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 
+/**
+ * RF-04, RF-05: Servicio de Dominio para la atención de solicitudes
+ * Gestiona la asignación de responsables y la atención de solicitudes
+ */
+@Service
 public class AtencionSolicitudesService {
     public void asignarResponsable(Usuario user, Solicitud solicitud, String descripcion){
         if(user == null){

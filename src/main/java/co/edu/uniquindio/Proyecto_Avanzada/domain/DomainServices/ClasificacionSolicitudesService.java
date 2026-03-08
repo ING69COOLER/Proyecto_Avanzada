@@ -1,5 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
@@ -9,7 +10,9 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 @Service
 public class ClasificacionSolicitudesService {
+    @Autowired
     private IRepositorioSolicitud repositorioSolicitud;
+    
     //RN2 
     public void clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipoSolicitud, Usuario usuario, String observacion){
         if (solicitud == null) {

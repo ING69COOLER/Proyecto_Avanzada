@@ -102,28 +102,75 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
     public int contar() {
         return solicitudes.size();
     }
-// mierdas de requisito 7
-    @Override
-    public void consultarEstado(EstadoSolicitud estadoSolicitud) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarEstado'");
+
+    /**
+     * Limpia todas las solicitudes del repositorio (útil para pruebas)
+     */
+    public void limpiar() {
+        solicitudes.clear();
+        System.out.println("🗑️ Repositorio limpiado");
     }
 
+/**
+     * RF-07: Consulta solicitudes por estado
+     */
     @Override
-    public void consultarTipoSolicitud(TipoSolicitud tipoSolicitud) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarTipoSolicitud'");
+    public List<Solicitud> consultarEstado(EstadoSolicitud estadoSolicitud) {
+        if (estadoSolicitud == null) {
+            throw new IllegalArgumentException("El estado de solicitud no puede ser nulo");
+        }
+        List<Solicitud> resultado = solicitudes.stream()
+                .filter(s -> s.getEstado() != null && s.getEstado().equals(estadoSolicitud))
+                .toList();
+        System.out.println("🔍 Consulta por estado " + estadoSolicitud + ": " + resultado.size() + " resultados");
+        return resultado;
     }
 
+    /**
+     * RF-07: Consulta solicitudes por tipo de solicitud
+     */
     @Override
-    public void consultarPrioridad(Prioridad prioridad) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarPrioridad'");
+    public List<Solicitud> consultarTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        if (tipoSolicitud == null) {
+            throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
+        }
+        List<Solicitud> resultado = solicitudes.stream()
+                .filter(s -> s.getTipo() != null && s.getTipo().equals(tipoSolicitud))
+                .toList();
+        System.out.println("🔍 Consulta por tipo " + tipoSolicitud + ": " + resultado.size() + " resultados");
+        return resultado;
     }
 
+    /**
+     * RF-07: Consulta solicitudes por prioridad
+     */
     @Override
-    public void consultarResponsable(Usuario usuario) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarResponsable'");
+    public List<Solicitud> consultarPrioridad(Prioridad prioridad) {
+        if (prioridad == null) {
+            throw new IllegalArgumentException("La prioridad no puede ser nula");
+        }
+        List<Solicitud> resultado = solicitudes.stream()
+                .filter(s -> s.getPrioridad() != null && s.getPrioridad().equals(prioridad))
+                .toList();
+        System.out.println("🔍 Consulta por prioridad: " + resultado.size() + " resultados");
+        return resultado;
+    }
+
+    /**
+     * RF-07: Consulta solicitudes asignadas a un responsable específico
+     * Busca en el historial la asignación más reciente
+     */
+    @Override
+    public List<Solicitud> consultarResponsable(Usuario usuario) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario responsable no puede ser nulo");
+        }
+        List<Solicitud> resultado = solicitudes.stream()
+                .filter(s -> s.getHistorial() != null && 
+                        s.getHistorial().stream()
+                            .anyMatch(h -> h.getResponsable() != null && h.getResponsable().equals(usuario)))
+                .toList();
+        System.out.println("🔍 Consulta por responsable " + usuario.getNombre() + ": " + resultado.size() + " resultados");
+        return resultado;
     }
 }

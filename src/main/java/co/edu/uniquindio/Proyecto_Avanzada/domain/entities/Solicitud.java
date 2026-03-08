@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
 import lombok.Data;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
@@ -9,6 +10,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +52,7 @@ public class Solicitud {
 
     // creo que prioridad, fechacierre y usuarioSolicitante no deben de meterse aunque mmm creo que eso va en el servicio de dominio
     public Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
-            LocalDateTime fechaHoraRegisro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
+            LocalDateTime fechaHoraRegistro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
             Usuario usuarioSolicitante, Prioridad prioridad) {
         // RF-01: validar campos obligatorios
         if (tipo == null || descripcion == null || descripcion.isBlank()
@@ -64,13 +66,14 @@ public class Solicitud {
         this.tipo = tipo;
         this.descripcion = descripcion;
         this.canalOrigen = canalOrigen;
-        this.fechaHoraRegistro = fechaHoraRegisro;
+        this.fechaHoraRegistro = fechaHoraRegistro;
         this.identificacionSolicitante = identificacion;
         this.id = null;
         this.fechaCierre = fechaCierre;
         this.estado = EstadoSolicitud.REGISTRADA;
         this.usuarioSolicitante = usuarioSolicitante;
         this.prioridad = prioridad;
+        this.historial = new ArrayList<>();
 
         crearHistoria(EstadoSolicitud.REGISTRADA, TipoAccion.CREACION, usuarioSolicitante, descripcion);
     }
@@ -105,6 +108,15 @@ public class Solicitud {
         if (tipoSolicitud == null) {
             throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
         }
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no puede ser nulo");
+        }
+        if (!usuario.puedeClasificarSolicitud()) {
+            throw new IllegalArgumentException("El usuario no tiene permisos para clasificar solicitudes");
+        }
+        if (!usuario.getActivo()) {
+            throw new IllegalArgumentException("El usuario no está activo");
+        }
         
         this.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
         this.estado = EstadoSolicitud.CLASIFICADA;
@@ -127,6 +139,22 @@ public class Solicitud {
     public void atenderSolicitud(Usuario user, String observacion) {
         this.estado = EstadoSolicitud.ATENDIDA;
         this.crearHistoria(EstadoSolicitud.ATENDIDA, TipoAccion.CAMBIO_ESTADO, user, observacion);
+    }
+
+    // RF-04: Cierre de solicitud
+    public void cerrarSolicitud(Usuario user, String observacion) throws SolicitudException {
+        if (this.estado == EstadoSolicitud.CERRADA) {
+            throw new SolicitudException("La solicitud ya está cerrada");
+        }
+        if (user == null) {
+            throw new SolicitudException("El usuario no puede ser nulo");
+        }
+        if (observacion == null || observacion.trim().isEmpty()) {
+            throw new SolicitudException("La observación no puede ser nula o vacía");
+        }
+        this.estado = EstadoSolicitud.CERRADA;
+        this.fechaCierre = LocalDateTime.now();
+        this.crearHistoria(EstadoSolicitud.CERRADA, TipoAccion.CIERRE, user, observacion);
     }
 
 

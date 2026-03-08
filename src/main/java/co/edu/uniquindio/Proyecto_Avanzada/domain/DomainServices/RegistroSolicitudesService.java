@@ -1,5 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
@@ -20,7 +21,9 @@ Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
 @Service
 public class RegistroSolicitudesService {
 
+    @Autowired
     private IRepositorioSolicitud repositorioSolicitud;
+    
     // metodo para crear solicitud incluyendo reglas validadas en usuario
     public void registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
                                     String descripcion, CanalOrigen canalOrigen, 
