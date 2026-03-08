@@ -42,8 +42,12 @@ public class Usuario {
         return activo && rol.equals(Rol.COORDINADOR);
     }
 
-    //puede asignarResponsable
+    public boolean puedeAsignar() {
+        return activo && rol.equals(Rol.COORDINADOR);
+    }
 
     //puede atenderSolicitud
-
+    public boolean puedeAtender(){
+        return activo && rol.equals(Rol.DOCENTE);
+    }
 }

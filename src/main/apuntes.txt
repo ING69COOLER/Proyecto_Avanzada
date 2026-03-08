@@ -1,0 +1,5 @@
+hace falta colocar verificaciones en los value objects ya que el profe los pide
+
+un usuario no puede auto atenderse ojo
+
+falta atencion estricta a los cambios de estado, para que no se repitan o no esten en orden

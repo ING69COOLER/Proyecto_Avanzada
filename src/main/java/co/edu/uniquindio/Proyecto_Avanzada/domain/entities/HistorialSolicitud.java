@@ -10,8 +10,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 
 // no se porque una observacion
 public class HistorialSolicitud {
@@ -29,4 +27,9 @@ public class HistorialSolicitud {
     private Usuario responsable;
 
     private Solicitud solicitud;
+
+    public Usuario obtenerUsuario(){
+        return responsable;
+    }
+
 }

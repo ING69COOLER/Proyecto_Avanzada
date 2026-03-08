@@ -68,20 +68,24 @@ public class Solicitud {
         this.identificacionSolicitante = identificacion;
         this.id = null;
         this.fechaCierre = fechaCierre;
-        this.estado = estado;
+        this.estado = EstadoSolicitud.REGISTRADA;
         this.usuarioSolicitante = usuarioSolicitante;
         this.prioridad = prioridad;
+
+        crearHistoria(EstadoSolicitud.REGISTRADA, TipoAccion.CREACION, usuarioSolicitante, descripcion);
     }
 
     /**
      * Crea una entrada en el historial de la solicitud
+     * 
+     * jajajajajaj, ya no esta la etiqueta de los setters, esto va a petar
      *
      * @param estado      Estado de la solicitud en el momento del evento
      * @param accion      Tipo de acción realizada
      * @param responsable Usuario responsable de la acción
      * @param observacion Descripción detallada de lo realizado
      */
-    public void crearHistoria(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
+    private void crearHistoria(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
         if (responsable == null || observacion == null || observacion.isBlank()) {
             throw new IllegalArgumentException("El responsable y la observación no pueden ser nulos o vacíos.");
         }
@@ -97,15 +101,34 @@ public class Solicitud {
         this.historial.add(entrada);
     }
     //RN2
-    public void clasificarSolicitud(TipoSolicitud tipoSolicitud){
+    public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario, String observacion){
         if (tipoSolicitud == null) {
             throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
         }
+        
+        this.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
+        this.estado = EstadoSolicitud.CLASIFICADA;
         this.tipo = tipoSolicitud;
     }
     //RN3
     public void priorizarSolicitud(NivelPrioridad prioridad, String justificacion){
         this.prioridad = new Prioridad(prioridad, justificacion); 
     }
-    
+
+    public void asignarResponsable(Usuario user, String descripcion) {
+        this.estado = EstadoSolicitud.EN_ATENCION;
+        this.crearHistoria(EstadoSolicitud.EN_ATENCION, TipoAccion.ASIGNACION, user, descripcion);
+    }
+
+    public boolean UsuarioPuedeAtender(Usuario user) {
+        return !historial.stream().filter(h -> h.obtenerUsuario().equals(user)).toList().isEmpty();
+    }
+
+    public void atenderSolicitud(Usuario user, String observacion) {
+        this.estado = EstadoSolicitud.ATENDIDA;
+        this.crearHistoria(EstadoSolicitud.ATENDIDA, TipoAccion.CAMBIO_ESTADO, user, observacion);
+    }
+
+
+
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 
 @Service
 public class PriorizacionService {

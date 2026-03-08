@@ -1,12 +1,10 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 import java.time.LocalDateTime;
@@ -36,7 +34,6 @@ public class RegistroSolicitudesService {
                     fechaHoraRegisro, identificacion,  null,  null,
                     null,  null);
 
-        solicitud.crearHistoria(EstadoSolicitud.REGISTRADA, TipoAccion.CREACION, responsableCreacion, descripcion);
         repositorioSolicitud.guardarSolicitud(solicitud);
 
     }
@@ -52,7 +49,6 @@ public class RegistroSolicitudesService {
                     fechaHoraRegisro, identificacion,  null,  null,
                     null,  null);
 
-        solicitud.crearHistoria(EstadoSolicitud.REGISTRADA, TipoAccion.CREACION, usuarioSolicitante, descripcion);
         repositorioSolicitud.guardarSolicitud(solicitud);
 
 

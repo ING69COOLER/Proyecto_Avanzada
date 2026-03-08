@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 @Service
@@ -28,8 +26,7 @@ public class ClasificacionSolicitudesService {
             throw new IllegalArgumentException("el usuario no tiene el rango para clasificar la solicitud");
         }
 
-        solicitud.clasificarSolicitud(tipoSolicitud);
-        solicitud.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
+        solicitud.clasificarSolicitud(tipoSolicitud, usuario, observacion);
         repositorioSolicitud.guardarSolicitud(solicitud);
     }
 }

@@ -1,7 +1,12 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -96,5 +101,29 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      */
     public int contar() {
         return solicitudes.size();
+    }
+// mierdas de requisito 7
+    @Override
+    public void consultarEstado(EstadoSolicitud estadoSolicitud) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarEstado'");
+    }
+
+    @Override
+    public void consultarTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarTipoSolicitud'");
+    }
+
+    @Override
+    public void consultarPrioridad(Prioridad prioridad) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarPrioridad'");
+    }
+
+    @Override
+    public void consultarResponsable(Usuario usuario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarResponsable'");
     }
 }
