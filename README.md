@@ -1,165 +1,117 @@
-# Proyecto Avanzada - Trazabilidad de Requisitos
+# Sistema de Gestión de Solicitudes Académicas
+### Universidad del Quindío — Proyecto Programación Avanzada
 
-Mapeo de cada Requisito Funcional (RF) a las clases que lo implementan.
 
----
+## Integrantes
+|Manuel Pineda Varela|1092455543|
+|Santiago Solarte Trujillo|1059355828|
+|Carlos Alonso Barahona Alvarez|1094896340|
 
-## RF-01 · Registro de solicitudes académicas
+## Descripción del Proyecto
 
-> Registrar tipo, descripción, canal de origen, fecha/hora e identificación del solicitante.
+Este proyecto es un sistema de gestión de solicitudes académicas desarrollado para la **Universidad del Quindío**, implementado con principios de **Domain-Driven Design (DDD)** y arquitectura limpia.
 
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | Constructor principal — valida y almacena los campos obligatorios. Registra la primera entrada en el historial. |
-| `domain/entities/Usuario.java` | `puedeRegistrarSolicitud()` — verifica que el usuario sea ESTUDIANTE o ADMINISTRATIVO. |
-| `domain/repos/repoImplementation/RepositorioSolicitud.java` | `guardarSolicitud()` — persiste la solicitud en memoria. |
+El sistema permite gestionar el ciclo de vida completo de una solicitud académica —desde su registro hasta su cierre— garantizando trazabilidad, control de acceso por roles y soporte opcional de inteligencia artificial para la generación de resúmenes y sugerencias de clasificación.
 
----
+### Funcionalidades principales
 
-## RF-02 · Clasificación de solicitudes
+| RF | Descripción | Cobertura |
+|----|-------------|-----------|
+| RF-01 | Registro de solicitudes académicas (tipo, descripción, canal, fecha, solicitante) | Diseño + Código |
+| RF-02 | Clasificación de solicitudes por tipo (homologación, cupos, cancelación, etc.) | Diseño + Código |
+| RF-03 | Priorización de solicitudes con justificación obligatoria (ALTA / MEDIA / BAJA) | Diseño + Código |
+| RF-04 | Gestión del ciclo de vida: `REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA` | Diseño + Código |
+| RF-06 | Historial auditable automático de cada acción sobre la solicitud | Diseño + Código |
+| RF-08 | Cierre de solicitudes con validaciones estrictas de estado y observación | Diseño + Código |
+| RF-11 | Funcionamiento independiente de IA (fallback a resumen estructurado) | Diseño |
+| RF-13 | Control de autorización por roles: ESTUDIANTE, COORDINADOR, DOCENTE | Diseño + Código |
 
-> Clasificar la solicitud por tipo (registro, homologación, cancelación, cupos, consulta).
+### Roles del sistema
 
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | `clasificarSolicitud()` — cambia el tipo y transiciona el estado a CLASIFICADA. |
-| `domain/DomainServices/ClasificacionSolicitudesService.java` | Orquesta la clasificación, valida parámetros, guarda en repositorio. |
-| `domain/entities/Usuario.java` | `puedeClasificarSolicitud()` — solo COORDINADOR puede clasificar (RN2). |
-
----
-
-## RF-03 · Priorización de solicitudes
-
-> Asignar prioridad (ALTA/MEDIA/BAJA) con justificación.
-
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | `priorizarSolicitud()` — asigna el objeto `Prioridad` a la solicitud. |
-| `domain/DomainServices/PriorizacionService.java` | Orquesta la priorización y valida el rol del usuario (RN3). |
-| `domain/entities/Usuario.java` | `puedePriorizar()` — solo COORDINADOR puede priorizar. |
-| `domain/valueobjects/Prioridad.java` | Value Object que encapsula nivel y justificación. |
-| `domain/valueobjects/NivelPrioridad.java` | Enum con los niveles: ALTA, MEDIA, BAJA. |
+- **ESTUDIANTE / ADMINISTRATIVO** — pueden registrar solicitudes.
+- **COORDINADOR** — puede clasificar, priorizar, asignar responsable y cerrar solicitudes.
+- **DOCENTE** — puede atender solicitudes que le fueron asignadas.
 
 ---
 
-## RF-04 · Gestión del ciclo de vida de la solicitud
+## Tecnologías
 
-> Estados: REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA.
+- Java 17+
+- Spring Boot
+- JUnit 5
+- Maven
 
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | Gestiona todas las transiciones de estado en sus métodos. `validarNoEsterrada()` impide modificar solicitudes cerradas. |
-| `domain/DomainServices/AtencionSolicitudesService.java` | `asignarResponsable()` → EN_ATENCION. `atenderSolicitud()` → ATENDIDA. |
-| `domain/valueobjects/EstadoSolicitud.java` | Enum con los estados del ciclo de vida. |
+## Compilar y ejecutar las pruebas
 
----
+### Prerrequisitos
 
-## RF-05 · Asignación de responsables
+- Tener instalado **Java 17** o superior.
+- Tener instalado **Maven 3.8+**.
 
-> Asignar solicitud a un responsable activo; la asignación queda en el historial.
+Verifica las versiones con:
 
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | `asignarResponsable()` — cambia estado a EN_ATENCION y registra en historial. `UsuarioPuedeAtender()` — verifica si el usuario fue asignado previamente. |
-| `domain/DomainServices/AtencionSolicitudesService.java` | `asignarResponsable()` — valida que el usuario esté activo y sea COORDINADOR. |
-| `domain/entities/Usuario.java` | `puedeAsignar()` — solo COORDINADOR puede asignar. |
+```bash
+java -version
+mvn -version
+```
 
----
+### Clonar el repositorio
 
-## RF-06 · Registro del historial de la solicitud
+```bash
+git clone https://github.com/ING69COOLER/Proyecto_Avanzada.git
+cd Proyecto_Avanzada
+```
 
-> Historial auditable con fecha/hora, acción, usuario responsable y observación.
+### Compilar el proyecto
 
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | `crearHistoria()` (privado) — llamado automáticamente en cada operación. |
-| `domain/entities/HistorialSolicitud.java` | Entidad que representa una entrada del historial. |
-| `domain/valueobjects/TipoAccion.java` | Enum con los tipos de acción (CREACION, CLASIFICADA, ASIGNACION, CAMBIO_ESTADO, CIERRE). |
+```bash
+mvn clean compile
+```
 
----
+### Ejecutar todas las pruebas
 
-## RF-07 · Consulta de solicitudes
+```bash
+mvn test
+```
 
-> Consultar por estado, tipo, prioridad y responsable asignado.
+### Ejecutar las pruebas de un RF específico
 
-| Clase | Rol |
-|---|---|
-| `domain/repos/repoImplementation/RepositorioSolicitud.java` | `consultarEstado()`, `consultarTipoSolicitud()`, `consultarPrioridad()`, `consultarResponsable()`. |
-| `domain/repos/repoInterfaces/IRepositorioSolicitud.java` | Interfaz que define el contrato de consulta. |
+```bash
+# Ejemplo: solo RF-01
+mvn test -Dtest=RF01_RegistroSolicitudTest
 
----
+# Ejemplo: solo RF-08
+mvn test -Dtest=RF08_CierreSolicitudesTest
+```
 
-## RF-08 · Cierre de solicitudes
+### Ver reporte de pruebas
 
-> Cerrar solo si está ATENDIDA, con observación obligatoria. Solicitud cerrada no es modificable.
-
-| Clase | Rol |
-|---|---|
-| `domain/entities/Solicitud.java` | `cerrarSolicitud()` — valida estado ATENDIDA, observación y rol. `validarNoEsterrada()` — bloquea cualquier operación sobre solicitudes cerradas. |
-| `domain/entities/Usuario.java` | `puedeCerrarSolicitud()` — solo COORDINADOR puede cerrar. |
-
----
-
-## RF-09 · Generación de resúmenes con IA *(opcional)*
-
-> Resumen textual del estado e historial usando un modelo de lenguaje externo.
-
-| Clase | Rol |
-|---|---|
-| `domain/DomainServices/ResumenSolicitudService.java` | `generarResumenSolicitud()` — orquesta la generación (IA o fallback). `generarResumenBasico()` — fallback local sin IA. |
-| `domain/DomainServices/ModeloLenguajeOpenAI.java` | `generarResumen()` — llama a la API REST de Gemini y parsea la respuesta. `generarResumenFallback()` — fallback sin IA cuando la API no está disponible. |
-
----
-
-## RF-10 · Sugerencia automática de clasificación *(opcional)*
-
-> Sugerir tipo y prioridad a partir del texto; debe ser confirmada por un humano.
-
-| Clase | Rol |
-|---|---|
-| `domain/DomainServices/ResumenSolicitudService.java` | `sugerirClasificacion()` — delega al modelo de IA si está disponible. |
-| `domain/DomainServices/ModeloLenguajeOpenAI.java` | `sugerirClasificacion()` — genera la sugerencia con Gemini. `sugerirClasificacionFallback()` — búsqueda por palabras clave cuando la IA no está disponible. |
-
----
-
-## RF-11 · Funcionamiento independiente de IA
-
-> El sistema debe operar sin modelos de lenguaje externos.
-
-| Clase | Rol |
-|---|---|
-| `domain/DomainServices/ModeloLenguajeOpenAI.java` | `init()` — detecta si la API key está disponible; si no, desactiva la IA. Métodos `*Fallback()` — implementan versiones locales de RF-09 y RF-10. |
-| `domain/DomainServices/ResumenSolicitudService.java` | Usa `@Autowired(required = false)` para el modelo; si es `null`, usa el resumen básico local. |
-| `domain/repos/repoImplementation/RepositorioSolicitud.java` | Almacenamiento en memoria — no depende de servicios externos. |
-
----
-
-## RF-13 · Autorización básica de operaciones
-
-> Restringir operaciones según el rol del usuario.
-
-| Clase | Rol |
-|---|---|
-| `domain/entities/Usuario.java` | Métodos de permiso: `puedeRegistrarSolicitud()`, `puedeClasificarSolicitud()`, `puedePriorizar()`, `puedeAsignar()`, `puedeAtender()`, `puedeCerrarSolicitud()`. |
-| `domain/entities/Solicitud.java` | Todos los métodos de operación validan el rol antes de ejecutarse y lanzan `SolicitudException` si el acceso es denegado. |
-| `domain/DomainServices/ClasificacionSolicitudesService.java` | Valida rol COORDINADOR antes de clasificar. |
-| `domain/DomainServices/AtencionSolicitudesService.java` | Valida rol COORDINADOR para asignar y DOCENTE para atender. |
-| `domain/DomainServices/PriorizacionService.java` | Valida rol COORDINADOR para priorizar. |
-| `domain/valueobjects/Rol.java` | Enum con los roles: ESTUDIANTE, DOCENTE, COORDINADOR, ADMINISTRATIVO. |
-| `domain/exception/SolicitudException.java` | Excepción lanzada cuando se deniega el acceso por rol. |
-
----
-
-## Resumen visual por clase
+Los resultados se generan en:
 
 ```
-Solicitud.java          → RF-01, RF-02, RF-03, RF-04, RF-05, RF-06, RF-08, RF-13
-Usuario.java            → RF-01, RF-02, RF-03, RF-04, RF-05, RF-08, RF-13
-ClasificacionService    → RF-02, RF-07, RF-13
-AtencionService         → RF-04, RF-05, RF-06, RF-13
-PriorizacionService     → RF-03, RF-13
-RepositorioSolicitud    → RF-01, RF-07, RF-11
-ResumenSolicitudService → RF-09, RF-10, RF-11
-ModeloLenguajeOpenAI   → RF-09, RF-10, RF-11
-Prueba.java             → Demo RF-01...RF-13
+target/surefire-reports/
+```
+
+Para generar un reporte HTML navegable:
+
+```bash
+mvn surefire-report:report
+# El reporte queda en: target/site/surefire-report.html
+```
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+├── main/java/co/edu/uniquindio/Proyecto_Avanzada/
+│   └── domain/
+│       ├── entities/          # Agregados: Solicitud, Usuario, HistorialSolicitud
+│       ├── valueobjects/      # Enums y VOs: Prioridad, Rol, EstadoSolicitud, etc.
+│       ├── DomainServices/    # Servicios de dominio por RF
+│       ├── exception/         # SolicitudException
+│       └── repos/             # Interfaces e implementaciones de repositorios
+└── test/java/co/edu/uniquindio/Proyecto_Avanzada/
+    └── domain/                # Pruebas unitarias por RF (RF01 a RF13)
 ```
