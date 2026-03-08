@@ -69,7 +69,7 @@ class RF04_CicloVidaSolicitudTest {
     
     @Test
     @DisplayName("Debe transitar de REGISTRADA a CLASIFICADA")
-    void testTransicionRegistradaAClasificada() {
+    void testTransicionRegistradaAClasificada() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Clasificando solicitud");
         
@@ -80,7 +80,7 @@ class RF04_CicloVidaSolicitudTest {
     
     @Test
     @DisplayName("Debe transitar de CLASIFICADA a EN_ATENCION")
-    void testTransicionClasificadaAEnAtencion() {
+    void testTransicionClasificadaAEnAtencion() throws SolicitudException {
         // Arrange
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Clasificada");
         
@@ -94,7 +94,7 @@ class RF04_CicloVidaSolicitudTest {
     
     @Test
     @DisplayName("Debe transitar de EN_ATENCION a ATENDIDA")
-    void testTransicionEnAtencionAAtendida() {
+    void testTransicionEnAtencionAAtendida() throws SolicitudException {
         // Arrange
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Clasificada");
         solicitud.asignarResponsable(usuarioDocente, "Asignada");

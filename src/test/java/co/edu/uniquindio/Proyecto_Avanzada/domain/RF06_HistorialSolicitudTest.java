@@ -124,7 +124,7 @@ class RF06_HistorialSolicitudTest {
     
     @Test
     @DisplayName("Debe mantener historial completo con múltiples acciones")
-    void testHistorialMultipleAcciones() {
+    void testHistorialMultipleAcciones() throws SolicitudException {
         // Arrange
         int tamanhoInicial = solicitud.getHistorial().size();
         
@@ -143,7 +143,7 @@ class RF06_HistorialSolicitudTest {
     
     @Test
     @DisplayName("Debe registrar acción de CLASIFICACION")
-    void testAccionClasificacion() {
+    void testAccionClasificacion() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.SOLICITUD_CUPOS, usuarioCoordinador, "Clasificando solicitud");
         
@@ -157,7 +157,7 @@ class RF06_HistorialSolicitudTest {
     
     @Test
     @DisplayName("Debe registrar acción de ASIGNACION")
-    void testAccionAsignacion() {
+    void testAccionAsignacion() throws SolicitudException {
         // Arrange
         solicitud.clasificarSolicitud(TipoSolicitud.CANCELACION_ASIGNATURA, usuarioCoordinador, "Clasificada");
         
@@ -174,7 +174,7 @@ class RF06_HistorialSolicitudTest {
     
     @Test
     @DisplayName("Debe registrar acción de CAMBIO_ESTADO (Atención)")
-    void testAccionAtencion() {
+    void testAccionAtencion() throws SolicitudException {
         // Arrange
         solicitud.clasificarSolicitud(TipoSolicitud.CONSULTA_ACADEMICA, usuarioCoordinador, "Clasificada");
         solicitud.asignarResponsable(usuarioDocente, "Asignada");
@@ -211,7 +211,7 @@ class RF06_HistorialSolicitudTest {
     
     @Test
     @DisplayName("Debe mantener orden cronológico en historial")
-    void testOrdenCronologicoHistorial() {
+    void testOrdenCronologicoHistorial() throws SolicitudException {
         // Arrange & Act
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Acción 1");
         LocalDateTime fecha1 = solicitud.getHistorial().get(solicitud.getHistorial().size() - 1).getFechaHora();

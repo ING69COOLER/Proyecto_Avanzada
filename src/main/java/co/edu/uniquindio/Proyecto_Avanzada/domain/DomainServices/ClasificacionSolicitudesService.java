@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
@@ -14,7 +15,7 @@ public class ClasificacionSolicitudesService {
     private IRepositorioSolicitud repositorioSolicitud;
     
     //RN2 
-    public void clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipoSolicitud, Usuario usuario, String observacion){
+    public void clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipoSolicitud, Usuario usuario, String observacion) throws SolicitudException{
         if (solicitud == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula");
         }

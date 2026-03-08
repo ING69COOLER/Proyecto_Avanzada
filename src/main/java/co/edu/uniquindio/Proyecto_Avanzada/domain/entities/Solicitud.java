@@ -79,6 +79,15 @@ public class Solicitud {
     }
 
     /**
+     * Valida que la solicitud no esté cerrada (RF-08: una solicitud cerrada no podrá ser modificada)
+     */
+    private void validarNoEsterrada() throws SolicitudException {
+        if (this.estado == EstadoSolicitud.CERRADA) {
+            throw new SolicitudException("No se puede modificar una solicitud cerrada");
+        }
+    }
+
+    /**
      * Crea una entrada en el historial de la solicitud
      * 
      * jajajajajaj, ya no esta la etiqueta de los setters, esto va a petar
@@ -104,7 +113,10 @@ public class Solicitud {
         this.historial.add(entrada);
     }
     //RN2
-    public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario, String observacion){
+    public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario, String observacion) throws SolicitudException {
+        // RF-08: Validar que no esté cerrada
+        validarNoEsterrada();
+        
         if (tipoSolicitud == null) {
             throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
         }
@@ -141,17 +153,28 @@ public class Solicitud {
         this.crearHistoria(EstadoSolicitud.ATENDIDA, TipoAccion.CAMBIO_ESTADO, user, observacion);
     }
 
-    // RF-04: Cierre de solicitud
+    // RF-08: Cierre de solicitud - La solicitud debe estar ATENDIDA y debe haber observación
+    // Una solicitud cerrada no podrá ser modificada
     public void cerrarSolicitud(Usuario user, String observacion) throws SolicitudException {
-        if (this.estado == EstadoSolicitud.CERRADA) {
-            throw new SolicitudException("La solicitud ya está cerrada");
+        // Validar que la solicitud esté en estado ATENDIDA (RF-08: requisito 1)
+        if (this.estado != EstadoSolicitud.ATENDIDA) {
+            throw new SolicitudException("La solicitud debe estar en estado ATENDIDA para ser cerrada. Estado actual: " + this.estado);
         }
+        
+        // Validar usuario (RF-08: usuario debe ser COORDINADOR)
         if (user == null) {
             throw new SolicitudException("El usuario no puede ser nulo");
         }
-        if (observacion == null || observacion.trim().isEmpty()) {
-            throw new SolicitudException("La observación no puede ser nula o vacía");
+        if (!user.puedeCerrarSolicitud()) {
+            throw new SolicitudException("El usuario no tiene permisos para cerrar solicitudes. Solo COORDINADOR puede cerrar");
         }
+        
+        // Validar observación de cierre (RF-08: requisito 2 - se registre una observación)
+        if (observacion == null || observacion.trim().isEmpty()) {
+            throw new SolicitudException("Debe proporcionar una observación de cierre");
+        }
+        
+        // Transicionar a estado CERRADA
         this.estado = EstadoSolicitud.CERRADA;
         this.fechaCierre = LocalDateTime.now();
         this.crearHistoria(EstadoSolicitud.CERRADA, TipoAccion.CIERRE, user, observacion);

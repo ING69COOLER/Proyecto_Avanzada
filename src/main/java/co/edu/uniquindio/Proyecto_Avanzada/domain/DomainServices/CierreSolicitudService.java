@@ -19,7 +19,7 @@ public class CierreSolicitudService {
     private IRepositorioSolicitud repositorioSolicitud;
     
     /**
-     * RF-04: Cierra una solicitud academica
+     * RF-04/RF-08: Cierra una solicitud academica
      * Valida que:
      * - El usuario sea COORDINADOR (unico autorizado para cerrar)
      * - La solicitud exista y no este ya cerrada
@@ -60,6 +60,6 @@ public class CierreSolicitudService {
         // Persistir cambios
         repositorioSolicitud.guardarSolicitud(solicitud);
         
-        System.out.println("✅ Solicitud cerrada correctamente - ID: " + solicitud.getId());
+        System.out.println("Solicitud cerrada correctamente - ID: " + solicitud.getId());
     }
 }

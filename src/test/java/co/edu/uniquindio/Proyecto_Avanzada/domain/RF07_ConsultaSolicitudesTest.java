@@ -94,7 +94,7 @@ class RF07_ConsultaSolicitudesTest {
     
     @Test
     @DisplayName("Debe consultar solicitudes por estado CLASIFICADA")
-    void testConsultarPorEstadoClasificada() {
+    void testConsultarPorEstadoClasificada() throws SolicitudException {
         // Arrange
         Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "123", null, null, usuarioCoordinador, null);
         Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "124", null, null, usuarioCoordinador, null);
@@ -176,7 +176,7 @@ class RF07_ConsultaSolicitudesTest {
     
     @Test
     @DisplayName("Debe consultar solicitudes por responsable asignado")
-    void testConsultarPorResponsable() {
+    void testConsultarPorResponsable() throws SolicitudException {
         // Arrange
         Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "130", null, null, usuarioCoordinador, null);
         Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "131", null, null, usuarioCoordinador, null);
@@ -251,7 +251,7 @@ class RF07_ConsultaSolicitudesTest {
     
     @Test
     @DisplayName("Debe consultar solicitudes pendientes en estado REGISTRADA")
-    void testConsultarSolicitudesPendientes() {
+    void testConsultarSolicitudesPendientes() throws SolicitudException {
         // Arrange
         Solicitud sol1 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "133", null, null, usuarioCoordinador, null);
         Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "134", null, null, usuarioCoordinador, null);
@@ -271,7 +271,7 @@ class RF07_ConsultaSolicitudesTest {
     
     @Test
     @DisplayName("Debe consultar solicitudes en atención")
-    void testConsultarSolicitudesEnAtencion() {
+    void testConsultarSolicitudesEnAtencion() throws SolicitudException {
         // Arrange
         Solicitud sol1 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "135", null, null, usuarioCoordinador, null);
         sol1.clasificarSolicitud(TipoSolicitud.CANCELACION_ASIGNATURA, usuarioCoordinador, "Clasificada");

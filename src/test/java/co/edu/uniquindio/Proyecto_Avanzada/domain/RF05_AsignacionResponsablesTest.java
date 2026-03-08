@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
@@ -34,7 +35,7 @@ class RF05_AsignacionResponsablesTest {
     private AtencionSolicitudesService servicioAtencion;
     
     @BeforeEach
-    void setup() {
+    void setup() throws SolicitudException {
         servicioAtencion = new AtencionSolicitudesService();
         
         // Coordinador autorizado para asignar
@@ -149,7 +150,7 @@ class RF05_AsignacionResponsablesTest {
     
     @Test
     @DisplayName("Debe permitir cambiar responsable de una solicitud")
-    void testCambiarResponsable() {
+    void testCambiarResponsable() throws SolicitudException {
         // Arrange
         Usuario usuarioDocente2 = new Usuario();
         usuarioDocente2.setId(5L);

@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ClasificacionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
@@ -74,7 +75,7 @@ class RF02_ClasificacionSolicitudTest {
     
     @Test
     @DisplayName("Debe clasificar solicitud como REGISTRO_ASIGNATURA")
-    void testClasificarComoRegistroAsignatura() {
+    void testClasificarComoRegistroAsignatura() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada como registro de asignatura");
         
@@ -87,7 +88,7 @@ class RF02_ClasificacionSolicitudTest {
     
     @Test
     @DisplayName("Debe clasificar solicitud como HOMOLOGACION")
-    void testClasificarComoHomologacion() {
+    void testClasificarComoHomologacion() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Clasificada como homologación");
         
@@ -98,7 +99,7 @@ class RF02_ClasificacionSolicitudTest {
     
     @Test
     @DisplayName("Debe clasificar solicitud como CANCELACION_ASIGNATURA")
-    void testClasificarComoCancelacion() {
+    void testClasificarComoCancelacion() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.CANCELACION_ASIGNATURA, usuarioCoordinador, "Clasificada como cancelación");
         
@@ -109,7 +110,7 @@ class RF02_ClasificacionSolicitudTest {
     
     @Test
     @DisplayName("Debe clasificar solicitud como SOLICITUD_CUPOS")
-    void testClasificarComoSolicitudCupos() {
+    void testClasificarComoSolicitudCupos() throws SolicitudException {
         // Act
         solicitud.clasificarSolicitud(TipoSolicitud.SOLICITUD_CUPOS, usuarioCoordinador, "Clasificada como solicitud de cupos");
         
@@ -129,7 +130,7 @@ class RF02_ClasificacionSolicitudTest {
     
     @Test
     @DisplayName("Debe registrar la clasificación en el historial")
-    void testRegistroEnHistorial() {
+    void testRegistroEnHistorial() throws SolicitudException {
         // Arrange
         int tamanhoHistorialAntes = solicitud.getHistorial().size();
         

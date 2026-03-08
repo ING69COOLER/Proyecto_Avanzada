@@ -6,6 +6,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * RF-07: Interfaz para operaciones CRUD y consultas de solicitudes
@@ -37,5 +38,7 @@ public interface IRepositorioSolicitud {
      * RF-07: Consulta solicitudes asignadas a un responsable
      */
     public List<Solicitud> consultarResponsable(Usuario usuario);
+
+    public Optional<Solicitud> obtenerPorId(Long id);
    
 }
