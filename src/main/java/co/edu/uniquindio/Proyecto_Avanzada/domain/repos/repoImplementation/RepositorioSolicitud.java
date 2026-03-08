@@ -14,8 +14,17 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementación del repositorio de solicitudes con patrón Singleton.
- * Almacena las solicitudes en memoria (lista).
+ * RF-01 / RF-07: Implementacion del repositorio de solicitudes academicas.
+ *
+ * RF-01: Almacena las solicitudes registradas en el sistema (en memoria, con
+ * lista).
+ * RF-07: Ofrece metodos de consulta por estado, tipo, prioridad y responsable.
+ *
+ * Patron Singleton: garantiza que solo exista una instancia del repositorio
+ * durante todo el ciclo de vida de la aplicacion.
+ *
+ * RF-11: Al no depender de una base de datos externa, el sistema puede operar
+ * de forma independiente en entornos sin persistencia.
  */
 
 @Service
@@ -25,15 +34,20 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
     private List<Solicitud> solicitudes;
 
     /**
-     * Constructor privado para el patrón Singleton
+     * Constructor privado (patron Singleton).
+     * Inicializa la lista de solicitudes en memoria.
      */
     private RepositorioSolicitud() {
         this.solicitudes = new ArrayList<>();
-        System.out.println("✅ RepositorioSolicitud inicializado (Singleton)");
+        System.out.println("[REPO] RepositorioSolicitud inicializado (Singleton)");
     }
 
     /**
-     * Obtiene la instancia única del repositorio
+     * Retorna la unica instancia del repositorio (patron Singleton, thread-safe).
+     * Util para acceder al repositorio desde contextos fuera del contenedor de
+     * Spring.
+     *
+     * @return Instancia unica de RepositorioSolicitud
      */
     public static synchronized RepositorioSolicitud getInstancia() {
         if (instancia == null) {
@@ -43,13 +57,18 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
     }
 
     /**
-     * Guarda una nueva solicitud en el repositorio
+     * RF-01: Guarda una nueva solicitud registrada en el repositorio en memoria.
+     * Se llama despues de que el usuario registra una solicitud desde cualquier
+     * canal.
+     *
+     * @param solicitud Solicitud a guardar (si es nula, se ignora)
      */
     @Override
     public void guardarSolicitud(Solicitud solicitud) {
         if (solicitud != null) {
             solicitudes.add(solicitud);
-            System.out.println("✅ Solicitud guardada: " + solicitud.getTipo() + " - " + solicitud.getDescripcion());
+            System.out.println("[REPO] Solicitud guardada: "
+                    + solicitud.getTipo() + " - " + solicitud.getDescripcion());
         }
     }
 
@@ -73,7 +92,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
                     .ifPresent(s -> {
                         int index = solicitudes.indexOf(s);
                         solicitudes.set(index, solicitud);
-                        System.out.println("✅ Solicitud actualizada: ID " + solicitud.getId());
+                        System.out.println("[REPO] Solicitud actualizada: ID " + solicitud.getId());
                     });
         }
     }
@@ -84,7 +103,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
     public void eliminar(Long id) {
         boolean eliminada = solicitudes.removeIf(s -> s.getId() != null && s.getId().equals(id));
         if (eliminada) {
-            System.out.println("✅ Solicitud eliminada: ID " + id);
+            System.out.println("[REPO] Solicitud eliminada: ID " + id);
         }
     }
 
@@ -92,7 +111,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      * Obtiene todas las solicitudes
      */
     public List<Solicitud> listar() {
-        System.out.println("📋 Total de solicitudes: " + solicitudes.size());
+        System.out.println("[REPO] Total de solicitudes: " + solicitudes.size());
         return new ArrayList<>(solicitudes);
     }
 
@@ -108,10 +127,10 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      */
     public void limpiar() {
         solicitudes.clear();
-        System.out.println("🗑️ Repositorio limpiado");
+        System.out.println("[REPO] Repositorio limpiado");
     }
 
-/**
+    /**
      * RF-07: Consulta solicitudes por estado
      */
     @Override
@@ -122,7 +141,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
         List<Solicitud> resultado = solicitudes.stream()
                 .filter(s -> s.getEstado() != null && s.getEstado().equals(estadoSolicitud))
                 .toList();
-        System.out.println("🔍 Consulta por estado " + estadoSolicitud + ": " + resultado.size() + " resultados");
+        System.out.println("[REPO] Consulta por estado " + estadoSolicitud + ": " + resultado.size() + " resultados");
         return resultado;
     }
 
@@ -137,7 +156,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
         List<Solicitud> resultado = solicitudes.stream()
                 .filter(s -> s.getTipo() != null && s.getTipo().equals(tipoSolicitud))
                 .toList();
-        System.out.println("🔍 Consulta por tipo " + tipoSolicitud + ": " + resultado.size() + " resultados");
+        System.out.println("[REPO] Consulta por tipo " + tipoSolicitud + ": " + resultado.size() + " resultados");
         return resultado;
     }
 
@@ -152,7 +171,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
         List<Solicitud> resultado = solicitudes.stream()
                 .filter(s -> s.getPrioridad() != null && s.getPrioridad().equals(prioridad))
                 .toList();
-        System.out.println("🔍 Consulta por prioridad: " + resultado.size() + " resultados");
+        System.out.println("[REPO] Consulta por prioridad: " + resultado.size() + " resultados");
         return resultado;
     }
 
@@ -166,11 +185,12 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
             throw new IllegalArgumentException("El usuario responsable no puede ser nulo");
         }
         List<Solicitud> resultado = solicitudes.stream()
-                .filter(s -> s.getHistorial() != null && 
+                .filter(s -> s.getHistorial() != null &&
                         s.getHistorial().stream()
-                            .anyMatch(h -> h.getResponsable() != null && h.getResponsable().equals(usuario)))
+                                .anyMatch(h -> h.getResponsable() != null && h.getResponsable().equals(usuario)))
                 .toList();
-        System.out.println("🔍 Consulta por responsable " + usuario.getNombre() + ": " + resultado.size() + " resultados");
+        System.out.println(
+                "[REPO] Consulta por responsable " + usuario.getNombre() + ": " + resultado.size() + " resultados");
         return resultado;
     }
 }

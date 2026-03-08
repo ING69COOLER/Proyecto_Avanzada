@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
@@ -69,7 +70,7 @@ class RF03_PriorizacionSolicitudTest {
     
     @Test
     @DisplayName("Debe asignar prioridad ALTA a solicitud")
-    void testAsignarPrioridadAlta() {
+    void testAsignarPrioridadAlta() throws SolicitudException {
         // Act
         servicioPriorizacion.priorizarSolicitud(
             usuarioCoordinador,
@@ -86,7 +87,7 @@ class RF03_PriorizacionSolicitudTest {
     
     @Test
     @DisplayName("Debe asignar prioridad MEDIA a solicitud")
-    void testAsignarPrioridadMedia() {
+    void testAsignarPrioridadMedia() throws SolicitudException {
         // Act
         servicioPriorizacion.priorizarSolicitud(
             usuarioCoordinador,
@@ -102,7 +103,7 @@ class RF03_PriorizacionSolicitudTest {
     
     @Test
     @DisplayName("Debe asignar prioridad BAJA a solicitud")
-    void testAsignarPrioridadBaja() {
+    void testAsignarPrioridadBaja() throws SolicitudException {
         // Act
         servicioPriorizacion.priorizarSolicitud(
             usuarioCoordinador,
@@ -118,7 +119,7 @@ class RF03_PriorizacionSolicitudTest {
     
     @Test
     @DisplayName("Debe guardar justificación de priorización")
-    void testJustificacionPriorizacion() {
+    void testJustificacionPriorizacion() throws SolicitudException {
         // Arrange
         String justificacion = "Estudiante próximo a graduarse con fecha límite en 2 semanas";
         

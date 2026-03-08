@@ -14,53 +14,83 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * RF-01: Entidad que representa una solicitud académica registrada en el
- * sistema.
- * Almacena: tipo, descripción, canal de origen, fecha/hora de registro e
- * identificación del solicitante.
+ * RF-01: Entidad central que representa una solicitud academica registrada en
+ * el sistema.
+ *
+ * Almacena los datos minimos requeridos: tipo, descripcion, canal de origen,
+ * fecha/hora de registro e identificacion del solicitante.
+ *
+ * Gestiona ademas el ciclo de vida completo (RF-04): REGISTRADA -> CLASIFICADA
+ * -> EN_ATENCION -> ATENDIDA -> CERRADA.
+ *
+ * RF-06: Mantiene un historial auditable de todas las acciones realizadas.
+ * RF-13: Valida que cada operacion sea ejecutada por un usuario con el rol
+ * correcto.
  */
 @Data
 public class Solicitud {
 
     private Long id;
 
-    /** RF-01: Tipo de solicitud */
+    /** RF-01: Tipo de solicitud (registro, homologacion, cancelacion, etc.) */
     private TipoSolicitud tipo;
 
-    /** RF-01: Descripción de la solicitud */
+    /** RF-01: Descripcion detallada de lo que solicita el estudiante */
     private String descripcion;
 
-    /** RF-01: Canal de origen (CSU, correo, SAC, telefónico, etc.) */
+    /** RF-01: Canal por el que ingreso la solicitud (CSU, correo, SAC, etc.) */
     private CanalOrigen canalOrigen;
 
-    /** RF-01: Fecha y hora de registro */
+    /** RF-01: Momento exacto en que se registro la solicitud */
     private LocalDateTime fechaHoraRegistro;
 
-    /** RF-01: Identificación del solicitante */
+    /** RF-01: Identificacion del estudiante que realizó la solicitud */
     private String identificacionSolicitante;
 
+    /** RF-08: Fecha y hora en que se cerro la solicitud */
     private LocalDateTime fechaCierre;
 
+    /** RF-04: Estado actual dentro del ciclo de vida de la solicitud */
     private EstadoSolicitud estado;
 
+    /** RF-05: Usuario solicitante que origino la solicitud */
     private Usuario usuarioSolicitante;
 
+    /** RF-03: Nivel de prioridad asignado y su justificacion */
     private Prioridad prioridad;
 
+    /**
+     * RF-06: Historial auditable con todas las acciones realizadas sobre la
+     * solicitud
+     */
     private List<HistorialSolicitud> historial;
 
-
-    // creo que prioridad, fechacierre y usuarioSolicitante no deben de meterse aunque mmm creo que eso va en el servicio de dominio
+    /**
+     * RF-01: Constructor principal para registrar una nueva solicitud academica.
+     *
+     * Valida que los campos obligatorios esten presentes y registra automaticamente
+     * la primera entrada en el historial con estado REGISTRADA.
+     *
+     * @param tipo              Tipo de solicitud (no puede ser nulo)
+     * @param descripcion       Texto descriptivo (no puede ser nulo ni vacio)
+     * @param canalOrigen       Canal de ingreso (no puede ser nulo)
+     * @param fechaHoraRegistro Timestamp del registro (no puede ser nulo)
+     * @param identificacion    Identificacion del solicitante (no puede ser nula ni
+     *                          vacia)
+     * @throws IllegalArgumentException Si alguno de los campos obligatorios es
+     *                                  invalido
+     */
     public Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
-            LocalDateTime fechaHoraRegistro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
-            Usuario usuarioSolicitante, Prioridad prioridad) {
-        // RF-01: validar campos obligatorios
+            LocalDateTime fechaHoraRegistro, String identificacion, LocalDateTime fechaCierre,
+            EstadoSolicitud estado, Usuario usuarioSolicitante, Prioridad prioridad) {
+
+        // RF-01: validar que todos los campos obligatorios esten presentes
         if (tipo == null || descripcion == null || descripcion.isBlank()
                 || canalOrigen == null || fechaHoraRegistro == null
                 || identificacion == null || identificacion.isBlank()) {
             throw new IllegalArgumentException(
-                    "Debe proporcionar al menos: tipo de solicitud, descripción, " +
-                            "canal de origen, fecha/hora de registro e identificación del solicitante.");
+                    "Debe proporcionar al menos: tipo de solicitud, descripcion, " +
+                            "canal de origen, fecha/hora de registro e identificacion del solicitante.");
         }
 
         this.tipo = tipo;
@@ -70,16 +100,21 @@ public class Solicitud {
         this.identificacionSolicitante = identificacion;
         this.id = null;
         this.fechaCierre = fechaCierre;
-        this.estado = EstadoSolicitud.REGISTRADA;
+        this.estado = EstadoSolicitud.REGISTRADA; // RF-04: estado inicial del ciclo de vida
         this.usuarioSolicitante = usuarioSolicitante;
         this.prioridad = prioridad;
         this.historial = new ArrayList<>();
 
+        // RF-06: registrar la primera entrada del historial al crear la solicitud
         crearHistoria(EstadoSolicitud.REGISTRADA, TipoAccion.CREACION, usuarioSolicitante, descripcion);
     }
 
     /**
-     * Valida que la solicitud no esté cerrada (RF-08: una solicitud cerrada no podrá ser modificada)
+     * RF-04 / RF-08: Valida que la solicitud no este cerrada antes de permitir
+     * modificaciones.
+     * Una solicitud cerrada no puede ser modificada (restriccion del RF-08).
+     *
+     * @throws SolicitudException Si la solicitud ya esta en estado CERRADA
      */
     private void validarNoEsterrada() throws SolicitudException {
         if (this.estado == EstadoSolicitud.CERRADA) {
@@ -88,18 +123,24 @@ public class Solicitud {
     }
 
     /**
-     * Crea una entrada en el historial de la solicitud
-     * 
-     * jajajajajaj, ya no esta la etiqueta de los setters, esto va a petar
+     * RF-06: Registra una nueva entrada en el historial auditable de la solicitud.
      *
-     * @param estado      Estado de la solicitud en el momento del evento
-     * @param accion      Tipo de acción realizada
-     * @param responsable Usuario responsable de la acción
-     * @param observacion Descripción detallada de lo realizado
+     * Cada accion realizada sobre la solicitud queda registrada con: fecha/hora,
+     * estado en ese momento, accion realizada, usuario responsable y observacion.
+     *
+     * @param estado      Estado de la solicitud al momento del evento
+     * @param accion      Tipo de accion realizada (CREACION, CLASIFICADA,
+     *                    ASIGNACION, etc.)
+     * @param responsable Usuario que ejecuto la accion
+     * @param observacion Descripcion de lo realizado
+     * @throws IllegalArgumentException Si el responsable o la observacion son
+     *                                  nulos/vacios
      */
-    private void crearHistoria(EstadoSolicitud estado, TipoAccion accion, Usuario responsable, String observacion) {
+    private void crearHistoria(EstadoSolicitud estado, TipoAccion accion,
+            Usuario responsable, String observacion) {
         if (responsable == null || observacion == null || observacion.isBlank()) {
-            throw new IllegalArgumentException("El responsable y la observación no pueden ser nulos o vacíos.");
+            throw new IllegalArgumentException(
+                    "El responsable y la observacion no pueden ser nulos o vacios.");
         }
 
         HistorialSolicitud entrada = new HistorialSolicitud();
@@ -112,74 +153,194 @@ public class Solicitud {
 
         this.historial.add(entrada);
     }
-    //RN2
-    public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario, String observacion) throws SolicitudException {
-        // RF-08: Validar que no esté cerrada
+
+    /**
+     * RF-02: Clasifica la solicitud asignandole un tipo especifico.
+     * RF-04: Transiciona el estado de la solicitud a CLASIFICADA.
+     * RF-13: Solo usuarios con rol COORDINADOR pueden clasificar (RN2).
+     *
+     * @param tipoSolicitud Nuevo tipo de solicitud asignado
+     * @param usuario       Usuario que realiza la clasificacion (debe ser
+     *                      COORDINADOR)
+     * @param observacion   Justificacion de la clasificacion
+     * @throws SolicitudException       Si la solicitud esta cerrada
+     * @throws IllegalArgumentException Si el usuario no tiene permisos de
+     *                                  clasificacion
+     */
+    public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario,
+            String observacion) throws SolicitudException {
+        // RF-08: no se puede modificar una solicitud cerrada
         validarNoEsterrada();
-        
+
         if (tipoSolicitud == null) {
             throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
         }
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
         }
+        // RF-13: verificar que el usuario tenga el rol de COORDINADOR
         if (!usuario.puedeClasificarSolicitud()) {
-            throw new IllegalArgumentException("El usuario no tiene permisos para clasificar solicitudes");
+            throw new IllegalArgumentException(
+                    "Acceso denegado: solo el COORDINADOR puede clasificar solicitudes." +
+                            " Rol actual: " + usuario.getRol());
         }
         if (!usuario.getActivo()) {
-            throw new IllegalArgumentException("El usuario no está activo");
+            throw new IllegalArgumentException("El usuario no esta activo");
         }
-        
+
+        // RF-06: registrar en el historial la accion de clasificacion
         this.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
+        // RF-04: transicion de estado
         this.estado = EstadoSolicitud.CLASIFICADA;
+        // RF-02: asignar el nuevo tipo de solicitud
         this.tipo = tipoSolicitud;
     }
-    //RN3
-    public void priorizarSolicitud(NivelPrioridad prioridad, String justificacion){
-        this.prioridad = new Prioridad(prioridad, justificacion); 
+
+    /**
+     * RF-03: Asigna una prioridad a la solicitud con base en nivel y justificacion.
+     * Version sin control de rol (para compatibilidad interna).
+     *
+     * @param prioridad     Nivel de prioridad (ALTA, MEDIA, BAJA)
+     * @param justificacion Razon por la que se asigna dicha prioridad
+     * @throws SolicitudException       Si la solicitud esta cerrada
+     * @throws IllegalArgumentException Si el nivel de prioridad es nulo
+     */
+    public void priorizarSolicitud(NivelPrioridad prioridad,
+            String justificacion) throws SolicitudException {
+        validarNoEsterrada();
+        if (prioridad == null) {
+            throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
+        }
+        this.prioridad = new Prioridad(prioridad, justificacion);
     }
 
-    public void asignarResponsable(Usuario user, String descripcion) {
+    /**
+     * RF-03: Asigna prioridad a la solicitud verificando el rol del responsable.
+     * RF-13: Solo el COORDINADOR puede priorizar solicitudes (RN3).
+     *
+     * @param prioridad     Nivel de prioridad (ALTA, MEDIA, BAJA)
+     * @param justificacion Razon por la que se asigna dicha prioridad
+     * @param responsable   Usuario que realiza la priorizacion (debe ser
+     *                      COORDINADOR)
+     * @throws SolicitudException Si la solicitud esta cerrada o el rol no es valido
+     */
+    public void priorizarSolicitud(NivelPrioridad prioridad, String justificacion,
+            Usuario responsable) throws SolicitudException {
+        validarNoEsterrada();
+        // RF-13: verificar que el usuario sea COORDINADOR
+        if (responsable == null || !responsable.puedePriorizar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede priorizar solicitudes." +
+                            (responsable != null ? " Rol actual: " + responsable.getRol() : ""));
+        }
+        if (prioridad == null) {
+            throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
+        }
+        this.prioridad = new Prioridad(prioridad, justificacion);
+    }
+
+    /**
+     * RF-04 / RF-05: Asigna un responsable a la solicitud y transiciona al estado
+     * EN_ATENCION.
+     * RF-13: Solo el COORDINADOR puede asignar responsables.
+     * RF-06: Registra la asignacion en el historial.
+     *
+     * @param user        Usuario que asigna (debe ser COORDINADOR)
+     * @param descripcion Observacion de la asignacion
+     * @throws SolicitudException Si la solicitud esta cerrada o el rol no es valido
+     */
+    public void asignarResponsable(Usuario user, String descripcion) throws SolicitudException {
+        validarNoEsterrada();
+        // RF-13: verificar que el usuario sea COORDINADOR
+        if (user == null || !user.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
+        // RF-04: transicion de estado a EN_ATENCION
         this.estado = EstadoSolicitud.EN_ATENCION;
+        // RF-06: registrar la asignacion en el historial
         this.crearHistoria(EstadoSolicitud.EN_ATENCION, TipoAccion.ASIGNACION, user, descripcion);
     }
 
+    /**
+     * RF-05: Verifica si un usuario puede atender esta solicitud.
+     * Confirma que el usuario haya participado previamente en el historial.
+     *
+     * @param user Usuario a verificar
+     * @return true si el usuario aparece en el historial de la solicitud
+     */
     public boolean UsuarioPuedeAtender(Usuario user) {
-        return !historial.stream().filter(h -> h.obtenerUsuario().equals(user)).toList().isEmpty();
+        return !historial.stream()
+                .filter(h -> h.obtenerUsuario().equals(user))
+                .toList()
+                .isEmpty();
     }
 
-    public void atenderSolicitud(Usuario user, String observacion) {
+    /**
+     * RF-04: Transiciona la solicitud al estado ATENDIDA.
+     * RF-13: Solo el DOCENTE puede marcar una solicitud como atendida.
+     * RF-06: Registra la atencion en el historial.
+     *
+     * @param user        Usuario que atiende (debe ser DOCENTE)
+     * @param observacion Descripcion de lo realizado
+     * @throws SolicitudException Si la solicitud esta cerrada o el rol no es valido
+     */
+    public void atenderSolicitud(Usuario user, String observacion) throws SolicitudException {
+        validarNoEsterrada();
+        // RF-13: verificar que el usuario sea DOCENTE
+        if (user == null || !user.puedeAtender()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el DOCENTE puede atender solicitudes." +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
+        // RF-04: transicion de estado a ATENDIDA
         this.estado = EstadoSolicitud.ATENDIDA;
+        // RF-06: registrar la atencion en el historial
         this.crearHistoria(EstadoSolicitud.ATENDIDA, TipoAccion.CAMBIO_ESTADO, user, observacion);
     }
 
-    // RF-08: Cierre de solicitud - La solicitud debe estar ATENDIDA y debe haber observación
-    // Una solicitud cerrada no podrá ser modificada
+    /**
+     * RF-08: Cierra formalmente la solicitud, finalizando su ciclo de vida.
+     * RF-04: Transiciona al estado CERRADA (estado final, sin retorno).
+     * RF-13: Solo el COORDINADOR puede cerrar solicitudes.
+     * RF-06: Registra el cierre en el historial.
+     *
+     * Condiciones previas (RF-08):
+     * - La solicitud debe estar en estado ATENDIDA
+     * - Se debe proporcionar una observacion de cierre
+     * - Una vez cerrada, la solicitud no puede ser modificada
+     *
+     * @param user        Usuario que cierra (debe ser COORDINADOR activo)
+     * @param observacion Observacion obligatoria de cierre
+     * @throws SolicitudException Si no se cumplen las condiciones de cierre o el
+     *                            rol es invalido
+     */
     public void cerrarSolicitud(Usuario user, String observacion) throws SolicitudException {
-        // Validar que la solicitud esté en estado ATENDIDA (RF-08: requisito 1)
+        // RF-08: la solicitud debe estar en estado ATENDIDA para poder cerrarla
         if (this.estado != EstadoSolicitud.ATENDIDA) {
-            throw new SolicitudException("La solicitud debe estar en estado ATENDIDA para ser cerrada. Estado actual: " + this.estado);
+            throw new SolicitudException(
+                    "La solicitud debe estar en estado ATENDIDA para ser cerrada. " +
+                            "Estado actual: " + this.estado);
         }
-        
-        // Validar usuario (RF-08: usuario debe ser COORDINADOR)
         if (user == null) {
             throw new SolicitudException("El usuario no puede ser nulo");
         }
+        // RF-13: solo el COORDINADOR puede cerrar solicitudes
         if (!user.puedeCerrarSolicitud()) {
-            throw new SolicitudException("El usuario no tiene permisos para cerrar solicitudes. Solo COORDINADOR puede cerrar");
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede cerrar solicitudes." +
+                            " Rol actual: " + user.getRol());
         }
-        
-        // Validar observación de cierre (RF-08: requisito 2 - se registre una observación)
+        // RF-08: la observacion de cierre es obligatoria
         if (observacion == null || observacion.trim().isEmpty()) {
-            throw new SolicitudException("Debe proporcionar una observación de cierre");
+            throw new SolicitudException("Debe proporcionar una observacion de cierre");
         }
-        
-        // Transicionar a estado CERRADA
+
+        // RF-04: transicion al estado final CERRADA
         this.estado = EstadoSolicitud.CERRADA;
         this.fechaCierre = LocalDateTime.now();
+        // RF-06: registrar el cierre en el historial
         this.crearHistoria(EstadoSolicitud.CERRADA, TipoAccion.CIERRE, user, observacion);
     }
-
-
-
 }

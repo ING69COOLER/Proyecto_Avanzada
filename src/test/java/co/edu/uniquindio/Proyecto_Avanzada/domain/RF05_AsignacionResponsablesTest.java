@@ -88,7 +88,7 @@ class RF05_AsignacionResponsablesTest {
     
     @Test
     @DisplayName("Debe asignar solicitud a un docente activo")
-    void testAsignarADocenteActivo() {
+    void testAsignarADocenteActivo() throws SolicitudException {
         // Act
         servicioAtencion.asignarResponsable(usuarioCoordinador, solicitud, "Asignaciones a Prof. Juan por especialidad");
         
@@ -99,7 +99,7 @@ class RF05_AsignacionResponsablesTest {
     
     @Test
     @DisplayName("Debe registrar asignación en el historial")
-    void testRegistroEnHistorial() {
+    void testRegistroEnHistorial() throws SolicitudException {
         // Arrange
         int tamanhoHistorialAntes = solicitud.getHistorial().size();
         
@@ -173,7 +173,7 @@ class RF05_AsignacionResponsablesTest {
     
     @Test
     @DisplayName("Debe registrar al responsable correcto en el historial")
-    void testResponsableEnHistorial() {
+    void testResponsableEnHistorial() throws SolicitudException {
         // Act
         servicioAtencion.asignarResponsable(usuarioCoordinador, solicitud, "Asignando a docente");
         
@@ -197,7 +197,7 @@ class RF05_AsignacionResponsablesTest {
     
     @Test
     @DisplayName("Debe verificar que usuario asignado sea obtenido del historial")
-    void testVerificacionUsuarioPuedeAtender() {
+    void testVerificacionUsuarioPuedeAtender() throws SolicitudException {
         // Arrange
         servicioAtencion.asignarResponsable(usuarioCoordinador, solicitud, "Asignación inicial");
         
