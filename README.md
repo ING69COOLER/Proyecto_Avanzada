@@ -11,7 +11,7 @@
 
 Este proyecto es un sistema de gestión de solicitudes académicas desarrollado para la **Universidad del Quindío**, implementado con principios de **Domain-Driven Design (DDD)** y arquitectura limpia.
 
-El sistema permite gestionar el ciclo de vida completo de una solicitud académica —desde su registro hasta su cierre— garantizando trazabilidad, control de acceso por roles y soporte opcional de inteligencia artificial para la generación de resúmenes y sugerencias de clasificación.
+El sistema permite gestionar el ciclo de vida completo de una solicitud académica desde su registro hasta su cierre garantizando trazabilidad, control de acceso por roles y soporte opcional de inteligencia artificial para la generación de resúmenes y sugerencias de clasificación.
 
 ### Funcionalidades principales
 
