@@ -138,11 +138,8 @@ public class Solicitud {
      */
     private void crearHistoria(EstadoSolicitud estado, TipoAccion accion,
             Usuario responsable, String observacion) {
-        if (responsable == null || observacion == null || observacion.isBlank()) {
-            throw new IllegalArgumentException(
-                    "El responsable y la observacion no pueden ser nulos o vacios.");
-        }
-        
+    
+                
         HistorialSolicitud entrada = new HistorialSolicitud(estado,accion,responsable,observacion,this);
         this.historial.add(entrada);
     }
