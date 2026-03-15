@@ -34,33 +34,19 @@ class RF02_ClasificacionSolicitudTest {
     private Solicitud solicitud;
     private Usuario usuarioCoordinador;
     private Usuario usuarioEstudiante;
-    @SuppressWarnings("unused")
-    private ClasificacionSolicitudesService servicioClasificacion;
-    @SuppressWarnings("unused")
     private RepositorioSolicitud repositorio;
+    private ClasificacionSolicitudesService clasificacionSolicitudesService;
     
     @BeforeEach
     void setup() {
         repositorio = RepositorioSolicitud.getInstancia();
-        servicioClasificacion = new ClasificacionSolicitudesService();
+        clasificacionSolicitudesService = new ClasificacionSolicitudesService();
         
         // Coordinador autorizado para clasificar
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Carlos López");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setCorreo("carlos@admin.com");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Carlos López", "1001234567", "carlos@admin.com", true, Rol.COORDINADOR);
         
         // Estudiante no autorizado para clasificar
-        usuarioEstudiante = new Usuario();
-        usuarioEstudiante.setId(2L);
-        usuarioEstudiante.setNombre("Pedro García");
-        usuarioEstudiante.setIdentificacion("1001234568");
-        usuarioEstudiante.setCorreo("pedro@student.com");
-        usuarioEstudiante.setActivo(true);
-        usuarioEstudiante.setRol(Rol.ESTUDIANTE);
+        usuarioEstudiante = new Usuario(2L, "Pedro García", "1001234568", "pedro@student.com", true, Rol.ESTUDIANTE);
         
         // Crear solicitud base
         solicitud = new Solicitud(
@@ -68,8 +54,10 @@ class RF02_ClasificacionSolicitudTest {
             "Solicitud sin clasificar",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
     }
     
@@ -142,25 +130,28 @@ class RF02_ClasificacionSolicitudTest {
         assertEquals(tamanhoHistorialAntes + 1, tamanhoHistorialDespues, 
                      "El historial debe tener una entrada adicional");
     }
-    
+    //Solicitud solicitud, TipoSolicitud tipoSolicitud,
+           // Usuario usuario, String observacion
     @Test
     @DisplayName("Debe validar que solo COORDINADOR pueda clasificar")
     void testValidarPermisosCordinador() {
-        // Act & Assert
+        // Arrange - Solicitud registrada y usuario estudiante sin permisos
+        
+        // Act & Assert - El servicio de dominio valida los permisos del usuario
         assertThrows(IllegalArgumentException.class, () -> {
-            solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioEstudiante, "obs");
+            clasificacionSolicitudesService.clasificarSolicitud(solicitud, TipoSolicitud.REGISTRO_ASIGNATURA, usuarioEstudiante, "obs");
         }, "Debe lanzar excepción si el usuario no es COORDINADOR");
     }
     
     @Test
     @DisplayName("Debe validar usuario activo para clasificar")
     void testValidarUsuarioActivo() {
-        // Arrange
+        // Arrange - Coordinador inactivo intenta clasificar
         usuarioCoordinador.setActivo(false);
         
-        // Act & Assert
+        // Act & Assert - El servicio de dominio valida que el usuario esté activo
         assertThrows(IllegalArgumentException.class, () -> {
-            solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "obs");
+            clasificacionSolicitudesService.clasificarSolicitud(solicitud, TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "obs");
         }, "Debe lanzar excepción si el usuario no está activo");
     }
 }

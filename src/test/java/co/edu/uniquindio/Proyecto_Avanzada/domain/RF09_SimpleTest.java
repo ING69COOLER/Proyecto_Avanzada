@@ -53,12 +53,7 @@ class RF09_SimpleTest {
         ReflectionTestUtils.setField(resumenService, "modeloLenguaje", modeloLenguajeOpenAI);
         
         // Crear usuario coordinador
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador", "1001234567", null, true, Rol.COORDINADOR);
         
         // Crear solicitud de prueba
         solicitud = new Solicitud(
@@ -66,8 +61,10 @@ class RF09_SimpleTest {
             "Solicitud de inscripción de materia Programación Avanzada",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            null,
+            usuarioCoordinador,
+            null
         );
         solicitud.setId(1L);
     }

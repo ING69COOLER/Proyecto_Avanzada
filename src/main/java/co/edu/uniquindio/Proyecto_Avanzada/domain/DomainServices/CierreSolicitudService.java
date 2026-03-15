@@ -12,7 +12,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
  * RF-04: Servicio de Dominio para cierre de solicitudes
  * Gestiona la transicion final del ciclo de vida de una solicitud al estado CERRADA
  */
-@Service2
+@Service
 public class CierreSolicitudService {
     
     @Autowired

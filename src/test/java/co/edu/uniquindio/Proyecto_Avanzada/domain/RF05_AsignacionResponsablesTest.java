@@ -39,40 +39,16 @@ class RF05_AsignacionResponsablesTest {
         servicioAtencion = new AtencionSolicitudesService();
         
         // Coordinador autorizado para asignar
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador Principal");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setCorreo("coordinador@admin.com");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador Principal", "1001234567", "coordinador@admin.com", true, Rol.COORDINADOR);
         
         // Docente 1 activo
-        usuarioDocente = new Usuario();
-        usuarioDocente.setId(2L);
-        usuarioDocente.setNombre("Profesor Juan");
-        usuarioDocente.setIdentificacion("1001234568");
-        usuarioDocente.setCorreo("juan@docente.com");
-        usuarioDocente.setActivo(true);
-        usuarioDocente.setRol(Rol.DOCENTE);
+        usuarioDocente = new Usuario(2L, "Profesor Juan", "1001234568", "juan@docente.com", true, Rol.DOCENTE);
         
         // Docente 2 inactivo
-        usuarioDocenteInactivo = new Usuario();
-        usuarioDocenteInactivo.setId(3L);
-        usuarioDocenteInactivo.setNombre("Profesor Inactivo");
-        usuarioDocenteInactivo.setIdentificacion("1001234569");
-        usuarioDocenteInactivo.setCorreo("inactivo@docente.com");
-        usuarioDocenteInactivo.setActivo(false);
-        usuarioDocenteInactivo.setRol(Rol.DOCENTE);
+        usuarioDocenteInactivo = new Usuario(3L, "Profesor Inactivo", "1001234569", "inactivo@docente.com", false, Rol.DOCENTE);
         
         // Estudiante no autorizado
-        usuarioEstudiante = new Usuario();
-        usuarioEstudiante.setId(4L);
-        usuarioEstudiante.setNombre("Estudiante Test");
-        usuarioEstudiante.setIdentificacion("1001234570");
-        usuarioEstudiante.setCorreo("student@mail.com");
-        usuarioEstudiante.setActivo(true);
-        usuarioEstudiante.setRol(Rol.ESTUDIANTE);
+        usuarioEstudiante = new Usuario(4L, "Estudiante Test", "1001234570", "student@mail.com", true, Rol.ESTUDIANTE);
         
         // Crear solicitud ya clasificada
         solicitud = new Solicitud(
@@ -80,8 +56,10 @@ class RF05_AsignacionResponsablesTest {
             "Solicitud de homologación",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
         solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, usuarioCoordinador, "Clasificada");
     }
@@ -152,12 +130,7 @@ class RF05_AsignacionResponsablesTest {
     @DisplayName("Debe permitir cambiar responsable de una solicitud")
     void testCambiarResponsable() throws SolicitudException {
         // Arrange
-        Usuario usuarioDocente2 = new Usuario();
-        usuarioDocente2.setId(5L);
-        usuarioDocente2.setNombre("Profesor Carlos");
-        usuarioDocente2.setIdentificacion("1001234571");
-        usuarioDocente2.setActivo(true);
-        usuarioDocente2.setRol(Rol.DOCENTE);
+        Usuario usuarioDocente2 = new Usuario(5L, "Profesor Carlos", "1001234571", null, true, Rol.DOCENTE);
         
         // Act - Primera asignación
         servicioAtencion.asignarResponsable(usuarioCoordinador, solicitud, "Asignación inicial a Juan");

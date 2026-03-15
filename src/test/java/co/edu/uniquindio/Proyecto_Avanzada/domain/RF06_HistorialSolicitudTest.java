@@ -37,27 +37,19 @@ class RF06_HistorialSolicitudTest {
     
     @BeforeEach
     void setup() {
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador Test");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
         
-        usuarioDocente = new Usuario();
-        usuarioDocente.setId(2L);
-        usuarioDocente.setNombre("Docente Test");
-        usuarioDocente.setIdentificacion("1001234568");
-        usuarioDocente.setActivo(true);
-        usuarioDocente.setRol(Rol.DOCENTE);
+        usuarioDocente = new Usuario(2L, "Docente Test", "1001234568", null, true, Rol.DOCENTE);
         
         solicitud = new Solicitud(
             TipoSolicitud.REGISTRO_ASIGNATURA,
             "Solicitud para historial",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
     }
     

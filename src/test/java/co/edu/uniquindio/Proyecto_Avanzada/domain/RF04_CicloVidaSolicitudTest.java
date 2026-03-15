@@ -33,20 +33,10 @@ class RF04_CicloVidaSolicitudTest {
     @BeforeEach
     void setup() {
         // Coordinador
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador Test");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
         
         // Docente
-        usuarioDocente = new Usuario();
-        usuarioDocente.setId(2L);
-        usuarioDocente.setNombre("Docente Test");
-        usuarioDocente.setIdentificacion("1001234568");
-        usuarioDocente.setActivo(true);
-        usuarioDocente.setRol(Rol.DOCENTE);
+        usuarioDocente = new Usuario(2L, "Docente Test", "1001234568", null, true, Rol.DOCENTE);
         
         // Crear solicitud en estado REGISTRADA
         solicitud = new Solicitud(
@@ -54,8 +44,10 @@ class RF04_CicloVidaSolicitudTest {
             "Solicitud test",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
     }
     

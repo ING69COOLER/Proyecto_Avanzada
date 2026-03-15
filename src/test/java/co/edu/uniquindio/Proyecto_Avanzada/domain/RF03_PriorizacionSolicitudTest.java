@@ -5,6 +5,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
@@ -40,22 +41,10 @@ class RF03_PriorizacionSolicitudTest {
         servicioPriorizacion = new PriorizacionService();
         
         // Coordinador autorizado para priorizar
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Ana Martínez");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setCorreo("ana@admin.com");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Ana Martínez", "1001234567", "ana@admin.com", true, Rol.COORDINADOR);
         
         // Estudiante no autorizado para priorizar
-        usuarioEstudiante = new Usuario();
-        usuarioEstudiante.setId(2L);
-        usuarioEstudiante.setNombre("Juan Rodríguez");
-        usuarioEstudiante.setIdentificacion("1001234568");
-        usuarioEstudiante.setCorreo("juan@student.com");
-        usuarioEstudiante.setActivo(true);
-        usuarioEstudiante.setRol(Rol.ESTUDIANTE);
+        usuarioEstudiante = new Usuario(2L, "Juan Rodríguez", "1001234568", "juan@student.com", true, Rol.ESTUDIANTE);
         
         // Crear solicitud base
         solicitud = new Solicitud(
@@ -63,8 +52,10 @@ class RF03_PriorizacionSolicitudTest {
             "Solicitud sin prioridad",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
     }
     

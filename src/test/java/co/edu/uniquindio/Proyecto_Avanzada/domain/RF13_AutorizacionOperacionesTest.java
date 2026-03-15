@@ -51,8 +51,10 @@ class RF13_AutorizacionOperacionesTest {
                 "Inscripcion en Programacion Avanzada",
                 CanalOrigen.PORTAL_WEB,
                 LocalDateTime.now(),
-                "1001",
-                null, null, estudiante, null);
+                null,
+                null,
+                estudiante,
+                null);
     }
 
     // =========================================================================
@@ -96,7 +98,7 @@ class RF13_AutorizacionOperacionesTest {
         @Test
         @DisplayName("COORDINADOR puede priorizar la solicitud")
         void coordinadorPuedePriorizar() {
-            assertDoesNotThrow(() -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente", coordinador),
+            assertDoesNotThrow(() -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente"),
                     "COORDINADOR debe poder priorizar");
 
             assertNotNull(solicitud.getPrioridad());
@@ -107,7 +109,7 @@ class RF13_AutorizacionOperacionesTest {
         @DisplayName("ESTUDIANTE no puede priorizar - debe lanzar SolicitudException")
         void estudianteNoPuedePriorizar() {
             assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente", estudiante),
+                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente"),
                     "ESTUDIANTE no debe poder priorizar");
         }
 
@@ -115,7 +117,7 @@ class RF13_AutorizacionOperacionesTest {
         @DisplayName("DOCENTE no puede priorizar - debe lanzar SolicitudException")
         void docenteNoPuedePriorizar() {
             assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.MEDIA, "Normal", docente),
+                    () -> solicitud.priorizarSolicitud(NivelPrioridad.MEDIA, "Normal"),
                     "DOCENTE no debe poder priorizar");
         }
     }
@@ -250,7 +252,7 @@ class RF13_AutorizacionOperacionesTest {
         @DisplayName("No se puede priorizar una solicitud cerrada")
         void noSePriorizaSolicitudCerrada() {
             assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Intento", coordinador),
+                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Intento"),
                     "No se debe poder priorizar una solicitud cerrada");
         }
 
@@ -295,12 +297,6 @@ class RF13_AutorizacionOperacionesTest {
     // Helper
     // =========================================================================
     private Usuario crearUsuario(Long id, String nombre, String identificacion, Rol rol) {
-        Usuario u = new Usuario();
-        u.setId(id);
-        u.setNombre(nombre);
-        u.setIdentificacion(identificacion);
-        u.setActivo(true);
-        u.setRol(rol);
-        return u;
+        return new Usuario(id, nombre, identificacion, null, true, rol);
     }
 }

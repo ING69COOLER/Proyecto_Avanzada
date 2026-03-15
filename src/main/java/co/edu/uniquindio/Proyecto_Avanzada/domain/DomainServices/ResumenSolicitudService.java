@@ -81,7 +81,7 @@ public class ResumenSolicitudService {
         resumen.append("=== RESUMEN DE SOLICITUD ===\n");
         resumen.append("ID: ").append(solicitud.getId()).append("\n");
         resumen.append("Tipo: ").append(solicitud.getTipo()).append("\n");
-        resumen.append("Solicitante: ").append(solicitud.getIdentificacionSolicitante()).append("\n");
+        resumen.append("Solicitante: ").append(solicitud.getUsuarioSolicitante().getIdentificacion()).append("\n");
         resumen.append("Fecha de Registro: ").append(solicitud.getFechaHoraRegistro()).append("\n");
         resumen.append("Estado Actual: ").append(solicitud.getEstado()).append("\n");
 

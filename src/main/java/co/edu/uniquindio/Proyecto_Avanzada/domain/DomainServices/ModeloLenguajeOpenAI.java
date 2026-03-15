@@ -248,7 +248,7 @@ public class ModeloLenguajeOpenAI implements ResumenSolicitudService.IModeloLeng
         prompt.append("- ID: ").append(solicitud.getId()).append("\n");
         prompt.append("- Tipo: ").append(solicitud.getTipo()).append("\n");
         prompt.append("- Estado: ").append(solicitud.getEstado()).append("\n");
-        prompt.append("- Solicitante (ID): ").append(solicitud.getIdentificacionSolicitante()).append("\n");
+        prompt.append("- Solicitante (ID): ").append(solicitud.getUsuarioSolicitante().getIdentificacion()).append("\n");
         prompt.append("- Fecha de Registro: ").append(solicitud.getFechaHoraRegistro()).append("\n");
         prompt.append("- Canal de Origen: ").append(solicitud.getCanalOrigen()).append("\n");
 
@@ -294,7 +294,7 @@ public class ModeloLenguajeOpenAI implements ResumenSolicitudService.IModeloLeng
         sb.append("ID:          ").append(solicitud.getId()).append("\n");
         sb.append("Tipo:        ").append(solicitud.getTipo()).append("\n");
         sb.append("Estado:      ").append(solicitud.getEstado()).append("\n");
-        sb.append("Solicitante: ").append(solicitud.getIdentificacionSolicitante()).append("\n");
+        sb.append("Solicitante: ").append(solicitud.getUsuarioSolicitante().getIdentificacion()).append("\n");
         sb.append("Fecha:       ").append(solicitud.getFechaHoraRegistro()).append("\n");
         sb.append("Canal:       ").append(solicitud.getCanalOrigen()).append("\n");
 

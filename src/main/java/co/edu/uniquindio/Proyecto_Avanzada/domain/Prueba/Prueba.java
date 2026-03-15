@@ -8,6 +8,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
@@ -23,6 +24,9 @@ public class Prueba {
 	private static final String SEP = "=".repeat(60);
 	private static final String LINE = "-".repeat(60);
 	private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	
+	@Autowired(required = false)
+	private PriorizacionService priorizacionService;
 
 	@Autowired(required = false)
 	private ResumenSolicitudService resumenService;
@@ -91,7 +95,7 @@ public class Prueba {
 
 			info("Intento 3: ESTUDIANTE intenta priorizar -> debe fallar");
 			try {
-				solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente", estudiante);
+				solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente");
 				error("Se permitio una operacion no autorizada!");
 			} catch (SolicitudException e) {
 				ok("Acceso denegado correctamente: " + e.getMessage());
@@ -111,15 +115,20 @@ public class Prueba {
 
 			// ---- PASO 6: RF-03 Priorizar (COORDINADOR) ---------------------------
 			paso(6, "RF-03 | Priorizar solicitud [COORDINADOR]");
-			try {
-				solicitud.priorizarSolicitud(NivelPrioridad.ALTA,
-						"Solicitud urgente para matriculacion de fin de semestre",
-						coordinador);
-				info("Prioridad     : " + solicitud.getPrioridad().getNivel());
-				info("Justificacion : " + solicitud.getPrioridad().getDescripcion());
-				ok("Solicitud priorizada");
-			} catch (SolicitudException e) {
-				error(e.getMessage());
+			if (priorizacionService != null) {
+				try {
+					priorizacionService.priorizarSolicitud(coordinador,
+							"Solicitud urgente para matriculacion de fin de semestre",
+							solicitud,
+							NivelPrioridad.ALTA);
+					info("Prioridad     : " + solicitud.getPrioridad().getNivel());
+					info("Justificacion : " + solicitud.getPrioridad().getDescripcion());
+					ok("Solicitud priorizada");
+				} catch (SolicitudException e) {
+					error(e.getMessage());
+				}
+			} else {
+				info("Servicio de priorización no disponible");
 			}
 
 			// ---- PASO 7: RF-04/05 Asignar (COORDINADOR) --------------------------
@@ -238,29 +247,21 @@ public class Prueba {
 	// Helpers de dominio
 	// -------------------------------------------------------------------------
 	private Usuario crearUsuario(Long id, String nombre, String identificacion, Rol rol) {
-		Usuario u = new Usuario();
-		u.setId(id);
-		u.setNombre(nombre);
-		u.setIdentificacion(identificacion);
-		u.setActivo(true);
-		u.setRol(rol);
-		return u;
+		return new Usuario(id, nombre, identificacion, null, true, rol);
 	}
-
 	private Solicitud crearSolicitud(Usuario estudiante) {
 		return new Solicitud(
 				TipoSolicitud.REGISTRO_ASIGNATURA,
 				"Solicitud de inscripcion a curso de Programacion Avanzada para completar plan de estudios",
 				CanalOrigen.PORTAL_WEB,
 				LocalDateTime.now(),
-				estudiante.getIdentificacion(),
 				null, null, estudiante, null);
 	}
 
 	private String generarResumenFallback(Solicitud s) {
 		return "Tipo:        " + s.getTipo() + "\n"
 				+ "Estado:      " + s.getEstado() + "\n"
-				+ "Solicitante: " + s.getIdentificacionSolicitante() + "\n"
+				+ "Solicitante: " + s.getUsuarioSolicitante().getIdentificacion() + "\n"
 				+ "Descripcion: " + s.getDescripcion() + "\n"
 				+ "Prioridad:   " + (s.getPrioridad() != null ? s.getPrioridad().getNivel() : "Sin asignar") + "\n"
 				+ "Cambios:     " + (s.getHistorial() != null ? s.getHistorial().size() : 0);

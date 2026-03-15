@@ -50,26 +50,11 @@ class RF07_ConsultaSolicitudesTest {
         field.setAccessible(true);
         field.set(servicioConsulta, repositorio);
         
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador Consultas");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador Consultas", "1001234567", null, true, Rol.COORDINADOR);
         
-        usuarioDocente = new Usuario();
-        usuarioDocente.setId(2L);
-        usuarioDocente.setNombre("Docente Uno");
-        usuarioDocente.setIdentificacion("1001234568");
-        usuarioDocente.setActivo(true);
-        usuarioDocente.setRol(Rol.DOCENTE);
+        usuarioDocente = new Usuario(2L, "Docente Uno", "1001234568", null, true, Rol.DOCENTE);
         
-        usuarioDocente2 = new Usuario();
-        usuarioDocente2.setId(3L);
-        usuarioDocente2.setNombre("Docente Dos");
-        usuarioDocente2.setIdentificacion("1001234569");
-        usuarioDocente2.setActivo(true);
-        usuarioDocente2.setRol(Rol.DOCENTE);
+        usuarioDocente2 = new Usuario(3L, "Docente Dos", "1001234569", null, true, Rol.DOCENTE);
         
         // Limpiar el repositorio
         repositorio.limpiar();
@@ -79,8 +64,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por estado REGISTRADA")
     void testConsultarPorEstadoRegistrada() {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "123", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "124", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         repositorio.guardarSolicitud(sol1);
         repositorio.guardarSolicitud(sol2);
         
@@ -96,8 +81,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por estado CLASIFICADA")
     void testConsultarPorEstadoClasificada() throws SolicitudException {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "123", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "124", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         sol1.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada");
         
@@ -116,9 +101,9 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por tipo REGISTRO_ASIGNATURA")
     void testConsultarPorTipoRegistroAsignatura() {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "Registro 1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "123", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "Registro 2", CanalOrigen.CSU, LocalDateTime.now(), "124", null, null, usuarioCoordinador, null);
-        Solicitud sol3 = new Solicitud(TipoSolicitud.HOMOLOGACION, "Homologación", CanalOrigen.EMAIL, LocalDateTime.now(), "125", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "Registro 1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "Registro 2", CanalOrigen.CSU, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol3 = new Solicitud(TipoSolicitud.HOMOLOGACION, "Homologación", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         repositorio.guardarSolicitud(sol1);
         repositorio.guardarSolicitud(sol2);
@@ -136,8 +121,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por tipo HOMOLOGACION")
     void testConsultarPorTipoHomologacion() {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.HOMOLOGACION, "Homo 1", CanalOrigen.CORREO_CERTIFICADO, LocalDateTime.now(), "126", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "Cancelación", CanalOrigen.PRESENCIAL, LocalDateTime.now(), "127", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.HOMOLOGACION, "Homo 1", CanalOrigen.CORREO_CERTIFICADO, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "Cancelación", CanalOrigen.PRESENCIAL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         repositorio.guardarSolicitud(sol1);
         repositorio.guardarSolicitud(sol2);
@@ -154,8 +139,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por prioridad ALTA")
     void testConsultarPorPrioridadAlta() {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "128", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.SOLICITUD_CUPOS, "desc", CanalOrigen.EMAIL, LocalDateTime.now(), "129", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.SOLICITUD_CUPOS, "desc", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         Prioridad prioridadAlta = new Prioridad(NivelPrioridad.ALTA, "Urgente");
         Prioridad prioridadBaja = new Prioridad(NivelPrioridad.BAJA, "Normal");
@@ -178,8 +163,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes por responsable asignado")
     void testConsultarPorResponsable() throws SolicitudException {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "130", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "131", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         sol1.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada");
         sol1.asignarResponsable(usuarioDocente, "Asignada a docente 1");
@@ -239,7 +224,7 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe retornar lista vacía cuando no hay coincidencias")
     void testConsultaSinResultados() {
         // Arrange
-        Solicitud sol = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "132", null, null, usuarioCoordinador, null);
+        Solicitud sol = new Solicitud(TipoSolicitud.REGISTRO_ASIGNATURA, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         repositorio.guardarSolicitud(sol);
         
         // Act
@@ -253,8 +238,8 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes pendientes en estado REGISTRADA")
     void testConsultarSolicitudesPendientes() throws SolicitudException {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "133", null, null, usuarioCoordinador, null);
-        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), "134", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
+        Solicitud sol2 = new Solicitud(TipoSolicitud.HOMOLOGACION, "desc2", CanalOrigen.EMAIL, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         
         sol1.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada");
         
@@ -273,7 +258,7 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes en atención")
     void testConsultarSolicitudesEnAtencion() throws SolicitudException {
         // Arrange
-        Solicitud sol1 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "135", null, null, usuarioCoordinador, null);
+        Solicitud sol1 = new Solicitud(TipoSolicitud.CANCELACION_ASIGNATURA, "desc1", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         sol1.clasificarSolicitud(TipoSolicitud.CANCELACION_ASIGNATURA, usuarioCoordinador, "Clasificada");
         sol1.asignarResponsable(usuarioDocente, "En atención");
         
@@ -291,7 +276,7 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe consultar solicitudes cerradas")
     void testConsultarSolicitudesCerradas() throws SolicitudException {
         // Arrange
-        Solicitud sol = new Solicitud(TipoSolicitud.SOLICITUD_CUPOS, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), "136", null, null, usuarioCoordinador, null);
+        Solicitud sol = new Solicitud(TipoSolicitud.SOLICITUD_CUPOS, "desc", CanalOrigen.PORTAL_WEB, LocalDateTime.now(), null, EstadoSolicitud.REGISTRADA, usuarioCoordinador, null);
         sol.clasificarSolicitud(TipoSolicitud.SOLICITUD_CUPOS, usuarioCoordinador, "Clasificada");
         sol.asignarResponsable(usuarioDocente, "Asignada");
         sol.atenderSolicitud(usuarioDocente, "Atendida");
@@ -311,10 +296,7 @@ class RF07_ConsultaSolicitudesTest {
     @DisplayName("Debe validar permisos del usuario para consultar")
     void testValidarPermisosConsulta() {
         // Arrange
-        Usuario usuarioInvalido = new Usuario();
-        usuarioInvalido.setId(99L);
-        usuarioInvalido.setActivo(true);
-        usuarioInvalido.setRol(Rol.ESTUDIANTE);
+        Usuario usuarioInvalido = new Usuario(99L, "Usuario Invalido", "9999", null, true, Rol.ESTUDIANTE);
         
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {

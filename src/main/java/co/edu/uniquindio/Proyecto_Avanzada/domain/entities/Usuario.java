@@ -17,8 +17,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
  * - ADMINISTRATIVO: puede registrar solicitudes
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Usuario {
 
     private Long id;
@@ -38,6 +36,18 @@ public class Usuario {
     /** RF-13: Rol que determina que operaciones puede ejecutar el usuario */
     private Rol rol;
 
+    public Usuario(Long id, String nombre, String identificacion, String correo, Boolean activo, Rol rol) {
+        if (identificacion == null || identificacion.isBlank() || identificacion.isEmpty()) {
+            throw new IllegalArgumentException("la identificacion no puede ser vacia ni nula");
+        }
+        this.id = id;
+        this.nombre = nombre;
+        this.identificacion = identificacion;
+        this.correo = correo;
+        this.activo = activo;
+        this.rol = rol;
+    }
+
     /**
      * RF-01 / RF-13: Verifica si el usuario puede registrar solicitudes.
      * Solo los usuarios con rol ESTUDIANTE o ADMINISTRATIVO pueden registrar.
@@ -45,6 +55,9 @@ public class Usuario {
      * @return true si el usuario esta activo y tiene rol ESTUDIANTE o
      *         ADMINISTRATIVO
      */
+
+    
+
     public boolean puedeRegistrarSolicitud() {
         return activo && (rol.equals(Rol.ESTUDIANTE) || rol.equals(Rol.ADMINISTRATIVO));
     }
@@ -95,7 +108,7 @@ public class Usuario {
      *
      * @return true si el usuario esta activo y tiene rol DOCENTE
      */
-    public boolean puedeAtender() {
+    public boolean puedeAtenderSolicitud() {
         return activo && rol.equals(Rol.DOCENTE);
     }
 }

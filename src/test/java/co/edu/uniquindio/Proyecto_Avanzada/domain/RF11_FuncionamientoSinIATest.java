@@ -6,6 +6,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
@@ -50,20 +51,17 @@ class RF11_FuncionamientoSinIATest {
         ReflectionTestUtils.setField(resumenService, "repositorioSolicitud", repositorioSolicitud);
         ReflectionTestUtils.setField(resumenService, "modeloLenguaje", null);
 
-        coordinador = new Usuario();
-        coordinador.setId(1L);
-        coordinador.setNombre("Coordinador Test");
-        coordinador.setIdentificacion("1001234567");
-        coordinador.setActivo(true);
-        coordinador.setRol(Rol.COORDINADOR);
+        coordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
 
         solicitud = new Solicitud(
                 TipoSolicitud.REGISTRO_ASIGNATURA,
                 "Solicitud de inscripcion en Programacion Avanzada",
                 CanalOrigen.PORTAL_WEB,
                 LocalDateTime.now(),
-                "1001234567",
-                null, null, coordinador, null);
+                null,
+                EstadoSolicitud.REGISTRADA,
+                coordinador,
+                null);
         solicitud.setId(1L);
     }
 
@@ -152,8 +150,10 @@ class RF11_FuncionamientoSinIATest {
                 "Solicitud de homologacion de materia externa",
                 CanalOrigen.CSU,
                 LocalDateTime.now(),
-                "9998887776",
-                null, null, coordinador, null);
+                null,
+                EstadoSolicitud.REGISTRADA,
+                coordinador,
+                null);
         // id es null, no se consulta al repo
 
         // Act

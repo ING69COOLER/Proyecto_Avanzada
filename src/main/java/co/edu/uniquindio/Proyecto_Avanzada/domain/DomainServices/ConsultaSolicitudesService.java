@@ -66,7 +66,7 @@ public class ConsultaSolicitudesService {
         if (responsable == null) {
             throw new IllegalArgumentException("El usuario responsable no puede ser nulo");
         }
-        if (!responsable.puedeAsignar() && !responsable.puedeAtender()) {
+        if (!responsable.puedeAsignar() && !responsable.puedeAtenderSolicitud()) {
             throw new IllegalArgumentException("El usuario no tiene permisos para consultar solicitudes");
         }
         return repositorioSolicitud.consultarResponsable(responsable);

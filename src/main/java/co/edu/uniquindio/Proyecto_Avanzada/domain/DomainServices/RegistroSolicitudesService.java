@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
@@ -21,8 +22,11 @@ Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
 @Service
 public class RegistroSolicitudesService {
 
-    @Autowired
     private IRepositorioSolicitud repositorioSolicitud;
+    
+    public RegistroSolicitudesService() {
+        this.repositorioSolicitud = RepositorioSolicitud.getInstancia();
+    }
     
     // metodo para crear solicitud incluyendo reglas validadas en usuario
     public void registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
@@ -34,8 +38,8 @@ public class RegistroSolicitudesService {
         }
 
         Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegisro, identificacion,  null,  null,
-                    null,  null);
+                    fechaHoraRegisro,  null,  null,
+                    responsableCreacion,  null);
 
         repositorioSolicitud.guardarSolicitud(solicitud);
 
@@ -49,7 +53,7 @@ public class RegistroSolicitudesService {
             throw new IllegalArgumentException("EL usuario es invalido");
         }
         Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegisro, identificacion,  null,  null,
+                    fechaHoraRegisro,  null,  null,
                     null,  null);
 
         repositorioSolicitud.guardarSolicitud(solicitud);

@@ -44,8 +44,6 @@ public class Solicitud {
     /** RF-01: Momento exacto en que se registro la solicitud */
     private LocalDateTime fechaHoraRegistro;
 
-    /** RF-01: Identificacion del estudiante que realizó la solicitud */
-    private String identificacionSolicitante;
 
     /** RF-08: Fecha y hora en que se cerro la solicitud */
     private LocalDateTime fechaCierre;
@@ -81,13 +79,13 @@ public class Solicitud {
      *                                  invalido
      */
     public Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
-            LocalDateTime fechaHoraRegistro, String identificacion, LocalDateTime fechaCierre,
+            LocalDateTime fechaHoraRegistro, LocalDateTime fechaCierre,
             EstadoSolicitud estado, Usuario usuarioSolicitante, Prioridad prioridad) {
 
         // RF-01: validar que todos los campos obligatorios esten presentes
         if (tipo == null || descripcion == null || descripcion.isBlank()
                 || canalOrigen == null || fechaHoraRegistro == null
-                || identificacion == null || identificacion.isBlank()) {
+                || usuarioSolicitante.getIdentificacion() == null || usuarioSolicitante.getIdentificacion().isBlank()) {
             throw new IllegalArgumentException(
                     "Debe proporcionar al menos: tipo de solicitud, descripcion, " +
                             "canal de origen, fecha/hora de registro e identificacion del solicitante.");
@@ -97,7 +95,6 @@ public class Solicitud {
         this.descripcion = descripcion;
         this.canalOrigen = canalOrigen;
         this.fechaHoraRegistro = fechaHoraRegistro;
-        this.identificacionSolicitante = identificacion;
         this.id = null;
         this.fechaCierre = fechaCierre;
         this.estado = EstadoSolicitud.REGISTRADA; // RF-04: estado inicial del ciclo de vida
@@ -168,27 +165,18 @@ public class Solicitud {
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
         }
-        // RF-13: verificar que el usuario tenga el rol de COORDINADOR
-        if (!usuario.puedeClasificarSolicitud()) {
-            throw new IllegalArgumentException(
-                    "Acceso denegado: solo el COORDINADOR puede clasificar solicitudes." +
-                            " Rol actual: " + usuario.getRol());
-        }
-        if (!usuario.getActivo()) {
-            throw new IllegalArgumentException("El usuario no esta activo");
-        }
-
-        // RF-06: registrar en el historial la accion de clasificacion
-        this.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
         // RF-04: transicion de estado
         this.estado = EstadoSolicitud.CLASIFICADA;
         // RF-02: asignar el nuevo tipo de solicitud
         this.tipo = tipoSolicitud;
+
+        // RF-06: registrar en el historial la accion de clasificacion
+        this.crearHistoria(EstadoSolicitud.CLASIFICADA, TipoAccion.CLASIFICADA, usuario, observacion);
     }
 
     /**
      * RF-03: Asigna una prioridad a la solicitud con base en nivel y justificacion.
-     * Version sin control de rol (para compatibilidad interna).
+     * 
      *
      * @param prioridad     Nivel de prioridad (ALTA, MEDIA, BAJA)
      * @param justificacion Razon por la que se asigna dicha prioridad
@@ -204,30 +192,6 @@ public class Solicitud {
         this.prioridad = new Prioridad(prioridad, justificacion);
     }
 
-    /**
-     * RF-03: Asigna prioridad a la solicitud verificando el rol del responsable.
-     * RF-13: Solo el COORDINADOR puede priorizar solicitudes (RN3).
-     *
-     * @param prioridad     Nivel de prioridad (ALTA, MEDIA, BAJA)
-     * @param justificacion Razon por la que se asigna dicha prioridad
-     * @param responsable   Usuario que realiza la priorizacion (debe ser
-     *                      COORDINADOR)
-     * @throws SolicitudException Si la solicitud esta cerrada o el rol no es valido
-     */
-    public void priorizarSolicitud(NivelPrioridad prioridad, String justificacion,
-            Usuario responsable) throws SolicitudException {
-        validarNoEsterrada();
-        // RF-13: verificar que el usuario sea COORDINADOR
-        if (responsable == null || !responsable.puedePriorizar()) {
-            throw new SolicitudException(
-                    "Acceso denegado: solo el COORDINADOR puede priorizar solicitudes." +
-                            (responsable != null ? " Rol actual: " + responsable.getRol() : ""));
-        }
-        if (prioridad == null) {
-            throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
-        }
-        this.prioridad = new Prioridad(prioridad, justificacion);
-    }
 
     /**
      * RF-04 / RF-05: Asigna un responsable a la solicitud y transiciona al estado
@@ -241,12 +205,6 @@ public class Solicitud {
      */
     public void asignarResponsable(Usuario user, String descripcion) throws SolicitudException {
         validarNoEsterrada();
-        // RF-13: verificar que el usuario sea COORDINADOR
-        if (user == null || !user.puedeAsignar()) {
-            throw new SolicitudException(
-                    "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
-                            (user != null ? " Rol actual: " + user.getRol() : ""));
-        }
         // RF-04: transicion de estado a EN_ATENCION
         this.estado = EstadoSolicitud.EN_ATENCION;
         // RF-06: registrar la asignacion en el historial
@@ -262,7 +220,7 @@ public class Solicitud {
      */
     public boolean UsuarioPuedeAtender(Usuario user) {
         return !historial.stream()
-                .filter(h -> h.obtenerUsuario().equals(user))
+           .filter(h -> h.obtenerUsuario().equals(user))
                 .toList()
                 .isEmpty();
     }
@@ -279,7 +237,7 @@ public class Solicitud {
     public void atenderSolicitud(Usuario user, String observacion) throws SolicitudException {
         validarNoEsterrada();
         // RF-13: verificar que el usuario sea DOCENTE
-        if (user == null || !user.puedeAtender()) {
+        if (user == null || !user.puedeAtenderSolicitud()) {
             throw new SolicitudException(
                     "Acceso denegado: solo el DOCENTE puede atender solicitudes." +
                             (user != null ? " Rol actual: " + user.getRol() : ""));
@@ -315,12 +273,6 @@ public class Solicitud {
         }
         if (user == null) {
             throw new SolicitudException("El usuario no puede ser nulo");
-        }
-        // RF-13: solo el COORDINADOR puede cerrar solicitudes
-        if (!user.puedeCerrarSolicitud()) {
-            throw new SolicitudException(
-                    "Acceso denegado: solo el COORDINADOR puede cerrar solicitudes." +
-                            " Rol actual: " + user.getRol());
         }
         // RF-08: la observacion de cierre es obligatoria
         if (observacion == null || observacion.trim().isEmpty()) {

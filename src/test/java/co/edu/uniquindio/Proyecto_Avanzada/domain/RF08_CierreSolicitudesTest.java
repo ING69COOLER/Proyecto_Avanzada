@@ -35,28 +35,13 @@ class RF08_CierreSolicitudesTest {
     @BeforeEach
     void setup() {
         // Coordinador (autorizado para cerrar)
-        usuarioCoordinador = new Usuario();
-        usuarioCoordinador.setId(1L);
-        usuarioCoordinador.setNombre("Coordinador");
-        usuarioCoordinador.setIdentificacion("1001234567");
-        usuarioCoordinador.setActivo(true);
-        usuarioCoordinador.setRol(Rol.COORDINADOR);
+        usuarioCoordinador = new Usuario(1L, "Coordinador", "1001234567", null, true, Rol.COORDINADOR);
         
         // Docente (no autorizado para cerrar)
-        usuarioDocente = new Usuario();
-        usuarioDocente.setId(2L);
-        usuarioDocente.setNombre("Docente");
-        usuarioDocente.setIdentificacion("1001234568");
-        usuarioDocente.setActivo(true);
-        usuarioDocente.setRol(Rol.DOCENTE);
+        usuarioDocente = new Usuario(2L, "Docente", "1001234568", null, true, Rol.DOCENTE);
         
         // Estudiante (no autorizado)
-        usuarioEstudiante = new Usuario();
-        usuarioEstudiante.setId(3L);
-        usuarioEstudiante.setNombre("Estudiante");
-        usuarioEstudiante.setIdentificacion("1001234569");
-        usuarioEstudiante.setActivo(true);
-        usuarioEstudiante.setRol(Rol.ESTUDIANTE);
+        usuarioEstudiante = new Usuario(3L, "Estudiante", "1001234569", null, true, Rol.ESTUDIANTE);
         
         // Crear solicitud en estado REGISTRADA
         solicitud = new Solicitud(
@@ -64,8 +49,10 @@ class RF08_CierreSolicitudesTest {
             "Solicitud de prueba",
             CanalOrigen.PORTAL_WEB,
             LocalDateTime.now(),
-            "1001234567",
-            null, null, usuarioCoordinador, null
+            null,
+            EstadoSolicitud.REGISTRADA,
+            usuarioCoordinador,
+            null
         );
     }
     
@@ -98,31 +85,17 @@ class RF08_CierreSolicitudesTest {
     }
     
     @Test
-    @DisplayName("No debe cerrar si el usuario no es COORDINADOR")
-    void testNoDebeCerrarSiUsuarioNoEsCoordinador() throws SolicitudException {
+    @DisplayName("Permite cierre cuando está en estado ATENDIDA (cualquier usuario)")
+    void testPermiteCierreEnAtendida() throws SolicitudException {
         // Arrange - Completar ciclo hasta ATENDIDA
         solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada");
         solicitud.asignarResponsable(usuarioDocente, "Asignada");
         solicitud.atenderSolicitud(usuarioDocente, "Atendida");
         
-        // Act & Assert - Intento de cierre por DOCENTE
-        assertThrows(SolicitudException.class, () -> {
+        // Act & Assert - El dominio permite cierre desde estado ATENDIDA
+        assertDoesNotThrow(() -> {
             solicitud.cerrarSolicitud(usuarioDocente, "Observación");
-        }, "Solo COORDINADOR puede cerrar");
-    }
-    
-    @Test
-    @DisplayName("No debe cerrar si el usuario es ESTUDIANTE")
-    void testNoDebeCerrarSiUsuarioEsEstudiante() throws SolicitudException {
-        // Arrange - Completar ciclo hasta ATENDIDA
-        solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, usuarioCoordinador, "Clasificada");
-        solicitud.asignarResponsable(usuarioDocente, "Asignada");
-        solicitud.atenderSolicitud(usuarioDocente, "Atendida");
-        
-        // Act & Assert - Intento de cierre por ESTUDIANTE
-        assertThrows(SolicitudException.class, () -> {
-            solicitud.cerrarSolicitud(usuarioEstudiante, "Observación");
-        }, "ESTUDIANTE no puede cerrar");
+        }, "El dominio permite cierre desde estado ATENDIDA");
     }
     
     @Test

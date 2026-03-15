@@ -48,6 +48,11 @@ public class AtencionSolicitudesService {
                     "Acceso denegado: el usuario no tiene el rol para asignar responsables." +
                             " Rol actual: " + user.getRol());
         }
+        if (user == null || !user.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
 
         // RF-05: delegar a la entidad, que valida RF-08/13 y registra RF-06
         solicitud.asignarResponsable(user, descripcion);
@@ -86,7 +91,7 @@ public class AtencionSolicitudesService {
             throw new IllegalArgumentException("El usuario no es el responsable asignado a esta solicitud");
         }
         // RF-13: verificar que el usuario tenga rol de DOCENTE
-        if (!user.puedeAtender()) {
+        if (!user.puedeAtenderSolicitud()) {
             throw new IllegalArgumentException(
                     "Acceso denegado: el usuario no tiene el rol para atender solicitudes." +
                             " Rol actual: " + user.getRol());

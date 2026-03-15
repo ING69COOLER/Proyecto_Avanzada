@@ -6,6 +6,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
@@ -52,20 +53,17 @@ class RF10_SugerenciaClasificacionTest {
         ReflectionTestUtils.setField(resumenService, "repositorioSolicitud", repositorioSolicitud);
         ReflectionTestUtils.setField(resumenService, "modeloLenguaje", modeloLenguaje);
 
-        coordinador = new Usuario();
-        coordinador.setId(1L);
-        coordinador.setNombre("Coordinador Test");
-        coordinador.setIdentificacion("1001234567");
-        coordinador.setActivo(true);
-        coordinador.setRol(Rol.COORDINADOR);
+        coordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
 
         solicitud = new Solicitud(
                 TipoSolicitud.CONSULTA_ACADEMICA,
                 "Quiero registrarme en Programacion Avanzada para el siguiente semestre",
                 CanalOrigen.PORTAL_WEB,
                 LocalDateTime.now(),
-                "1001234567",
-                null, null, coordinador, null);
+                null,
+                EstadoSolicitud.REGISTRADA,
+                coordinador,
+                null);
     }
 
     @Test
