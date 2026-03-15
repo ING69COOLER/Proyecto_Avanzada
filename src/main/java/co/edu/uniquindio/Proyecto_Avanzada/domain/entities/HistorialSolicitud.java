@@ -1,8 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
-
 import lombok.Data;
-
 
 import java.time.LocalDateTime;
 
@@ -28,7 +26,21 @@ public class HistorialSolicitud {
 
     private Solicitud solicitud;
 
-    public Usuario obtenerUsuario(){
+    public HistorialSolicitud(EstadoSolicitud estado, TipoAccion accion,
+            Usuario responsable, String observacion, Solicitud solicitud) {
+        if (responsable == null || observacion == null || observacion.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El responsable y la observacion no pueden ser nulos o vacios.");
+        }
+        this.fechaHora = LocalDateTime.now();
+        this.estado = estado;
+        this.accion = accion;
+        this.responsable = responsable;
+        this.solicitud = solicitud;
+        this.observacion = observacion;
+    }
+
+    public Usuario obtenerUsuario() {
         return responsable;
     }
 

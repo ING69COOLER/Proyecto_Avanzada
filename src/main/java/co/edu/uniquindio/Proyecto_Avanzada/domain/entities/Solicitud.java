@@ -142,15 +142,8 @@ public class Solicitud {
             throw new IllegalArgumentException(
                     "El responsable y la observacion no pueden ser nulos o vacios.");
         }
-
-        HistorialSolicitud entrada = new HistorialSolicitud();
-        entrada.setFechaHora(LocalDateTime.now());
-        entrada.setEstado(estado);
-        entrada.setAccion(accion);
-        entrada.setResponsable(responsable);
-        entrada.setSolicitud(this);
-        entrada.setObservacion(observacion);
-
+        
+        HistorialSolicitud entrada = new HistorialSolicitud(estado,accion,responsable,observacion,this);
         this.historial.add(entrada);
     }
 
