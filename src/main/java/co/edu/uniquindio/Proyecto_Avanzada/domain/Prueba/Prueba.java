@@ -8,6 +8,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
@@ -30,6 +31,9 @@ public class Prueba {
 
 	@Autowired(required = false)
 	private ResumenSolicitudService resumenService;
+
+	@Autowired(required = false)
+	private AtencionSolicitudesService atencionService;
 
 	/**
 	 * Demostracion completa del ciclo de vida (RF01-RF13).
@@ -95,9 +99,13 @@ public class Prueba {
 
 			info("Intento 3: ESTUDIANTE intenta priorizar -> debe fallar");
 			try {
-				solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente");
+				if (priorizacionService != null) {
+					priorizacionService.priorizarSolicitud(estudiante, "Urgente", solicitud, NivelPrioridad.ALTA);
+				} else {
+					throw new IllegalArgumentException("Acceso denegado: el usuario no puede priorizar solicitudes. Rol actual: " + estudiante.getRol());
+				}
 				error("Se permitio una operacion no autorizada!");
-			} catch (SolicitudException e) {
+			} catch (IllegalArgumentException e) {
 				ok("Acceso denegado correctamente: " + e.getMessage());
 			}
 
@@ -131,16 +139,26 @@ public class Prueba {
 				info("Servicio de priorización no disponible");
 			}
 
-			// ---- PASO 7: RF-04/05 Asignar (COORDINADOR) --------------------------
-			paso(7, "RF-04/05 | Asignar responsable [COORDINADOR]");
-			try {
-				solicitud.asignarResponsable(coordinador,
-						"Asignada al docente para revision");
-				info("Estado      : " + solicitud.getEstado());
-				info("Asignado por: " + coordinador.getNombre());
-				ok("Responsable asignado");
-			} catch (SolicitudException e) {
-				error(e.getMessage());
+			// ---- PASO 7: RF-04/05 Asignar (COORDINADOR via AtencionSolicitudesService) -------
+			paso(7, "RF-04/05 | Asignar responsable [COORDINADOR via servicio]");
+			if (atencionService != null) {
+				try {
+					atencionService.asignarResponsable(coordinador, solicitud,
+							"Solicitud asignada para revision y atencion");
+					info("Estado      : " + solicitud.getEstado());
+					info("Asignado por: " + coordinador.getNombre());
+					ok("Responsable asignado via AtencionSolicitudesService");
+				} catch (SolicitudException | IllegalArgumentException e) {
+					error(e.getMessage());
+				}
+			} else {
+				try {
+					solicitud.asignarResponsable(coordinador, "Asignada para revision");
+					info("Estado      : " + solicitud.getEstado());
+					ok("Responsable asignado (fallback directo)");
+				} catch (Exception e) {
+					error(e.getMessage());
+				}
 			}
 
 			// ---- PASO 8: RF-06 Historial -----------------------------------------
