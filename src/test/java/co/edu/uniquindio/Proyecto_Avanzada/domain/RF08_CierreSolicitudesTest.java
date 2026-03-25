@@ -17,12 +17,17 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-08 – Cierre de solicitudes
+ * RF-08: Cierre de solicitudes
  *
- * Verifica que el sistema permita cerrar una solicitud únicamente cuando:
- * - La solicitud haya sido atendida (estado ATENDIDA)
- * - Se registre una observación de cierre
- * - Validar que una solicitud cerrada no pueda ser modificada
+ * Métodos verificadores:
+ * - "Debe cerrar solicitud cuando está en estado ATENDIDA y usuario es COORDINADOR"
+ * - "No debe cerrar si no está en estado ATENDIDA"
+ * - "Permite cierre cuando está en estado ATENDIDA (cualquier usuario)"
+ * - "Debe validar que se proporcione observación de cierre (no nula ni vacía)"
+ * - "Debe registrar observación en historial al cerrar"
+ * - "Solicitud cerrada debe registrar fecha y hora de cierre"
+ * - "Una solicitud cerrada no podrá ser modificada - intento de reclasificar"
+ * - "No debe permitir doble cierre - intento de cerrar una solicitud ya cerrada"
  */
 @DisplayName("RF-08: Cierre de solicitudes")
 class RF08_CierreSolicitudesTest {

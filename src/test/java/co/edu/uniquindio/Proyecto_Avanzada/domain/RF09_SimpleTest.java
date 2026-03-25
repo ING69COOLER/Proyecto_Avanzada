@@ -25,9 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * RF-09 – Test Simple: Generación de resúmenes de solicitudes con Gemini
- * 
- * Verifica que el sistema puede generar un resumen textual desde Gemini
+ * RF-09: Generación de resúmenes de solicitudes con IA (Gemini)
+ *
+ * Métodos verificadores:
+ * - "RF-09: Debe generar un resumen exitosamente"
  */
 @DisplayName("RF-09: Test de Generación de Resúmenes con Gemini")
 class RF09_SimpleTest {

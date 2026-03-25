@@ -23,13 +23,24 @@ import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-07 – Consulta de solicitudes
+ * RF-07: Consulta de solicitudes
  *
- * Verifica que el sistema permita consultar solicitudes según diferentes criterios:
- * - Estado
- * - Tipo de solicitud
- * - Prioridad
- * - Responsable asignado
+ * Métodos verificadores:
+ * - "Debe consultar solicitudes por estado REGISTRADA"
+ * - "Debe consultar solicitudes por estado CLASIFICADA"
+ * - "Debe consultar solicitudes por tipo REGISTRO_ASIGNATURA"
+ * - "Debe consultar solicitudes por tipo HOMOLOGACION"
+ * - "Debe consultar solicitudes por prioridad ALTA"
+ * - "Debe consultar solicitudes por responsable asignado"
+ * - "Debe validar que el estado no sea nulo en consulta"
+ * - "Debe validar que el tipo no sea nulo en consulta"
+ * - "Debe validar que la prioridad no sea nula en consulta"
+ * - "Debe validar que el responsable no sea nulo en consulta"
+ * - "Debe retornar lista vacía cuando no hay coincidencias"
+ * - "Debe consultar solicitudes pendientes en estado REGISTRADA"
+ * - "Debe consultar solicitudes en atención"
+ * - "Debe consultar solicitudes cerradas"
+ * - "Debe validar permisos del usuario para consultar"
  */
 @DisplayName("RF-07: Consulta de solicitudes")
 class RF07_ConsultaSolicitudesTest {

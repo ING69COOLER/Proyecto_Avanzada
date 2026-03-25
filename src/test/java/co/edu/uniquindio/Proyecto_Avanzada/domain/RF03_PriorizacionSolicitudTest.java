@@ -20,13 +20,19 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-03 – Priorización de solicitudes
+ * RF-03: Priorización de solicitudes
  *
- * Verifica que el sistema asigne una prioridad a cada solicitud con base en reglas definidas:
- * - Tipo de solicitud
- * - Impacto académico
- * - Fecha límite asociada
- * - La prioridad debe quedar registrada junto con una justificación
+ * Métodos verificadores:
+ * - "Debe asignar prioridad ALTA a solicitud"
+ * - "Debe asignar prioridad MEDIA a solicitud"
+ * - "Debe asignar prioridad BAJA a solicitud"
+ * - "Debe guardar justificación de priorización"
+ * - "Debe validar que la justificación no sea nula"
+ * - "Debe validar que solo COORDINADOR pueda priorizar"
+ * - "Debe validar usuario no nulo"
+ * - "Debe validar solicitud no nula"
+ * - "Debe validar nivel de prioridad no nulo"
+ * - "Debe validar que Prioridad contenga justificación no vacía"
  */
 @DisplayName("RF-03: Priorización de solicitudes")
 class RF03_PriorizacionSolicitudTest {

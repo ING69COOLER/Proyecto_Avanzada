@@ -1,37 +1,39 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.RegistroSolicitudesService;
+import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.RegistroSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
-//import org.hibernate.engine.jdbc.env.internal.LobCreationLogging_.logger;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-
 
 
 /**
- * RF-01 – Registro de solicitudes académicas
+ * RF-01: Registro de solicitudes académicas
  *
- * Verifica que el sistema permita registrar una solicitud almacenando:
- * - Tipo de solicitud
- * - Descripción de la solicitud
- * - Canal de origen (CSU, correo, SAC, telefónico, etc.)
- * - Fecha y hora de registro
- * - Identificación del solicitante
+ * Métodos verificadores:
+ * - "Debe registrar solicitud con todos los campos requeridos"
+ * - "Debe guardar solicitud en el repositorio"
+ * - "Debe validar que el tipo de solicitud no sea nulo"
+ * - "Debe validar que la descripción no sea nula ni vacía"
+ * - "Debe validar que el canal de origen no sea nulo"
+ * - "Debe validar que la fecha y hora de registro no sea nula"
+ * - "Debe validar que la identificación del solicitante no sea nula ni vacía"
+ * - "Debe crear entrada en historial al registrar solicitud"
+ * - "Debe permitir registrar solicitudes por diferentes canales"
  */
 @DisplayName("RF-01: Registro de solicitudes académicas")
 class RF01_RegistroSolicitudTest {
@@ -81,7 +83,6 @@ class RF01_RegistroSolicitudTest {
         
         // Assert - Verificamos que la solicitud fue creada correctamente en el repositorio
         assertFalse(repositorio.listar().isEmpty(), "Debe existir al menos una solicitud registrada");
-        System.out.print("paso");
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
         assertNotNull(solicitud, "La solicitud no debe ser nula");
         assertEquals(tipo, solicitud.getTipo(), "El tipo de solicitud debe ser REGISTRO_ASIGNATURA");
@@ -90,7 +91,7 @@ class RF01_RegistroSolicitudTest {
         assertNotNull(solicitud.getFechaHoraRegistro(), "La fecha y hora de registro no debe ser nula");
         assertEquals(EstadoSolicitud.REGISTRADA, solicitud.getEstado(), "El estado debe ser REGISTRADA");
     }
-    
+
     @Test
     @DisplayName("Debe guardar solicitud en el repositorio")
     void testGuardarSolicitudEnRepositorio() {

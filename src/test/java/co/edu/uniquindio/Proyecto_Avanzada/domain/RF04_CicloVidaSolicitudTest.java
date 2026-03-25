@@ -17,11 +17,17 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-04 – Gestión del ciclo de vida de la solicitud
+ * RF-04: Gestión del ciclo de vida de la solicitud
  *
- * Verifica que el sistema gestione el ciclo de vida de una solicitud, permitiendo:
- * - Estados: REGISTRADA, CLASIFICADA, EN_ATENCION, ATENDIDA, CERRADA
- * - Validar que las transiciones entre estados sean coherentes
+ * Métodos verificadores:
+ * - "Debe crear solicitud en estado REGISTRADA"
+ * - "Debe transitar de REGISTRADA a CLASIFICADA"
+ * - "Debe transitar de CLASIFICADA a EN_ATENCION"
+ * - "Debe transitar de EN_ATENCION a ATENDIDA"
+ * - "Debe transitar de ATENDIDA a CERRADA"
+ * - "Debe permitir ciclo completo: REGISTRADA -> CLASIFICADA -> EN_ATENCION -> ATENDIDA -> CERRADA"
+ * - "Debe registrar fecha de cierre cuando se cierra solicitud"
+ * - "Debe contar entregas en historial que reflejen transiciones de estado"
  */
 @DisplayName("RF-04: Gestión del ciclo de vida de solicitudes")
 class RF04_CicloVidaSolicitudTest {

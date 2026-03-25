@@ -25,12 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * RF-11 – Funcionamiento independiente de IA
+ * RF-11: Funcionamiento independiente de IA
  *
- * Verifica que el sistema opera correctamente SIN integracion de IA:
- * - Genera resumenes basicos cuando el modelo no esta disponible
- * - Sugerencias de clasificacion con fallback local
- * - No lanza excepciones cuando la IA no esta configurada
+ * Métodos verificadores:
+ * - "RF-11: Debe generar resumen básico sin IA disponible"
+ * - "RF-11: El resumen fallback debe incluir el estado de la solicitud"
+ * - "RF-11: El resumen fallback debe incluir el solicitante"
+ * - "RF-11: Sugerencia de clasificación funciona sin IA (fallback por palabras clave)"
+ * - "RF-11: No debe lanzar excepción cuando la IA no está configurada"
+ * - "RF-11: La solicitud nula debe lanzar excepción controlada, no un NullPointerException"
+ * - "RF-11: El sistema genera resumen para solicitud sin ID (no persistida)"
  */
 @DisplayName("RF-11: Funcionamiento independiente de IA")
 class RF11_FuncionamientoSinIATest {

@@ -26,11 +26,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * RF-10 – Sugerencia automatica de clasificacion con IA
+ * RF-10: Sugerencia automática de clasificación con IA
  *
- * Verifica que el sistema pueda sugerir tipo y prioridad a partir del
- * texto descriptivo, usando IA o fallback, y que la sugerencia siempre
- * indique que debe ser confirmada por un humano.
+ * Métodos verificadores:
+ * - "RF-10: Debe retornar sugerencia del modelo de IA cuando está disponible"
+ * - "RF-10: La sugerencia de IA se debe poder construir con la descripción de la solicitud"
+ * - "RF-10: Con descripción nula debe retornar mensaje sin sugerencia"
+ * - "RF-10: Con descripción en blanco debe retornar mensaje sin sugerencia"
+ * - "RF-10: Debe reconocer descripción relacionada con registro de asignatura"
  */
 @DisplayName("RF-10: Sugerencia automatica de clasificacion")
 class RF10_SugerenciaClasificacionTest {

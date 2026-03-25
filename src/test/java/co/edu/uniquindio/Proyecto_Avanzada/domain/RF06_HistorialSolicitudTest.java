@@ -20,13 +20,23 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-06 – Registro del historial auditable de la solicitud
+ * RF-06: Registro del historial auditable de la solicitud
  *
- * Verifica que el sistema mantenga un historial de cada solicitud, registrando:
- * - Fecha y hora de cada acción
- * - Acción realizada
- * - Usuario responsable
- * - Observaciones asociadas
+ * Métodos verificadores:
+ * - "Debe crear entrada de historial al registrar solicitud"
+ * - "Debe registrar fecha y hora en cada entrada de historial"
+ * - "Debe registrar el tipo de acción realizada"
+ * - "Debe registrar el usuario responsable de la acción"
+ * - "Debe registrar observaciones de cada acción"
+ * - "Debe registrar el estado en el momento de la acción"
+ * - "Debe mantener historial completo con múltiples acciones"
+ * - "Debe registrar acción de CLASIFICACION"
+ * - "Debe registrar acción de ASIGNACION"
+ * - "Debe registrar acción de CAMBIO_ESTADO (Atención)"
+ * - "Debe registrar acción de CIERRE"
+ * - "Debe mantener orden cronológico en historial"
+ * - "Debe permitir consultar usuario mediante método obtenerUsuario"
+ * - "Debe registrar historial completo de ciclo de vida"
  */
 @DisplayName("RF-06: Registro del historial de solicitudes")
 class RF06_HistorialSolicitudTest {

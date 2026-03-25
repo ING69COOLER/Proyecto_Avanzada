@@ -19,14 +19,17 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-02 – Clasificación de solicitudes
+ * RF-02: Clasificación de solicitudes
  *
- * Verifica que el sistema permita clasificar una solicitud académica según su tipo:
- * - Registro de asignaturas
- * - Homologación
- * - Cancelación de asignaturas
- * - Solicitud de cupos
- * - Consulta académica
+ * Métodos verificadores:
+ * - "Debe clasificar solicitud como REGISTRO_ASIGNATURA"
+ * - "Debe clasificar solicitud como HOMOLOGACION"
+ * - "Debe clasificar solicitud como CANCELACION_ASIGNATURA"
+ * - "Debe clasificar solicitud como SOLICITUD_CUPOS"
+ * - "Debe validar que el tipo de solicitud no sea nulo"
+ * - "Debe registrar la clasificación en el historial"
+ * - "Debe validar que solo COORDINADOR pueda clasificar"
+ * - "Debe validar usuario activo para clasificar"
  */
 @DisplayName("RF-02: Clasificación de solicitudes")
 class RF02_ClasificacionSolicitudTest {
@@ -130,8 +133,7 @@ class RF02_ClasificacionSolicitudTest {
         assertEquals(tamanhoHistorialAntes + 1, tamanhoHistorialDespues, 
                      "El historial debe tener una entrada adicional");
     }
-    //Solicitud solicitud, TipoSolicitud tipoSolicitud,
-           // Usuario usuario, String observacion
+
     @Test
     @DisplayName("Debe validar que solo COORDINADOR pueda clasificar")
     void testValidarPermisosCordinador() {

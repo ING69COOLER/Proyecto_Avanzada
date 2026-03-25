@@ -18,11 +18,19 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-05 – Asignación de responsables
+ * RF-05: Asignación de responsables
  *
- * Verifica que el sistema permita asignar una solicitud a un responsable autorizado, garantizando:
- * - El responsable esté activo
- * - La asignación quede registrada en el historial
+ * Métodos verificadores:
+ * - "Debe asignar solicitud a un docente activo"
+ * - "Debe registrar asignación en el historial"
+ * - "Debe validar que solo COORDINADOR pueda asignar"
+ * - "Debe validar que el usuario asignador sea válido"
+ * - "Debe validar que la solicitud no sea nula"
+ * - "Debe validar descripción no nula ni vacía"
+ * - "Debe permitir cambiar responsable de una solicitud"
+ * - "Debe registrar al responsable correcto en el historial"
+ * - "Debe validar que usuario inactivo no sea asignado"
+ * - "Debe verificar que usuario asignado sea obtenido del historial"
  */
 @DisplayName("RF-05: Asignación de responsables")
 class RF05_AsignacionResponsablesTest {

@@ -18,19 +18,44 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF-13 – Autorizacion basica de operaciones
+ * RF-13: Autorización básica de operaciones
  *
- * Verifica que el sistema restrinja correctamente cada operacion
- * segun el rol del usuario:
- * - ESTUDIANTE: puede registrar solicitudes
- * - COORDINADOR: puede clasificar, priorizar, asignar y cerrar
- * - DOCENTE: puede atender solicitudes
+ * Métodos verificadores (agrupados por clase anidada):
  *
- * Casos probados:
- * - Acceso permitido (rol correcto)
- * - Acceso denegado (rol incorrecto, lanza SolicitudException /
- * IllegalArgumentException)
- * - Proteccion de solicitud cerrada (no modificable)
+ * ClasificacionTest:
+ * - "COORDINADOR puede clasificar la solicitud"
+ * - "ESTUDIANTE no puede clasificar - debe lanzar excepción"
+ * - "DOCENTE no puede clasificar - debe lanzar excepción"
+ *
+ * PriorizacionTest:
+ * - "COORDINADOR puede priorizar la solicitud"
+ * - "ESTUDIANTE no puede priorizar - debe lanzar SolicitudException"
+ * - "DOCENTE no puede priorizar - debe lanzar SolicitudException"
+ *
+ * AsignacionTest:
+ * - "COORDINADOR puede asignar responsable"
+ * - "ESTUDIANTE no puede asignar responsable - debe lanzar SolicitudException"
+ * - "DOCENTE no puede asignar responsable - debe lanzar SolicitudException"
+ *
+ * AtencionTest:
+ * - "DOCENTE puede atender la solicitud"
+ * - "ESTUDIANTE no puede atender - debe lanzar SolicitudException"
+ * - "COORDINADOR no puede atender - debe lanzar SolicitudException"
+ *
+ * CierreTest:
+ * - "COORDINADOR puede cerrar la solicitud"
+ * - "DOCENTE no puede cerrar - debe lanzar SolicitudException"
+ * - "ESTUDIANTE no puede cerrar - debe lanzar SolicitudException"
+ *
+ * SolicitudCerradaTest:
+ * - "No se puede clasificar una solicitud cerrada"
+ * - "No se puede priorizar una solicitud cerrada"
+ * - "No se puede asignar responsable a solicitud cerrada"
+ *
+ * RegistroTest:
+ * - "ESTUDIANTE puede registrar solicitudes"
+ * - "COORDINADOR no puede registrar solicitudes"
+ * - "DOCENTE no puede registrar solicitudes"
  */
 @DisplayName("RF-13: Autorizacion basica de operaciones")
 class RF13_AutorizacionOperacionesTest {
