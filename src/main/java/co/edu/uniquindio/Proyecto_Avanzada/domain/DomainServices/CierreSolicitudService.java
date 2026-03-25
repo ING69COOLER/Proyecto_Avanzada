@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
@@ -11,6 +12,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 /**
  * RF-04: Servicio de Dominio para cierre de solicitudes
  * Gestiona la transicion final del ciclo de vida de una solicitud al estado CERRADA
+ * 
+ *
  */
 @Service
 public class CierreSolicitudService {

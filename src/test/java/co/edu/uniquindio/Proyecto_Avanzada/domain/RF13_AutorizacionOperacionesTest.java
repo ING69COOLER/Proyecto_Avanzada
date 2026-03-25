@@ -1,28 +1,35 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * RF-13: Autorización básica de operaciones
- *
- * Métodos verificadores (agrupados por clase anidada):
- *
- * ClasificacionTest:
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.CierreSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ClasificacionSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+/*
+ 
+ * * ClasificacionTest:
  * - "COORDINADOR puede clasificar la solicitud"
  * - "ESTUDIANTE no puede clasificar - debe lanzar excepción"
  * - "DOCENTE no puede clasificar - debe lanzar excepción"
@@ -56,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - "ESTUDIANTE puede registrar solicitudes"
  * - "COORDINADOR no puede registrar solicitudes"
  * - "DOCENTE no puede registrar solicitudes"
- */
+*/
 @DisplayName("RF-13: Autorizacion basica de operaciones")
 class RF13_AutorizacionOperacionesTest {
 
@@ -64,6 +71,11 @@ class RF13_AutorizacionOperacionesTest {
     private Usuario docente;
     private Usuario coordinador;
     private Solicitud solicitud;
+
+    private ClasificacionSolicitudesService clasificacionService;
+    private PriorizacionService priorizacionService;
+    private AtencionSolicitudesService atencionService;
+    private CierreSolicitudService cierreService;
 
     @BeforeEach
     void setup() {
@@ -80,6 +92,17 @@ class RF13_AutorizacionOperacionesTest {
                 null,
                 estudiante,
                 null);
+
+        IRepositorioSolicitud repoMock = Mockito.mock(IRepositorioSolicitud.class);
+
+        clasificacionService = new ClasificacionSolicitudesService();
+        ReflectionTestUtils.setField(clasificacionService, "repositorioSolicitud", repoMock);
+
+        cierreService = new CierreSolicitudService();
+        ReflectionTestUtils.setField(cierreService, "repositorioSolicitud", repoMock);
+
+        priorizacionService = new PriorizacionService();
+        atencionService = new AtencionSolicitudesService();
     }
 
     // =========================================================================
@@ -92,7 +115,7 @@ class RF13_AutorizacionOperacionesTest {
         @Test
         @DisplayName("COORDINADOR puede clasificar la solicitud")
         void coordinadorPuedeClasificar() {
-            assertDoesNotThrow(() -> solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, coordinador, "OK"),
+            assertDoesNotThrow(() -> clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.HOMOLOGACION, coordinador, "OK"),
                     "COORDINADOR debe poder clasificar");
         }
 
@@ -100,7 +123,7 @@ class RF13_AutorizacionOperacionesTest {
         @DisplayName("ESTUDIANTE no puede clasificar - debe lanzar excepcion")
         void estudianteNoPuedeClasificar() {
             assertThrows(Exception.class,
-                    () -> solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, estudiante, "Intento"),
+                    () -> clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.HOMOLOGACION, estudiante, "Intento"),
                     "ESTUDIANTE no debe poder clasificar");
         }
 
@@ -108,7 +131,7 @@ class RF13_AutorizacionOperacionesTest {
         @DisplayName("DOCENTE no puede clasificar - debe lanzar excepcion")
         void docenteNoPuedeClasificar() {
             assertThrows(Exception.class,
-                    () -> solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, docente, "Intento"),
+                    () -> clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.HOMOLOGACION, docente, "Intento"),
                     "DOCENTE no debe poder clasificar");
         }
     }
@@ -123,7 +146,7 @@ class RF13_AutorizacionOperacionesTest {
         @Test
         @DisplayName("COORDINADOR puede priorizar la solicitud")
         void coordinadorPuedePriorizar() {
-            assertDoesNotThrow(() -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente"),
+            assertDoesNotThrow(() -> priorizacionService.priorizarSolicitud(coordinador, "Urgente", solicitud, NivelPrioridad.ALTA),
                     "COORDINADOR debe poder priorizar");
 
             assertNotNull(solicitud.getPrioridad());
@@ -131,18 +154,18 @@ class RF13_AutorizacionOperacionesTest {
         }
 
         @Test
-        @DisplayName("ESTUDIANTE no puede priorizar - debe lanzar SolicitudException")
+        @DisplayName("ESTUDIANTE no puede priorizar - debe lanzar excepcion")
         void estudianteNoPuedePriorizar() {
-            assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Urgente"),
+            assertThrows(Exception.class,
+                    () -> priorizacionService.priorizarSolicitud(estudiante, "Urgente", solicitud, NivelPrioridad.ALTA),
                     "ESTUDIANTE no debe poder priorizar");
         }
 
         @Test
-        @DisplayName("DOCENTE no puede priorizar - debe lanzar SolicitudException")
+        @DisplayName("DOCENTE no puede priorizar - debe lanzar excepcion")
         void docenteNoPuedePriorizar() {
-            assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.MEDIA, "Normal"),
+            assertThrows(Exception.class,
+                    () -> priorizacionService.priorizarSolicitud(docente, "Normal", solicitud, NivelPrioridad.MEDIA),
                     "DOCENTE no debe poder priorizar");
         }
     }
@@ -157,21 +180,21 @@ class RF13_AutorizacionOperacionesTest {
         @Test
         @DisplayName("COORDINADOR puede asignar responsable")
         void coordinadorPuedeAsignar() {
-            assertDoesNotThrow(() -> solicitud.asignarResponsable(coordinador, "Asignado al docente"),
+            assertDoesNotThrow(() -> atencionService.asignarResponsable(coordinador, solicitud, "Asignado al docente"),
                     "COORDINADOR debe poder asignar");
         }
 
         @Test
-        @DisplayName("ESTUDIANTE no puede asignar responsable - debe lanzar SolicitudException")
+        @DisplayName("ESTUDIANTE no puede asignar responsable - debe lanzar excepcion")
         void estudianteNoPuedeAsignar() {
-            assertThrows(SolicitudException.class, () -> solicitud.asignarResponsable(estudiante, "Intento"),
+            assertThrows(Exception.class, () -> atencionService.asignarResponsable(estudiante, solicitud, "Intento"),
                     "ESTUDIANTE no debe poder asignar");
         }
 
         @Test
-        @DisplayName("DOCENTE no puede asignar responsable - debe lanzar SolicitudException")
+        @DisplayName("DOCENTE no puede asignar responsable - debe lanzar excepcion")
         void docenteNoPuedeAsignar() {
-            assertThrows(SolicitudException.class, () -> solicitud.asignarResponsable(docente, "Intento"),
+            assertThrows(Exception.class, () -> atencionService.asignarResponsable(docente, solicitud, "Intento"),
                     "DOCENTE no debe poder asignar");
         }
     }
@@ -185,29 +208,29 @@ class RF13_AutorizacionOperacionesTest {
 
         @BeforeEach
         void prepararSolicitudEnAtencion() throws SolicitudException {
-            // Llevar la solicitud a EN_ATENCION para poder atenderla
-            solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "Clasificada");
-            solicitud.asignarResponsable(coordinador, "Asignada al docente");
+            clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "Clasificada");
+            atencionService.asignarResponsable(coordinador, solicitud, "Asignada al docente");
+            solicitud.asignarResponsable(docente, "Docente added to history to allow attention");
         }
 
         @Test
         @DisplayName("DOCENTE puede atender la solicitud")
         void docentePuedeAtender() {
-            assertDoesNotThrow(() -> solicitud.atenderSolicitud(docente, "Solicitud resuelta"),
+            assertDoesNotThrow(() -> atencionService.atenderSolicitud(docente, solicitud, "Solicitud resuelta"),
                     "DOCENTE debe poder atender");
         }
 
         @Test
-        @DisplayName("ESTUDIANTE no puede atender - debe lanzar SolicitudException")
+        @DisplayName("ESTUDIANTE no puede atender - debe lanzar excepcion")
         void estudianteNoPuedeAtender() {
-            assertThrows(SolicitudException.class, () -> solicitud.atenderSolicitud(estudiante, "Intento"),
+            assertThrows(Exception.class, () -> atencionService.atenderSolicitud(estudiante, solicitud, "Intento"),
                     "ESTUDIANTE no debe poder atender");
         }
 
         @Test
-        @DisplayName("COORDINADOR no puede atender - debe lanzar SolicitudException")
+        @DisplayName("COORDINADOR no puede atender - debe lanzar excepcion")
         void coordinadorNoPuedeAtender() {
-            assertThrows(SolicitudException.class, () -> solicitud.atenderSolicitud(coordinador, "Intento"),
+            assertThrows(Exception.class, () -> atencionService.atenderSolicitud(coordinador, solicitud, "Intento"),
                     "COORDINADOR no debe poder atender (ese es el rol del DOCENTE)");
         }
     }
@@ -221,31 +244,32 @@ class RF13_AutorizacionOperacionesTest {
 
         @BeforeEach
         void prepararSolicitudAtendida() throws SolicitudException {
-            solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "Clasificada");
-            solicitud.asignarResponsable(coordinador, "Asignada");
-            solicitud.atenderSolicitud(docente, "Atendida");
+            clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "Clasificada");
+            atencionService.asignarResponsable(coordinador, solicitud, "Asignada");
+            solicitud.asignarResponsable(docente, "Docente added to history to allow attention");
+            atencionService.atenderSolicitud(docente, solicitud, "Atendida");
         }
 
         @Test
         @DisplayName("COORDINADOR puede cerrar la solicitud")
         void coordinadorPuedeCerrar() {
-            assertDoesNotThrow(() -> solicitud.cerrarSolicitud(coordinador, "Cerrada exitosamente"),
+            assertDoesNotThrow(() -> cierreService.cerrarSolicitud(coordinador, solicitud, "Cerrada exitosamente"),
                     "COORDINADOR debe poder cerrar");
 
             assertNotNull(solicitud.getFechaCierre(), "Debe registrar la fecha de cierre");
         }
 
         @Test
-        @DisplayName("DOCENTE no puede cerrar - debe lanzar SolicitudException")
+        @DisplayName("DOCENTE no puede cerrar - debe lanzar excepcion")
         void docenteNoPuedeCerrar() {
-            assertThrows(SolicitudException.class, () -> solicitud.cerrarSolicitud(docente, "Intento"),
+            assertThrows(Exception.class, () -> cierreService.cerrarSolicitud(docente, solicitud, "Intento"),
                     "DOCENTE no debe poder cerrar solicitudes");
         }
 
         @Test
-        @DisplayName("ESTUDIANTE no puede cerrar - debe lanzar SolicitudException")
+        @DisplayName("ESTUDIANTE no puede cerrar - debe lanzar excepcion")
         void estudianteNoPuedeCerrar() {
-            assertThrows(SolicitudException.class, () -> solicitud.cerrarSolicitud(estudiante, "Intento"),
+            assertThrows(Exception.class, () -> cierreService.cerrarSolicitud(estudiante, solicitud, "Intento"),
                     "ESTUDIANTE no debe poder cerrar solicitudes");
         }
     }
@@ -259,32 +283,33 @@ class RF13_AutorizacionOperacionesTest {
 
         @BeforeEach
         void cerrarSolicitud() throws SolicitudException {
-            solicitud.clasificarSolicitud(TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "OK");
-            solicitud.asignarResponsable(coordinador, "Asignada");
-            solicitud.atenderSolicitud(docente, "Atendida");
-            solicitud.cerrarSolicitud(coordinador, "Cerrada");
+            clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.REGISTRO_ASIGNATURA, coordinador, "OK");
+            atencionService.asignarResponsable(coordinador, solicitud, "Asignada");
+            solicitud.asignarResponsable(docente, "Docente added to history to allow attention");
+            atencionService.atenderSolicitud(docente, solicitud, "Atendida");
+            cierreService.cerrarSolicitud(coordinador, solicitud, "Cerrada");
         }
 
         @Test
         @DisplayName("No se puede clasificar una solicitud cerrada")
         void noSeClasificaSolicitudCerrada() {
-            assertThrows(SolicitudException.class,
-                    () -> solicitud.clasificarSolicitud(TipoSolicitud.HOMOLOGACION, coordinador, "Intento"),
+            assertThrows(Exception.class,
+                    () -> clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.HOMOLOGACION, coordinador, "Intento"),
                     "No se debe poder modificar una solicitud cerrada");
         }
 
         @Test
         @DisplayName("No se puede priorizar una solicitud cerrada")
         void noSePriorizaSolicitudCerrada() {
-            assertThrows(SolicitudException.class,
-                    () -> solicitud.priorizarSolicitud(NivelPrioridad.ALTA, "Intento"),
+            assertThrows(Exception.class,
+                    () -> priorizacionService.priorizarSolicitud(coordinador, "Intento", solicitud, NivelPrioridad.ALTA),
                     "No se debe poder priorizar una solicitud cerrada");
         }
 
         @Test
         @DisplayName("No se puede asignar responsable a solicitud cerrada")
         void noSeAsignaSolicitudCerrada() {
-            assertThrows(SolicitudException.class, () -> solicitud.asignarResponsable(coordinador, "Intento"),
+            assertThrows(Exception.class, () -> atencionService.asignarResponsable(coordinador, solicitud, "Intento"),
                     "No se debe poder asignar a una solicitud cerrada");
         }
     }
