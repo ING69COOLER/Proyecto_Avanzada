@@ -1,30 +1,19 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-//Manuel
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Prioridad {
+public record Prioridad(Long id, String descripcion, NivelPrioridad nivel) {
 
-    private Long id;
-
-    private String descripcion;
-
-    private NivelPrioridad nivel;
-
-    public Prioridad(NivelPrioridad prioridad, String justificacion){
+    public Prioridad {
         //RN3 debe de haber una justificacion
-        if (justificacion == null || justificacion.isBlank() || justificacion.isEmpty()) {
+        if (descripcion == null || descripcion.isBlank()) {
             throw new IllegalArgumentException("debe de haber una justificacion para poder registrar una prioridad");
         }
-        if (prioridad == null) {
+        if (nivel == null) {
             throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
         }
-        this.nivel = prioridad;
-        this.descripcion = justificacion;
+    }
+
+    public Prioridad(NivelPrioridad prioridad, String justificacion) {
+        this(null, justificacion, prioridad);
     }
 }
