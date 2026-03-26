@@ -253,8 +253,8 @@ public class ModeloLenguajeOpenAI implements ResumenSolicitudService.IModeloLeng
         prompt.append("- Canal de Origen: ").append(solicitud.getCanalOrigen()).append("\n");
 
         if (solicitud.getPrioridad() != null) {
-            prompt.append("- Prioridad: ").append(solicitud.getPrioridad().getNivel()).append("\n");
-            prompt.append("- Justificacion: ").append(solicitud.getPrioridad().getDescripcion()).append("\n");
+            prompt.append("- Prioridad: ").append(solicitud.getPrioridad().nivel()).append("\n");
+            prompt.append("- Justificacion: ").append(solicitud.getPrioridad().descripcion()).append("\n");
         }
 
         prompt.append("\nDESCRIPCION:\n").append(solicitud.getDescripcion()).append("\n");
@@ -299,8 +299,8 @@ public class ModeloLenguajeOpenAI implements ResumenSolicitudService.IModeloLeng
         sb.append("Canal:       ").append(solicitud.getCanalOrigen()).append("\n");
 
         if (solicitud.getPrioridad() != null) {
-            sb.append("Prioridad:   ").append(solicitud.getPrioridad().getNivel())
-                    .append(" - ").append(solicitud.getPrioridad().getDescripcion()).append("\n");
+            sb.append("Prioridad:   ").append(solicitud.getPrioridad().nivel())
+                    .append(" - ").append(solicitud.getPrioridad().descripcion()).append("\n");
         }
 
         sb.append("\nDescripcion:\n  ").append(solicitud.getDescripcion()).append("\n");

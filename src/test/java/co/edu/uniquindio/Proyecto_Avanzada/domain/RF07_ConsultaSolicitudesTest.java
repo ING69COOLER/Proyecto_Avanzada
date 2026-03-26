@@ -167,7 +167,7 @@ class RF07_ConsultaSolicitudesTest {
         
         // Assert
         assertEquals(1, resultado.size());
-        assertEquals(NivelPrioridad.ALTA, resultado.get(0).getPrioridad().getNivel());
+        assertEquals(NivelPrioridad.ALTA, resultado.get(0).getPrioridad().nivel());
     }
     
     @Test

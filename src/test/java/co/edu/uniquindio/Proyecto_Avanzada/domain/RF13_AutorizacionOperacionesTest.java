@@ -150,7 +150,7 @@ class RF13_AutorizacionOperacionesTest {
                     "COORDINADOR debe poder priorizar");
 
             assertNotNull(solicitud.getPrioridad());
-            assertEquals(NivelPrioridad.ALTA, solicitud.getPrioridad().getNivel());
+            assertEquals(NivelPrioridad.ALTA, solicitud.getPrioridad().nivel());
         }
 
         @Test

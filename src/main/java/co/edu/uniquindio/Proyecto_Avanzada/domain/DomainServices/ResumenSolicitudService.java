@@ -87,7 +87,7 @@ public class ResumenSolicitudService {
 
         // Prioridad si está disponible
         if (solicitud.getPrioridad() != null) {
-            resumen.append("Prioridad: ").append(solicitud.getPrioridad().getNivel()).append("\n");
+            resumen.append("Prioridad: ").append(solicitud.getPrioridad().nivel()).append("\n");
         }
 
         // Descripción

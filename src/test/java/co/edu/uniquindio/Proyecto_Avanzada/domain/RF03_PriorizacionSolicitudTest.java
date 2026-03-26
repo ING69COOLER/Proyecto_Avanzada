@@ -78,7 +78,7 @@ class RF03_PriorizacionSolicitudTest {
         
         // Assert
         assertNotNull(solicitud.getPrioridad(), "La prioridad no debe ser nula");
-        assertEquals(NivelPrioridad.ALTA, solicitud.getPrioridad().getNivel(), 
+        assertEquals(NivelPrioridad.ALTA, solicitud.getPrioridad().nivel(), 
                      "La prioridad debe ser ALTA");
     }
     
@@ -95,7 +95,7 @@ class RF03_PriorizacionSolicitudTest {
         
         // Assert
         assertNotNull(solicitud.getPrioridad());
-        assertEquals(NivelPrioridad.MEDIA, solicitud.getPrioridad().getNivel());
+        assertEquals(NivelPrioridad.MEDIA, solicitud.getPrioridad().nivel());
     }
     
     @Test
@@ -111,7 +111,7 @@ class RF03_PriorizacionSolicitudTest {
         
         // Assert
         assertNotNull(solicitud.getPrioridad());
-        assertEquals(NivelPrioridad.BAJA, solicitud.getPrioridad().getNivel());
+        assertEquals(NivelPrioridad.BAJA, solicitud.getPrioridad().nivel());
     }
     
     @Test
@@ -129,7 +129,7 @@ class RF03_PriorizacionSolicitudTest {
         );
         
         // Assert
-        assertEquals(justificacion, solicitud.getPrioridad().getDescripcion(), 
+        assertEquals(justificacion, solicitud.getPrioridad().descripcion(), 
                      "La justificación debe almacenarse");
     }
     

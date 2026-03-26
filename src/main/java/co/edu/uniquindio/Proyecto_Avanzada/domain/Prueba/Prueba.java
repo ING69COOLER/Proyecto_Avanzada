@@ -129,8 +129,8 @@ public class Prueba {
 							"Solicitud urgente para matriculacion de fin de semestre",
 							solicitud,
 							NivelPrioridad.ALTA);
-					info("Prioridad     : " + solicitud.getPrioridad().getNivel());
-					info("Justificacion : " + solicitud.getPrioridad().getDescripcion());
+					info("Prioridad     : " + solicitud.getPrioridad().nivel());
+					info("Justificacion : " + solicitud.getPrioridad().descripcion());
 					ok("Solicitud priorizada");
 				} catch (SolicitudException e) {
 					error(e.getMessage());
@@ -281,7 +281,7 @@ public class Prueba {
 				+ "Estado:      " + s.getEstado() + "\n"
 				+ "Solicitante: " + s.getUsuarioSolicitante().getIdentificacion() + "\n"
 				+ "Descripcion: " + s.getDescripcion() + "\n"
-				+ "Prioridad:   " + (s.getPrioridad() != null ? s.getPrioridad().getNivel() : "Sin asignar") + "\n"
+				+ "Prioridad:   " + (s.getPrioridad() != null ? s.getPrioridad().nivel() : "Sin asignar") + "\n"
 				+ "Cambios:     " + (s.getHistorial() != null ? s.getHistorial().size() : 0);
 	}
 }
