@@ -1,6 +1,9 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
@@ -8,10 +11,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
+import lombok.Getter;
 
 /**
  * RF-01: Entidad central que representa una solicitud academica registrada en
@@ -28,6 +29,7 @@ import java.util.List;
  * correcto.
  */
 @Data
+@Getter
 public class Solicitud {
 
     private Long id;
@@ -43,7 +45,6 @@ public class Solicitud {
 
     /** RF-01: Momento exacto en que se registro la solicitud */
     private LocalDateTime fechaHoraRegistro;
-
 
     /** RF-08: Fecha y hora en que se cerro la solicitud */
     private LocalDateTime fechaCierre;
@@ -135,9 +136,8 @@ public class Solicitud {
      */
     private void crearHistoria(EstadoSolicitud estado, TipoAccion accion,
             Usuario responsable, String observacion) {
-    
-                
-        HistorialSolicitud entrada = new HistorialSolicitud(estado,accion,responsable,observacion,this);
+
+        HistorialSolicitud entrada = new HistorialSolicitud(estado, accion, responsable, observacion, this);
         this.historial.add(entrada);
     }
 
@@ -192,7 +192,6 @@ public class Solicitud {
         this.prioridad = new Prioridad(prioridad, justificacion);
     }
 
-
     /**
      * RF-04 / RF-05: Asigna un responsable a la solicitud y transiciona al estado
      * EN_ATENCION.
@@ -220,7 +219,7 @@ public class Solicitud {
      */
     public boolean UsuarioPuedeAtender(Usuario user) {
         return !historial.stream()
-           .filter(h -> h.obtenerUsuario().equals(user))
+                .filter(h -> h.obtenerUsuario().equals(user))
                 .toList()
                 .isEmpty();
     }

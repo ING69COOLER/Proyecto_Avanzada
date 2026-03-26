@@ -1,13 +1,16 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 
 /**
  * RF-09: Servicio de Dominio para generación de resúmenes de solicitudes
@@ -176,21 +179,5 @@ public class ResumenSolicitudService {
     /**
      * Interfaz para inyectar diferentes modelos de lenguaje
      */
-    public interface IModeloLenguaje {
-        /**
-         * RF-09: Genera un resumen de una solicitud usando un modelo de IA
-         * 
-         * @param solicitud Solicitud a resumir
-         * @return Resumen generado por el modelo de IA
-         */
-        String generarResumen(Optional<Solicitud> solicitud);
 
-        /**
-         * RF-10: Sugiere tipo y prioridad a partir del texto descriptivo
-         * 
-         * @param descripcion Texto de la solicitud
-         * @return Sugerencia de clasificación (debe ser confirmada por un humano)
-         */
-        String sugerirClasificacion(String descripcion);
-    }
 }

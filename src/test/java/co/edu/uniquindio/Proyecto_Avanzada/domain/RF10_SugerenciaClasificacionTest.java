@@ -1,7 +1,26 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ModeloLenguajeOpenAI;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
@@ -9,21 +28,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * RF-10: Sugerencia automática de clasificación con IA
@@ -45,7 +49,7 @@ class RF10_SugerenciaClasificacionTest {
     private IRepositorioSolicitud repositorioSolicitud;
 
     @Mock
-    private ModeloLenguajeOpenAI modeloLenguaje;
+    private IModeloLenguaje modeloLenguaje;
 
     private Usuario coordinador;
     private Solicitud solicitud;

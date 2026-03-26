@@ -25,7 +25,7 @@ public class Prueba {
 	private static final String SEP = "=".repeat(60);
 	private static final String LINE = "-".repeat(60);
 	private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	
+
 	@Autowired(required = false)
 	private PriorizacionService priorizacionService;
 
@@ -102,7 +102,9 @@ public class Prueba {
 				if (priorizacionService != null) {
 					priorizacionService.priorizarSolicitud(estudiante, "Urgente", solicitud, NivelPrioridad.ALTA);
 				} else {
-					throw new IllegalArgumentException("Acceso denegado: el usuario no puede priorizar solicitudes. Rol actual: " + estudiante.getRol());
+					throw new IllegalArgumentException(
+							"Acceso denegado: el usuario no puede priorizar solicitudes. Rol actual: "
+									+ estudiante.getRol());
 				}
 				error("Se permitio una operacion no autorizada!");
 			} catch (IllegalArgumentException e) {
@@ -139,7 +141,8 @@ public class Prueba {
 				info("Servicio de priorización no disponible");
 			}
 
-			// ---- PASO 7: RF-04/05 Asignar (COORDINADOR via AtencionSolicitudesService) -------
+			// ---- PASO 7: RF-04/05 Asignar (COORDINADOR via AtencionSolicitudesService)
+			// -------
 			paso(7, "RF-04/05 | Asignar responsable [COORDINADOR via servicio]");
 			if (atencionService != null) {
 				try {
@@ -267,6 +270,7 @@ public class Prueba {
 	private Usuario crearUsuario(Long id, String nombre, String identificacion, Rol rol) {
 		return new Usuario(id, nombre, identificacion, null, true, rol);
 	}
+
 	private Solicitud crearSolicitud(Usuario estudiante) {
 		return new Solicitud(
 				TipoSolicitud.REGISTRO_ASIGNATURA,
