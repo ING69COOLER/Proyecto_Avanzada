@@ -19,8 +19,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 @Data
 public class Usuario {
 
-    private Long id;
-
     /** Nombre completo del usuario */
     private String nombre;
 
@@ -40,7 +38,6 @@ public class Usuario {
         if (identificacion == null || identificacion.isBlank() || identificacion.isEmpty()) {
             throw new IllegalArgumentException("la identificacion no puede ser vacia ni nula");
         }
-        this.id = id;
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.correo = correo;
@@ -110,5 +107,10 @@ public class Usuario {
      */
     public boolean puedeAtenderSolicitud() {
         return activo && rol.equals(Rol.DOCENTE);
+    }
+
+    //SE QUE NO PUEDO PONER GETS ASI COMO ASI YA QUE QUEDA COMO ANEMICO
+    public String getIdentificacion(){
+        return identificacion;
     }
 }

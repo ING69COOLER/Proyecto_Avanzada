@@ -26,7 +26,7 @@ import tools.jackson.databind.ObjectMapper;
 public class ModeloLenguajeGemini implements IModelo {
 
     private static final String MODELO = "gemini-3-flash-preview";
-    private final String apiKey = "AIzaSyDgQaXIBDY7ChhqzOJXOFE10-aUW0UtW1M";
+    private final String apiKey = "AIzaSyBIK58aaCmT5_AMfjuPlSdXX8k_PJdzrYQ";
 
     @Override
     public String generarResumenIA(String resumen) {
@@ -103,6 +103,7 @@ public class ModeloLenguajeGemini implements IModelo {
         JsonNode candidates = root.path("candidates");
 
         if (!candidates.isArray() || candidates.isEmpty()) {
+            System.out.println(root);
             throw new Exception("No hay 'candidates' en la respuesta");
         }
 
@@ -116,7 +117,7 @@ public class ModeloLenguajeGemini implements IModelo {
 
         String texto = parts.get(0)
                 .path("text")
-                .asText();
+                .asString();
 
         if (texto == null || texto.isEmpty()) {
             throw new Exception("El campo 'text' está vacío");

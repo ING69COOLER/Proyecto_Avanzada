@@ -51,12 +51,12 @@ public class ResumenSolicitudService {
         // using the provided in-memory object. Otherwise, load the complete
         // entity from the repository to include any persisted history.
         Optional<Solicitud> solicitudCompleta;
-        if (solicitud.getId() == null) {
+        if (solicitud.getCodigo() == null) {
             solicitudCompleta = Optional.of(solicitud);
         } else {
-            solicitudCompleta = repositorioSolicitud.obtenerPorId(solicitud.getId());
+            solicitudCompleta = repositorioSolicitud.obtenerPorId(solicitud.getCodigo());
             if (!solicitudCompleta.isPresent()) {
-                throw new SolicitudException("No se encontró la solicitud con ID: " + solicitud.getId());
+                throw new SolicitudException("No se encontró la solicitud con ID: " + solicitud.getCodigo());
             }
         }
 
@@ -82,7 +82,7 @@ public class ResumenSolicitudService {
 
         // Encabezado
         resumen.append("=== RESUMEN DE SOLICITUD ===\n");
-        resumen.append("ID: ").append(solicitud.getId()).append("\n");
+        resumen.append("ID: ").append(solicitud.getCodigo()).append("\n");
         resumen.append("Tipo: ").append(solicitud.getTipo()).append("\n");
         resumen.append("Solicitante: ").append(solicitud.getUsuarioSolicitante().getIdentificacion()).append("\n");
         resumen.append("Fecha de Registro: ").append(solicitud.getFechaHoraRegistro()).append("\n");

@@ -66,7 +66,7 @@ class RF11_FuncionamientoSinIATest {
                 EstadoSolicitud.REGISTRADA,
                 coordinador,
                 null);
-        solicitud.setId(1L);
+        solicitud.setCodigo(1L);
     }
 
     @Test

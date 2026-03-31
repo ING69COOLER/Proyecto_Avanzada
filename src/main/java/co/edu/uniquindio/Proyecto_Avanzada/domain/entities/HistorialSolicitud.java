@@ -12,8 +12,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion;
 // no se porque una observacion
 public class HistorialSolicitud {
 
-    private Long id;
-
     private LocalDateTime fechaHora;
 
     private String observacion;

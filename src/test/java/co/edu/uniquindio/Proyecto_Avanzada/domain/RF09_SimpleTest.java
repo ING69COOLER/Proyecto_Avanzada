@@ -69,7 +69,7 @@ class RF09_SimpleTest {
             usuarioCoordinador,
             null
         );
-        solicitud.setId(1L);
+        solicitud.setCodigo(1L);
     }
     
     @Test

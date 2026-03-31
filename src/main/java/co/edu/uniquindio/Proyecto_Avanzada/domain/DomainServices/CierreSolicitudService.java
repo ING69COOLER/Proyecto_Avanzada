@@ -63,6 +63,6 @@ public class CierreSolicitudService {
         // Persistir cambios
         repositorioSolicitud.guardarSolicitud(solicitud);
         
-        System.out.println("Solicitud cerrada correctamente - ID: " + solicitud.getId());
+        System.out.println("Solicitud cerrada correctamente - ID: " + solicitud.getCodigo());
     }
 }

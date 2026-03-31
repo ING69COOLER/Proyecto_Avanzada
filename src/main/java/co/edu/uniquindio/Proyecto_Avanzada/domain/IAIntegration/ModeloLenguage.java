@@ -17,7 +17,6 @@ public class ModeloLenguage implements IModeloLenguaje {
     public String generarResumenFallback(Solicitud solicitud) {
         StringBuilder sb = new StringBuilder();
         sb.append("=== RESUMEN DE SOLICITUD ===\n");
-        sb.append("ID:          ").append(solicitud.getId()).append("\n");
         sb.append("Tipo:        ").append(solicitud.getTipo()).append("\n");
         sb.append("Estado:      ").append(solicitud.getEstado()).append("\n");
         sb.append("Solicitante: ").append(solicitud.getUsuarioSolicitante().getIdentificacion()).append("\n");
@@ -94,7 +93,6 @@ public class ModeloLenguage implements IModeloLenguaje {
                 "Incluye: que solicita el estudiante, estado actual, acciones realizadas y proximos pasos recomendados.\n\n");
 
         prompt.append("DATOS DE LA SOLICITUD:\n");
-        prompt.append("- ID: ").append(solicitud.getId()).append("\n");
         prompt.append("- Tipo: ").append(solicitud.getTipo()).append("\n");
         prompt.append("- Estado: ").append(solicitud.getEstado()).append("\n");
         prompt.append("- Solicitante (ID): ").append(solicitud.getUsuarioSolicitante().getIdentificacion())

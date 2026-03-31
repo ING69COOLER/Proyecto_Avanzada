@@ -39,6 +39,7 @@ public interface IRepositorioSolicitud {
      */
     public List<Solicitud> consultarResponsable(Usuario usuario);
 
+    //obtiene una solicitud por
     public Optional<Solicitud> obtenerPorId(Long id);
    
 }

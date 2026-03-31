@@ -77,7 +77,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      */
     public Optional<Solicitud> obtenerPorId(Long id) {
         return solicitudes.stream()
-                .filter(s -> s.getId() != null && s.getId().equals(id))
+                .filter(s -> s.getCodigo() != null && s.getCodigo().equals(id))
                 .findFirst();
     }
 
@@ -85,14 +85,14 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      * Actualiza una solicitud existente
      */
     public void actualizar(Solicitud solicitud) {
-        if (solicitud != null && solicitud.getId() != null) {
+        if (solicitud != null && solicitud.getCodigo() != null) {
             solicitudes.stream()
-                    .filter(s -> s.getId().equals(solicitud.getId()))
+                    .filter(s -> s.getCodigo().equals(solicitud.getCodigo()))
                     .findFirst()
                     .ifPresent(s -> {
                         int index = solicitudes.indexOf(s);
                         solicitudes.set(index, solicitud);
-                        System.out.println("[REPO] Solicitud actualizada: ID " + solicitud.getId());
+                        System.out.println("[REPO] Solicitud actualizada: ID " + solicitud.getCodigo());
                     });
         }
     }
@@ -101,7 +101,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      * Elimina una solicitud por su ID
      */
     public void eliminar(Long id) {
-        boolean eliminada = solicitudes.removeIf(s -> s.getId() != null && s.getId().equals(id));
+        boolean eliminada = solicitudes.removeIf(s -> s.getCodigo() != null && s.getCodigo().equals(id));
         if (eliminada) {
             System.out.println("[REPO] Solicitud eliminada: ID " + id);
         }

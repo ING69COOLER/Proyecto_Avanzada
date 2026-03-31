@@ -28,11 +28,12 @@ import lombok.Getter;
  * RF-13: Valida que cada operacion sea ejecutada por un usuario con el rol
  * correcto.
  */
+
 @Data
 @Getter
 public class Solicitud {
 
-    private Long id;
+    private Long codigo;
 
     /** RF-01: Tipo de solicitud (registro, homologacion, cancelacion, etc.) */
     private TipoSolicitud tipo;
@@ -96,7 +97,6 @@ public class Solicitud {
         this.descripcion = descripcion;
         this.canalOrigen = canalOrigen;
         this.fechaHoraRegistro = fechaHoraRegistro;
-        this.id = null;
         this.fechaCierre = fechaCierre;
         this.estado = EstadoSolicitud.REGISTRADA; // RF-04: estado inicial del ciclo de vida
         this.usuarioSolicitante = usuarioSolicitante;

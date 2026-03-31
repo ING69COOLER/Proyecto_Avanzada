@@ -1,0 +1,8 @@
+package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces;
+
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
+
+public interface IRepositorioUsuario {
+    public void guardarUsuario(Usuario usuario);
+    public Usuario obtenerUsuarioIdentificacion(String id);
+}
