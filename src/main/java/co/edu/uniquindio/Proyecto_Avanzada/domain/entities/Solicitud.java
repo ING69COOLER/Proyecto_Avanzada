@@ -155,6 +155,14 @@ public class Solicitud {
      * @throws IllegalArgumentException Si el usuario no tiene permisos de
      *                                  clasificacion
      */
+
+    /*
+    {
+  "tipoSolicitud": "REGISTRO_ASIGNATURA",
+  "usuarioIdentificacion": "string",
+  "observacion": "string"
+}
+    */
     public void clasificarSolicitud(TipoSolicitud tipoSolicitud, Usuario usuario,
             String observacion) throws SolicitudException {
         // RF-08: no se puede modificar una solicitud cerrada
