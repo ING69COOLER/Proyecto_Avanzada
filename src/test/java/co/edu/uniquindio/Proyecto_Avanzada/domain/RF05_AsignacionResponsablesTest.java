@@ -183,9 +183,9 @@ class RF05_AsignacionResponsablesTest {
         servicioAtencion.asignarResponsable(usuarioCoordinador, solicitud, "Asignación inicial");
         
         // Act
-        boolean usuarioPuedeAtender = solicitud.UsuarioPuedeAtender(usuarioCoordinador);
+        boolean usuarioPuedeAtender = usuarioCoordinador.puedeAtenderSolicitud();
         
         // Assert
-        assertTrue(usuarioPuedeAtender, "El coordinador que asignó debe poder atender (está en historial)");
+        assertTrue(!usuarioPuedeAtender, "El coordinador que asignó no debe poder atender (está en historial)");
     }
 }

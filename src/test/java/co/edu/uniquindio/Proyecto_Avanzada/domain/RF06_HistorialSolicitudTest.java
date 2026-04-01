@@ -239,7 +239,7 @@ class RF06_HistorialSolicitudTest {
         HistorialSolicitud entrada = solicitud.getHistorial().get(0);
         Usuario usuarioObtenido = entrada.obtenerUsuario();
         assertNotNull(usuarioObtenido, "Debe obtener el usuario");
-        assertEquals(usuarioCoordinador.getCodigo(), usuarioObtenido.getCodigo(), 
+        assertEquals(usuarioCoordinador.getIdentificacion(), usuarioObtenido.getIdentificacion(), 
                      "Debe devolver el usuario correcto");
     }
     

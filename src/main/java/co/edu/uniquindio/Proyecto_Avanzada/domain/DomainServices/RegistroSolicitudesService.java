@@ -30,15 +30,16 @@ public class RegistroSolicitudesService {
     
     // metodo para crear solicitud incluyendo reglas validadas en usuario
     public void registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
-                                    String descripcion, CanalOrigen canalOrigen, 
-                                    LocalDateTime fechaHoraRegisro, String identificacion){
+                                    String descripcion, CanalOrigen canalOrigen){
 
         if(!responsableCreacion.puedeRegistrarSolicitud()){
             throw new IllegalArgumentException("EL usuario es invalido");
         }
 
+        LocalDateTime fechaHoraRegistro = LocalDateTime.now();
+
         Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegisro,  null,  null,
+                    fechaHoraRegistro,  null,  null,
                     responsableCreacion,  null);
 
         repositorioSolicitud.guardarSolicitud(solicitud);
@@ -46,15 +47,18 @@ public class RegistroSolicitudesService {
     }
 
     public void registrarSolicitudCompleta(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen, 
-                    LocalDateTime fechaHoraRegisro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
+                    LocalDateTime fechaCierre, EstadoSolicitud estado,
                     Usuario usuarioSolicitante, Prioridad prioridad){
 
         if(!usuarioSolicitante.puedeRegistrarSolicitud()){
             throw new IllegalArgumentException("EL usuario es invalido");
         }
+
+        LocalDateTime fechaHoraRegistro = LocalDateTime.now();
+
         Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegisro,  null,  null,
-                    null,  null);
+                    fechaHoraRegistro,  fechaCierre,  estado,
+                    usuarioSolicitante,  prioridad);
 
         repositorioSolicitud.guardarSolicitud(solicitud);
 

@@ -11,6 +11,9 @@ public class RegistrarUsuarioService {
     public RegistrarUsuarioService(){
         repositorioUsuario = RepositorioUsuario.getInstancia();
     }
+
+    
+
     // METODO SOLICITADO
     public void registrarUsuario(Usuario usuario){
 

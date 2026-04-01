@@ -16,6 +16,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
@@ -69,18 +71,19 @@ class RF01_RegistroSolicitudTest {
         TipoSolicitud tipo = TipoSolicitud.REGISTRO_ASIGNATURA;
         String descripcion = "Solicito registrar 3 asignaturas para el próximo semestre";
         CanalOrigen canal = CanalOrigen.PORTAL_WEB;
-        LocalDateTime fecha = LocalDateTime.now();
-        
+        LocalDateTime fechaCierre = LocalDateTime.now().plusDays(10);
+
         // Act - El servicio de dominio orquesta la creación y validación
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante, 
-            tipo, 
-            descripcion, 
-            canal, 
-            fecha, 
-            usuarioEstudiante.getIdentificacion()
+        registroService.registrarSolicitudCompleta(
+            tipo,
+            descripcion,
+            canal,
+            fechaCierre,
+            EstadoSolicitud.REGISTRADA,
+            usuarioEstudiante,
+            new Prioridad(NivelPrioridad.MEDIA, "Reemplazo por motivo académico")
         );
-        
+
         // Assert - Verificamos que la solicitud fue creada correctamente en el repositorio
         assertFalse(repositorio.listar().isEmpty(), "Debe existir al menos una solicitud registrada");
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
@@ -99,14 +102,7 @@ class RF01_RegistroSolicitudTest {
         int contantesDe = repositorio.listar().size();
         
         // Act - El servicio de dominio guarda la solicitud en el repositorio
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante,
-            TipoSolicitud.HOMOLOGACION,
-            "Solicito homologación de asignaturas cursadas en universidad externa",
-            CanalOrigen.CORREO_CERTIFICADO,
-            LocalDateTime.now(),
-            usuarioEstudiante.getIdentificacion()
-        );
+        registroService.registrarSolicitudBasica(usuarioEstudiante, TipoSolicitud.HOMOLOGACION, "Solicito homologación de asignaturas cursadas en universidad externa", CanalOrigen.CORREO_CERTIFICADO);
         
         // Assert - Las verificaciones bajan desde el servicio hasta el agregado
         int contadorDespues = repositorio.listar().size();
@@ -129,9 +125,7 @@ class RF01_RegistroSolicitudTest {
                 usuarioEstudiante,
                 null,  // tipo nulo
                 "descripción",
-                CanalOrigen.CSU,
-                LocalDateTime.now(),
-                usuarioEstudiante.getIdentificacion()
+                CanalOrigen.CSU
             );
         }, "Debe lanzar excepción si el tipo es nulo");
     }
@@ -146,9 +140,7 @@ class RF01_RegistroSolicitudTest {
                 usuarioEstudiante,
                 TipoSolicitud.CANCELACION_ASIGNATURA,
                 "",  // descripción vacía
-                CanalOrigen.SAC,
-                LocalDateTime.now(),
-                usuarioEstudiante.getIdentificacion()
+                CanalOrigen.SAC
             );
         }, "Debe lanzar excepción si la descripción está vacía");
         
@@ -158,9 +150,7 @@ class RF01_RegistroSolicitudTest {
                 usuarioEstudiante,
                 TipoSolicitud.CANCELACION_ASIGNATURA,
                 null,  // descripción nula
-                CanalOrigen.SAC,
-                LocalDateTime.now(),
-                usuarioEstudiante.getIdentificacion()
+                CanalOrigen.SAC
             );
         }, "Debe lanzar excepción si la descripción es nula");
     }
@@ -175,9 +165,7 @@ class RF01_RegistroSolicitudTest {
                 usuarioEstudiante,
                 TipoSolicitud.SOLICITUD_CUPOS,
                 "descripción",
-                null,  // canal nulo
-                LocalDateTime.now(),
-                usuarioEstudiante.getIdentificacion()
+                null  // canal nulo
             );
         }, "Debe lanzar excepción si el canal es nulo");
     }
@@ -185,18 +173,17 @@ class RF01_RegistroSolicitudTest {
     @Test
     @DisplayName("Debe validar que la fecha y hora de registro no sea nula")
     void testFechaHoraRegistroNoNula() {
-        // Act & Assert
-        // El agregado valida que la fecha no sea nula
-        assertThrows(IllegalArgumentException.class, () -> {
-            registroService.registrarSolicitudBasica(
-                usuarioEstudiante,
-                TipoSolicitud.CONSULTA_ACADEMICA,
-                "descripción",
-                CanalOrigen.TELEFONO,
-                null,  // fecha nula
-                usuarioEstudiante.getIdentificacion()
-            );
-        }, "Debe lanzar excepción si la fecha es nula");
+        // Act
+        registroService.registrarSolicitudBasica(
+            usuarioEstudiante,
+            TipoSolicitud.CONSULTA_ACADEMICA,
+            "descripción",
+            CanalOrigen.TELEFONO
+        );
+
+        // Assert
+        solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
+        assertNotNull(solicitud.getFechaHoraRegistro(), "La fecha y hora de registro no debe ser nula");
     }
     
     @Test
@@ -213,14 +200,7 @@ class RF01_RegistroSolicitudTest {
     @DisplayName("Debe crear entrada en historial al registrar solicitud")
     void testHistorialInicial() {
         // Act - El servicio de dominio registra la solicitud
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante,
-            TipoSolicitud.HOMOLOGACION,
-            "Solicito homologación",
-            CanalOrigen.CSU,
-            LocalDateTime.now(),
-            usuarioEstudiante.getIdentificacion()
-        );
+        registroService.registrarSolicitudBasica(usuarioEstudiante, TipoSolicitud.HOMOLOGACION, "Solicito homologación", CanalOrigen.CSU);
         
         // Assert - Verificamos que el agregado (Solicitud) tiene un historial
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
@@ -233,38 +213,17 @@ class RF01_RegistroSolicitudTest {
     @DisplayName("Debe permitir registrar solicitudes por diferentes canales")
     void testDiferentesCanalesOrigen() {
         // Test CSU - El servicio de dominio registra a través del agregado
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante,
-            TipoSolicitud.REGISTRO_ASIGNATURA,
-            "desc",
-            CanalOrigen.CSU,
-            LocalDateTime.now(),
-            usuarioEstudiante.getIdentificacion()
-        );
+        registroService.registrarSolicitudBasica(usuarioEstudiante, TipoSolicitud.REGISTRO_ASIGNATURA, "desc", CanalOrigen.CSU);
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
         assertEquals(CanalOrigen.CSU, solicitud.getCanalOrigen(), "El canal debe ser CSU");
         
         // Test EMAIL
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante,
-            TipoSolicitud.REGISTRO_ASIGNATURA,
-            "desc",
-            CanalOrigen.EMAIL,
-            LocalDateTime.now(),
-            usuarioEstudiante.getIdentificacion()
-        );
+        registroService.registrarSolicitudBasica(usuarioEstudiante, TipoSolicitud.REGISTRO_ASIGNATURA, "desc", CanalOrigen.EMAIL);
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
         assertEquals(CanalOrigen.EMAIL, solicitud.getCanalOrigen(), "El canal debe ser EMAIL");
         
         // Test PRESENCIAL
-        registroService.registrarSolicitudBasica(
-            usuarioEstudiante,
-            TipoSolicitud.REGISTRO_ASIGNATURA,
-            "desc",
-            CanalOrigen.PRESENCIAL,
-            LocalDateTime.now(),
-            usuarioEstudiante.getIdentificacion()
-        );
+        registroService.registrarSolicitudBasica(usuarioEstudiante, TipoSolicitud.REGISTRO_ASIGNATURA, "desc", CanalOrigen.PRESENCIAL);
         solicitud = repositorio.listar().get(repositorio.listar().size() - 1);
         assertEquals(CanalOrigen.PRESENCIAL, solicitud.getCanalOrigen(), "El canal debe ser PRESENCIAL");
     }
