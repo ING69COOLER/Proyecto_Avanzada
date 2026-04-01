@@ -3,7 +3,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
-
+//caso de uso
 public class RegistrarUsuarioService {
 
     IRepositorioUsuario repositorioUsuario;

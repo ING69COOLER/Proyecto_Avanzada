@@ -15,6 +15,7 @@ import java.util.List;
  * Facilita el seguimiento y la gestión operativa de solicitudes
  * Permite consultar por: estado, tipo, prioridad y responsable asignado
  */
+//caso de uso
 @Service
 public class ConsultaSolicitudesService {
 
@@ -62,6 +63,8 @@ public class ConsultaSolicitudesService {
      * @param responsable Usuario responsable de la solicitud
      * @return Lista de solicitudes asignadas al responsable especificado
      */
+
+    //ambiguedad resuelta
     public List<Solicitud> consultarPorResponsable(Usuario responsable) {
         if (responsable == null) {
             throw new IllegalArgumentException("El usuario responsable no puede ser nulo");

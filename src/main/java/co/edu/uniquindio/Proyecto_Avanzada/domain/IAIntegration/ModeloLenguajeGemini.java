@@ -25,7 +25,6 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 public class ModeloLenguajeGemini implements IModelo {
 
-    private static final String MODELO = "gemini-3-flash-preview";
     private final String apiKey = "AIzaSyBIK58aaCmT5_AMfjuPlSdXX8k_PJdzrYQ";
 
     @Override

@@ -111,7 +111,7 @@ class HistorialSolicitud {
 ' RELACIONES
 ' =========================
 
-Usuario "1" -- "N" Solicitud : crea >
+Usuario "1" -- "N" Solicitud : responsable <
 Prioridad "1" -- "1" Solicitud : define <
 CanalOrigen "1" -- "N" Solicitud : registra <
 Solicitud "1" -- "N" HistorialSolicitud : tiene >

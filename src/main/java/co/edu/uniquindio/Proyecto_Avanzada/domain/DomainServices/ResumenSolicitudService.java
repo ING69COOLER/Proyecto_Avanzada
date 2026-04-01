@@ -22,6 +22,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IReposito
  * Justificación: Mejorar la comprensión rápida del caso por parte de los
  * responsables.
  */
+// adefecio
 @Service
 public class ResumenSolicitudService {
 

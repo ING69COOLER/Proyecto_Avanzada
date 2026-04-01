@@ -38,6 +38,8 @@ public class PriorizacionService {
      * @throws IllegalArgumentException Si alguno de los parametros requeridos es
      *                                  nulo
      */
+
+    //caso de uso
     public void priorizarSolicitud(Usuario usuario, String justifiacion,
             Solicitud solicitud, NivelPrioridad prioridad)
             throws SolicitudException {

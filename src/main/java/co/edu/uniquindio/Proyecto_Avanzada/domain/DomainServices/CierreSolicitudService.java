@@ -15,6 +15,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
  * 
  *
  */
+
+// caso de uso
 @Service
 public class CierreSolicitudService {
     
@@ -45,11 +47,6 @@ public class CierreSolicitudService {
         // Validar solicitud
         if (solicitud == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula");
-        }
-        
-        // Validar estado actual
-        if (solicitud.getEstado() == EstadoSolicitud.CERRADA) {
-            throw new IllegalArgumentException("La solicitud ya esta cerrada");
         }
         
         // Validar observacion

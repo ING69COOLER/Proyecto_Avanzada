@@ -87,8 +87,11 @@ public class AtencionSolicitudesService {
             throw new IllegalArgumentException("La observacion no puede ser vacia");
         }
         // RF-05: el usuario debe haber sido asignado previamente a esta solicitud
-        if (!solicitud.UsuarioPuedeAtender(user)) {
-            throw new IllegalArgumentException("El usuario no es el responsable asignado a esta solicitud");
+        
+        if (!solicitud.obtenerUsuariosDeHistorias().stream().filter((usuario) -> usuario.getIdentificacion()
+                                                    .equals(user.getIdentificacion())).toList().isEmpty()) 
+                                                    {
+            throw new IllegalArgumentException("El usuario no es el responsable asignado a esta solicitud");    
         }
         // RF-13: verificar que el usuario tenga rol de DOCENTE
         if (!user.puedeAtenderSolicitud()) {

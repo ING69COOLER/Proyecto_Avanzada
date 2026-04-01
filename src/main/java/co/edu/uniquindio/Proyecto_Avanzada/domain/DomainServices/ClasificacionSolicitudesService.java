@@ -19,6 +19,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
  * (RN2).
  * RF-07: Persiste la solicitud en el repositorio tras clasificarla.
  */
+
+// caso de uso
 @Service
 public class ClasificacionSolicitudesService {
 

@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
@@ -217,11 +218,14 @@ public class Solicitud {
      * @param user Usuario a verificar
      * @return true si el usuario aparece en el historial de la solicitud
      */
-    public boolean UsuarioPuedeAtender(Usuario user) {
-        return !historial.stream()
-                .filter(h -> h.obtenerUsuario().equals(user))
-                .toList()
-                .isEmpty();
+    
+
+    public List<Usuario> obtenerUsuariosDeHistorias(){
+        List<Usuario> usuarios = new LinkedList<>();
+        for (HistorialSolicitud historialSolicitud : historial) {
+            usuarios.add(historialSolicitud.getResponsable());
+        }
+        return usuarios;
     }
 
     /**
@@ -271,11 +275,15 @@ public class Solicitud {
                             "Estado actual: " + this.estado);
         }
         if (user == null) {
-            throw new SolicitudException("El usuario no puede ser nulo");
+            throw new SolicitudException("El usuario no puede ser nulo, debe de haber un responsable");
         }
         // RF-08: la observacion de cierre es obligatoria
         if (observacion == null || observacion.trim().isEmpty()) {
             throw new SolicitudException("Debe proporcionar una observacion de cierre");
+        }
+
+        if (estado == EstadoSolicitud.CERRADA) {
+            throw new IllegalArgumentException("La solicitud ya esta cerrada");
         }
 
         // RF-04: transicion al estado final CERRADA

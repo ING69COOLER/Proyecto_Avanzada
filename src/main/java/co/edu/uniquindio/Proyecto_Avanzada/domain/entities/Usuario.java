@@ -1,8 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 
@@ -52,8 +50,6 @@ public class Usuario {
      * @return true si el usuario esta activo y tiene rol ESTUDIANTE o
      *         ADMINISTRATIVO
      */
-
-    
 
     public boolean puedeRegistrarSolicitud() {
         return activo && (rol.equals(Rol.ESTUDIANTE) || rol.equals(Rol.ADMINISTRATIVO));
@@ -109,8 +105,61 @@ public class Usuario {
         return activo && rol.equals(Rol.DOCENTE);
     }
 
-    //SE QUE NO PUEDO PONER GETS ASI COMO ASI YA QUE QUEDA COMO ANEMICO
-    public String getIdentificacion(){
+    public boolean puedeConsultarSolicitudes() {
+        return activo && (rol == Rol.COORDINADOR ||
+                rol == Rol.DOCENTE);
+    }
+
+    // SE QUE NO PUEDO PONER GETS ASI COMO ASI YA QUE QUEDA COMO ANEMICO
+    public String getIdentificacion() {
         return identificacion;
     }
+
+    // metodo interno reutilizable (no duplicar lógica)
+    private void validarRol(Rol rolRequerido, String accion) {
+        if (this.activo == null || !this.activo) {
+            throw new IllegalArgumentException(
+                    "El usuario debe estar activo para " + accion + ".");
+        }
+
+        if (this.rol != rolRequerido) {
+            throw new IllegalArgumentException(
+                    "Acceso denegado: no tiene permisos para " + accion +
+                            ". Rol actual: " + this.rol +
+                            ", Rol requerido: " + rolRequerido);
+        }
+    }
+
+    public void validarPuedeRegistrarSolicitud() {
+        if (this.activo == null || !this.activo ||
+                (this.rol != Rol.ESTUDIANTE && this.rol != Rol.ADMINISTRATIVO)) {
+
+            throw new IllegalArgumentException(
+                    "El usuario no puede registrar solicitudes. " +
+                            "Debe estar activo y tener rol ESTUDIANTE o ADMINISTRATIVO. " +
+                            "Rol actual: " + this.rol);
+        }
+    }
+
+    
+
+    public void validarPuedeConsultarSolicitudes() {
+        if (!puedeConsultarSolicitudes()) {
+            throw new IllegalArgumentException(
+                    "El usuario no tiene permisos para consultar solicitudes. Rol actual: " + rol);
+        }
+    }
+
+    public void validarPuedeAtenderSolicitud() {
+        validarRol(Rol.DOCENTE, "atender solicitudes");
+    }
+
+    public void validarPuedePriorizar() {
+        validarRol(Rol.COORDINADOR, "priorizar solicitudes");
+    }
+
+    public void validarPuedeCerrarSolicitud() {
+        validarRol(Rol.COORDINADOR, "cerrar solicitudes");
+    }
+
 }

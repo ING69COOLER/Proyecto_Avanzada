@@ -1,6 +1,5 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
@@ -19,6 +18,7 @@ Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
                     LocalDateTime fechaHoraRegisro, String identificacion, LocalDateTime fechaCierre, EstadoSolicitud estado,
                     Usuario usuarioSolicitante, Prioridad prioridad) */
 //RN1
+//caso de uso
 @Service
 public class RegistroSolicitudesService {
 
@@ -58,16 +58,5 @@ public class RegistroSolicitudesService {
 
         repositorioSolicitud.guardarSolicitud(solicitud);
 
-
     }
-
-
-
-
-
-
-
-
-
-
 }
