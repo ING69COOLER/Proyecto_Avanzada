@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.RegistroSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.application.services.RegistroSolicitudesApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
@@ -44,7 +44,7 @@ class RF01_RegistroSolicitudTest {
     private Usuario usuarioEstudiante;
     private Usuario usuarioAdministrativo;
     private RepositorioSolicitud repositorio;
-    private RegistroSolicitudesService registroService;
+    private RegistroSolicitudesApplicationService registroService;
     private EstadoSolicitud estado;
     
     @BeforeEach
@@ -52,8 +52,8 @@ class RF01_RegistroSolicitudTest {
        
         repositorio = RepositorioSolicitud.getInstancia();
         
-        // Instanciamos el servicio de dominio que orquestará la lógica de negocio
-        registroService = new RegistroSolicitudesService();
+        // Instanciamos el servicio de aplicacion que orquestará la lógica de negocio y persistencia
+        registroService = new RegistroSolicitudesApplicationService();
         
         // Usuario estudiante autorizado para registrar
         usuarioEstudiante = new Usuario(1L, "Juan Pérez", "1001234567", "juan@gmail.com", true, Rol.ESTUDIANTE);

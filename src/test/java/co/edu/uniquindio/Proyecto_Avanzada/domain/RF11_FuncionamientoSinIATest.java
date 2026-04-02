@@ -1,10 +1,10 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.application.services.ResumenSolicitudApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
@@ -13,16 +13,10 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * RF-11: Funcionamiento independiente de IA
@@ -39,21 +33,19 @@ import static org.mockito.Mockito.*;
 @DisplayName("RF-11: Funcionamiento independiente de IA")
 class RF11_FuncionamientoSinIATest {
 
-    @InjectMocks
-    private ResumenSolicitudService resumenService;
-
-    @Mock
-    private IRepositorioSolicitud repositorioSolicitud;
+    private ResumenSolicitudApplicationService resumenService;
 
     private Usuario coordinador;
     private Solicitud solicitud;
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
-        // NO se inyecta modelo de IA — simula que no esta configurado
-        ReflectionTestUtils.setField(resumenService, "repositorioSolicitud", repositorioSolicitud);
-        ReflectionTestUtils.setField(resumenService, "modeloLenguaje", null);
+        // Crear el servicio con null como modeloLenguaje para simular que no hay IA
+        resumenService = new ResumenSolicitudApplicationService(null);
+        
+        // Obtener instancia del repositorio y limpiarla
+        RepositorioSolicitud repositorio = RepositorioSolicitud.getInstancia();
+        repositorio.limpiar();
 
         coordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
 
@@ -67,14 +59,14 @@ class RF11_FuncionamientoSinIATest {
                 coordinador,
                 null);
         solicitud.setCodigo(1L);
+        
+        // Guardar la solicitud en el repositorio
+        repositorio.guardarSolicitud(solicitud);
     }
 
     @Test
     @DisplayName("RF-11: Debe generar resumen basico sin IA disponible")
     void testResumenSinIA() throws SolicitudException {
-        // Arrange
-        when(repositorioSolicitud.obtenerPorId(1L)).thenReturn(Optional.of(solicitud));
-
         // Act
         String resumen = resumenService.generarResumenSolicitud(solicitud);
 
@@ -89,9 +81,6 @@ class RF11_FuncionamientoSinIATest {
     @Test
     @DisplayName("RF-11: El resumen fallback debe incluir el estado de la solicitud")
     void testResumenFallbackIncluyeEstado() throws SolicitudException {
-        // Arrange
-        when(repositorioSolicitud.obtenerPorId(1L)).thenReturn(Optional.of(solicitud));
-
         // Act
         String resumen = resumenService.generarResumenSolicitud(solicitud);
 
@@ -104,9 +93,6 @@ class RF11_FuncionamientoSinIATest {
     @Test
     @DisplayName("RF-11: El resumen fallback debe incluir el solicitante")
     void testResumenFallbackIncluyeSolicitante() throws SolicitudException {
-        // Arrange
-        when(repositorioSolicitud.obtenerPorId(1L)).thenReturn(Optional.of(solicitud));
-
         // Act
         String resumen = resumenService.generarResumenSolicitud(solicitud);
 
@@ -165,7 +151,5 @@ class RF11_FuncionamientoSinIATest {
 
         // Assert
         assertNotNull(resumen);
-        // No se debe llamar al repositorio cuando no hay ID
-        verify(repositorioSolicitud, never()).obtenerPorId(any());
     }
 }

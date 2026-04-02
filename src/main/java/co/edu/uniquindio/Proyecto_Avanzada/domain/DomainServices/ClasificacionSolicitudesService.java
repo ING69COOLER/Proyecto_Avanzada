@@ -1,12 +1,10 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 /**
@@ -17,20 +15,15 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
  *
  * RF-13: Verifica que el usuario tenga el rol COORDINADOR antes de clasificar
  * (RN2).
- * RF-07: Persiste la solicitud en el repositorio tras clasificarla.
  */
 
 // caso de uso
 @Service
 public class ClasificacionSolicitudesService {
 
-    @Autowired
-    private IRepositorioSolicitud repositorioSolicitud;
-
     /**
      * RF-02: Clasifica una solicitud asignandole un tipo especifico.
      * RF-13: Solo el COORDINADOR puede ejecutar esta operacion (RN2).
-     * RF-07: Guarda la solicitud actualizada en el repositorio.
      *
      * Valida que la solicitud, el tipo y el usuario sean validos antes de
      * delegar la operacion a la entidad Solicitud, que a su vez registra
@@ -44,7 +37,7 @@ public class ClasificacionSolicitudesService {
      * @throws IllegalArgumentException Si el usuario no tiene el rol adecuado o
      *                                  algun parametro es nulo
      */
-    public void clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipoSolicitud,
+    public Solicitud clasificarSolicitud(Solicitud solicitud, TipoSolicitud tipoSolicitud,
             Usuario usuario, String observacion) throws SolicitudException {
         if (solicitud == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula");
@@ -66,7 +59,6 @@ public class ClasificacionSolicitudesService {
         // RF-06)
         solicitud.clasificarSolicitud(tipoSolicitud, usuario, observacion);
 
-        // RF-07: persistir la solicitud actualizada
-        repositorioSolicitud.guardarSolicitud(solicitud);
+        return solicitud;
     }
 }

@@ -10,20 +10,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.application.services.ResumenSolicitudApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
@@ -42,11 +40,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 @DisplayName("RF-10: Sugerencia automatica de clasificacion")
 class RF10_SugerenciaClasificacionTest {
 
-    @InjectMocks
-    private ResumenSolicitudService resumenService;
-
-    @Mock
-    private IRepositorioSolicitud repositorioSolicitud;
+    private ResumenSolicitudApplicationService resumenService;
 
     @Mock
     private IModeloLenguaje modeloLenguaje;
@@ -57,8 +51,13 @@ class RF10_SugerenciaClasificacionTest {
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(resumenService, "repositorioSolicitud", repositorioSolicitud);
-        ReflectionTestUtils.setField(resumenService, "modeloLenguaje", modeloLenguaje);
+        
+        // Crear el servicio manualmente inyectando el mock de IModeloLenguaje
+        resumenService = new ResumenSolicitudApplicationService(modeloLenguaje);
+        
+        // Obtener instancia del repositorio y limpiarla
+        RepositorioSolicitud repositorio = RepositorioSolicitud.getInstancia();
+        repositorio.limpiar();
 
         coordinador = new Usuario(1L, "Coordinador Test", "1001234567", null, true, Rol.COORDINADOR);
 
@@ -71,6 +70,9 @@ class RF10_SugerenciaClasificacionTest {
                 EstadoSolicitud.REGISTRADA,
                 coordinador,
                 null);
+        
+        // Guardar la solicitud en el repositorio
+        repositorio.guardarSolicitud(solicitud);
     }
 
     @Test

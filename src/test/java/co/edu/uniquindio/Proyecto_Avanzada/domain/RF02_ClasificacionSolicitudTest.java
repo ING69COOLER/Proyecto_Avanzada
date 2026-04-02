@@ -1,9 +1,9 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain;
 
+import co.edu.uniquindio.Proyecto_Avanzada.application.services.ClasificacionSolicitudesApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ClasificacionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
@@ -38,12 +38,12 @@ class RF02_ClasificacionSolicitudTest {
     private Usuario usuarioCoordinador;
     private Usuario usuarioEstudiante;
     private RepositorioSolicitud repositorio;
-    private ClasificacionSolicitudesService clasificacionSolicitudesService;
+    private ClasificacionSolicitudesApplicationService clasificacionSolicitudesService;
     
     @BeforeEach
     void setup() {
         repositorio = RepositorioSolicitud.getInstancia();
-        clasificacionSolicitudesService = new ClasificacionSolicitudesService();
+        clasificacionSolicitudesService = new ClasificacionSolicitudesApplicationService();
         
         // Coordinador autorizado para clasificar
         usuarioCoordinador = new Usuario(1L, "Carlos López", "1001234567", "carlos@admin.com", true, Rol.COORDINADOR);

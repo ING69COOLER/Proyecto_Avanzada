@@ -41,5 +41,7 @@ public interface IRepositorioSolicitud {
 
     //obtiene una solicitud por
     public Optional<Solicitud> obtenerPorId(Long id);
+
+    public List<Solicitud> listar();
    
 }

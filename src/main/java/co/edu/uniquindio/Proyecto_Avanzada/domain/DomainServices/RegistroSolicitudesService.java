@@ -1,8 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
@@ -22,14 +20,8 @@ Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
 @Service
 public class RegistroSolicitudesService {
 
-    private IRepositorioSolicitud repositorioSolicitud;
-    
-    public RegistroSolicitudesService() {
-        this.repositorioSolicitud = RepositorioSolicitud.getInstancia();
-    }
-    
     // metodo para crear solicitud incluyendo reglas validadas en usuario
-    public void registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
+    public Solicitud registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
                                     String descripcion, CanalOrigen canalOrigen){
 
         if(!responsableCreacion.puedeRegistrarSolicitud()){
@@ -42,11 +34,11 @@ public class RegistroSolicitudesService {
                     fechaHoraRegistro,  null,  null,
                     responsableCreacion,  null);
 
-        repositorioSolicitud.guardarSolicitud(solicitud);
+        return solicitud;
 
     }
 
-    public void registrarSolicitudCompleta(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen, 
+    public Solicitud registrarSolicitudCompleta(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen, 
                     LocalDateTime fechaCierre, EstadoSolicitud estado,
                     Usuario usuarioSolicitante, Prioridad prioridad){
 
@@ -60,7 +52,7 @@ public class RegistroSolicitudesService {
                     fechaHoraRegistro,  fechaCierre,  estado,
                     usuarioSolicitante,  prioridad);
 
-        repositorioSolicitud.guardarSolicitud(solicitud);
+        return solicitud;
 
     }
 }

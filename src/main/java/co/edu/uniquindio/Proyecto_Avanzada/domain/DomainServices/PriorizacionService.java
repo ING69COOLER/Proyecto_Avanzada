@@ -40,7 +40,7 @@ public class PriorizacionService {
      */
 
     //caso de uso
-    public void priorizarSolicitud(Usuario usuario, String justifiacion,
+    public Solicitud priorizarSolicitud(Usuario usuario, String justifiacion,
             Solicitud solicitud, NivelPrioridad prioridad)
             throws SolicitudException {
 
@@ -65,5 +65,6 @@ public class PriorizacionService {
 
         // RF-03: delegar a la entidad la asignacion de prioridad (valida RF-08)
         solicitud.priorizarSolicitud(prioridad, justifiacion);
+        return solicitud;
     }
 }

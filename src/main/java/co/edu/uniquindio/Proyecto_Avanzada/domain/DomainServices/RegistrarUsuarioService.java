@@ -1,26 +1,18 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
 //caso de uso
 public class RegistrarUsuarioService {
-
-    IRepositorioUsuario repositorioUsuario;
-
-    public RegistrarUsuarioService(){
-        repositorioUsuario = RepositorioUsuario.getInstancia();
-    }
 
     
 
     // METODO SOLICITADO
-    public void registrarUsuario(Usuario usuario){
+    public Usuario registrarUsuario(Usuario usuario){
 
-        if (repositorioUsuario.obtenerUsuarioIdentificacion(usuario.getIdentificacion()) != null) {
-            throw new IllegalArgumentException("EL usuario ya existe");
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no puede ser nulo");
         }
 
-        repositorioUsuario.guardarUsuario(usuario);
+        return usuario;
     }
 }

@@ -34,7 +34,7 @@ public class AtencionSolicitudesService {
      *                                  invalido
      * @throws IllegalArgumentException Si alguno de los parametros es nulo
      */
-    public void asignarResponsable(Usuario user, Solicitud solicitud,
+    public Solicitud asignarResponsable(Usuario user, Solicitud solicitud,
             String descripcion) throws SolicitudException {
         if (user == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
@@ -48,7 +48,7 @@ public class AtencionSolicitudesService {
                     "Acceso denegado: el usuario no tiene el rol para asignar responsables." +
                             " Rol actual: " + user.getRol());
         }
-        if (user == null || !user.puedeAsignar()) {
+        if (!user.puedeAsignar()) {
             throw new SolicitudException(
                     "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
                             (user != null ? " Rol actual: " + user.getRol() : ""));
@@ -56,6 +56,7 @@ public class AtencionSolicitudesService {
 
         // RF-05: delegar a la entidad, que valida RF-08/13 y registra RF-06
         solicitud.asignarResponsable(user, descripcion);
+        return solicitud;
     }
 
     /**
@@ -75,7 +76,7 @@ public class AtencionSolicitudesService {
      * @throws IllegalArgumentException Si alguno de los parametros es nulo/vacio o
      *                                  el usuario no esta asignado
      */
-    public void atenderSolicitud(Usuario user, Solicitud solicitud,
+    public Solicitud atenderSolicitud(Usuario user, Solicitud solicitud,
             String observacion) throws SolicitudException {
         if (user == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
@@ -102,5 +103,6 @@ public class AtencionSolicitudesService {
 
         // RF-04: delegar a la entidad, que registra RF-06 y transiciona el estado
         solicitud.atenderSolicitud(user, observacion);
+        return solicitud;
     }
 }

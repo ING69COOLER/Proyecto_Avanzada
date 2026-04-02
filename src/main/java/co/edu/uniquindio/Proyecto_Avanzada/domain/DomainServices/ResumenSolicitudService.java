@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 
 /**
  * RF-09: Servicio de Dominio para generación de resúmenes de solicitudes
@@ -26,11 +24,11 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IReposito
 @Service
 public class ResumenSolicitudService {
 
-    @Autowired
-    private IRepositorioSolicitud repositorioSolicitud;
-
-    @Autowired(required = false)
     private IModeloLenguaje modeloLenguaje;
+
+    public ResumenSolicitudService(IModeloLenguaje modeloLenguaje) {
+        this.modeloLenguaje = modeloLenguaje;
+    }
 
     /**
      * RF-09: Genera un resumen textual de una solicitud
@@ -51,24 +49,13 @@ public class ResumenSolicitudService {
         // If the solicitud has no ID (not persisted), allow generating a summary
         // using the provided in-memory object. Otherwise, load the complete
         // entity from the repository to include any persisted history.
-        Optional<Solicitud> solicitudCompleta;
-        if (solicitud.getCodigo() == null) {
-            solicitudCompleta = Optional.of(solicitud);
-        } else {
-            solicitudCompleta = repositorioSolicitud.obtenerPorId(solicitud.getCodigo());
-            if (!solicitudCompleta.isPresent()) {
-                throw new SolicitudException("No se encontró la solicitud con ID: " + solicitud.getCodigo());
-            }
-        }
-
-        // Si hay modelo de lenguaje disponible, usarlo
         if (modeloLenguaje != null) {
             System.out.println("------- Resumen generado con IA-------");
-            return modeloLenguaje.generarResumen(solicitudCompleta);
+            return modeloLenguaje.generarResumen(Optional.of(solicitud));
         }
 
         // Si no, generar resumen básico
-        return generarResumenBasico(solicitudCompleta.get());
+        return generarResumenBasico(solicitud);
     }
 
     /**

@@ -12,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.CierreSolicitudService;
@@ -22,7 +20,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionSer
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
@@ -93,13 +90,9 @@ class RF13_AutorizacionOperacionesTest {
                 estudiante,
                 null);
 
-        IRepositorioSolicitud repoMock = Mockito.mock(IRepositorioSolicitud.class);
-
         clasificacionService = new ClasificacionSolicitudesService();
-        ReflectionTestUtils.setField(clasificacionService, "repositorioSolicitud", repoMock);
 
         cierreService = new CierreSolicitudService();
-        ReflectionTestUtils.setField(cierreService, "repositorioSolicitud", repoMock);
 
         priorizacionService = new PriorizacionService();
         atencionService = new AtencionSolicitudesService();

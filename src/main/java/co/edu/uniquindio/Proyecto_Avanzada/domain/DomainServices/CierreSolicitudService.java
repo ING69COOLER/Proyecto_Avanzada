@@ -1,13 +1,8 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 
 /**
  * RF-04: Servicio de Dominio para cierre de solicitudes
@@ -17,11 +12,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
  */
 
 // caso de uso
-@Service
 public class CierreSolicitudService {
-    
-    @Autowired
-    private IRepositorioSolicitud repositorioSolicitud;
     
     /**
      * RF-04/RF-08: Cierra una solicitud academica
@@ -35,7 +26,7 @@ public class CierreSolicitudService {
      * @param observacion Observacion sobre el cierre
      * @throws SolicitudException 
      */
-    public void cerrarSolicitud(Usuario user, Solicitud solicitud, String observacion) throws SolicitudException {
+    public Solicitud cerrarSolicitud(Usuario user, Solicitud solicitud, String observacion) throws SolicitudException {
         // Validar usuario autorizado
         if (user == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
@@ -57,9 +48,6 @@ public class CierreSolicitudService {
         // RF-06: Registrar en historial y cambiar estado
         solicitud.cerrarSolicitud(user, observacion);
         
-        // Persistir cambios
-        repositorioSolicitud.guardarSolicitud(solicitud);
-        
-        System.out.println("Solicitud cerrada correctamente - ID: " + solicitud.getCodigo());
+        return solicitud;
     }
 }

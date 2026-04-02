@@ -3,7 +3,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ConsultaSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.application.services.ConsultaSolicitudesApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RF07_ConsultaSolicitudesTest {
 
     private RepositorioSolicitud repositorio;
-    private ConsultaSolicitudesService servicioConsulta;
+    private ConsultaSolicitudesApplicationService servicioConsulta;
     private Usuario usuarioCoordinador;
     private Usuario usuarioDocente;
     private Usuario usuarioDocente2;
@@ -54,12 +53,7 @@ class RF07_ConsultaSolicitudesTest {
     @BeforeEach
     void setup() throws Exception {
         repositorio = RepositorioSolicitud.getInstancia();
-        servicioConsulta = new ConsultaSolicitudesService();
-        
-        // Inyectar el repositorio usando reflexión
-        Field field = ConsultaSolicitudesService.class.getDeclaredField("repositorioSolicitud");
-        field.setAccessible(true);
-        field.set(servicioConsulta, repositorio);
+        servicioConsulta = new ConsultaSolicitudesApplicationService();
         
         usuarioCoordinador = new Usuario(1L, "Coordinador Consultas", "1001234567", null, true, Rol.COORDINADOR);
         
