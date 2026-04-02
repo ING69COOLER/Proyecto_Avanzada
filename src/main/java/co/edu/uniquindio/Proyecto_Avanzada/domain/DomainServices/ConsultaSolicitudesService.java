@@ -19,7 +19,7 @@ public class ConsultaSolicitudesService {
         if (!responsable.puedeAsignar() && !responsable.puedeAtenderSolicitud()) {
             throw new IllegalArgumentException("El usuario no tiene permisos para consultar solicitudes");
         }
-
+        //no se si sea mejor mediante una query de sql o algo asi, pero por ahora lo hago con streams
         return solicitudes.stream()
                 .filter(s -> s.obtenerUsuariosDeHistorias().stream()
                         .anyMatch(u -> u.getIdentificacion().equals(responsable.getIdentificacion())))

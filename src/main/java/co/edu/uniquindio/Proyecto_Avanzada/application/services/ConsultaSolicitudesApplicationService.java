@@ -44,21 +44,10 @@ public class ConsultaSolicitudesApplicationService {
         }
         return repositorio.consultarPrioridad(prioridad);
     }
-
+    // deberia de hacerse por una query de sql o algo asi, ya que si lo dejamos como listas va a quedar muy ineficiente, pero por ahora lo dejo asi
     public List<Solicitud> consultarPorResponsable(Usuario responsable) {
         List<Solicitud> solicitudes = repositorio.listar();
         return dominio.consultarPorResponsable(solicitudes, responsable);
     }
 
-    public List<Solicitud> consultarSolicitudesPendientes() {
-        return consultarPorEstado(EstadoSolicitud.REGISTRADA);
-    }
-
-    public List<Solicitud> consultarSolicitudesEnAtencion() {
-        return consultarPorEstado(EstadoSolicitud.EN_ATENCION);
-    }
-
-    public List<Solicitud> consultarSolicitudesCerradas() {
-        return consultarPorEstado(EstadoSolicitud.CERRADA);
-    }
 }

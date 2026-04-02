@@ -33,7 +33,7 @@ import lombok.Getter;
 @Data
 @Getter
 public class Solicitud {
-
+    // le deje codigo de solicitud ya que no se considera como tal un id
     private Long codigo;
 
     /** RF-01: Tipo de solicitud (registro, homologacion, cancelacion, etc.) */

@@ -252,7 +252,7 @@ class RF07_ConsultaSolicitudesTest {
         repositorio.guardarSolicitud(sol2);
         
         // Act
-        List<Solicitud> pendientes = servicioConsulta.consultarSolicitudesPendientes();
+        List<Solicitud> pendientes = servicioConsulta.consultarPorEstado(EstadoSolicitud.REGISTRADA);
         
         // Assert
         assertEquals(1, pendientes.size(), "Solo una solicitud debe estar registrada sin clasificar");
@@ -270,7 +270,7 @@ class RF07_ConsultaSolicitudesTest {
         repositorio.guardarSolicitud(sol1);
         
         // Act
-        List<Solicitud> enAtencion = servicioConsulta.consultarSolicitudesEnAtencion();
+        List<Solicitud> enAtencion = servicioConsulta.consultarPorEstado(EstadoSolicitud.EN_ATENCION);
         
         // Assert
         assertEquals(1, enAtencion.size());
@@ -290,7 +290,7 @@ class RF07_ConsultaSolicitudesTest {
         repositorio.guardarSolicitud(sol);
         
         // Act
-        List<Solicitud> cerradas = servicioConsulta.consultarSolicitudesCerradas();
+        List<Solicitud> cerradas = servicioConsulta.consultarPorEstado(EstadoSolicitud.CERRADA);
         
         // Assert
         assertEquals(1, cerradas.size());
