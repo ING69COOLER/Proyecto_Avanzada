@@ -1,0 +1,716 @@
+openapi: 3.1.0
+info:
+  title: API de Gestion de Solicitudes Academicas
+  version: 1.1.0
+  description: >
+    API REST domain-first para gestionar solicitudes academicas.
+    El contrato esta alineado con los DTOs y commands de la capa de aplicacion
+    del proyecto `co.edu.uniquindio.Proyecto_Avanzada`.
+
+servers:
+  - url: http://localhost:8080
+    description: Entorno local
+
+tags:
+  - name: Usuarios
+  - name: Solicitudes
+
+paths:
+  /api/usuarios/registro:
+    post:
+      tags: [Usuarios]
+      summary: Registrar usuario
+      operationId: registrarUsuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearUsuarioRequest'
+      responses:
+        '201':
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResumenDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/solicitudes:
+    post:
+      tags: [Solicitudes]
+      summary: Crear solicitud
+      operationId: crearSolicitud
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearSolicitudRequest'
+      responses:
+        '201':
+          description: Solicitud creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/solicitudes/{codigo}:
+    get:
+      tags: [Solicitudes]
+      summary: Obtener detalle de solicitud
+      operationId: obtenerDetalleSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      responses:
+        '200':
+          description: Detalle de la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/estado:
+    get:
+      tags: [Solicitudes]
+      summary: Consultar solicitudes por estado
+      operationId: consultarSolicitudesPorEstado
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estado
+          in: query
+          required: true
+          description: Estado actual de la solicitud
+          schema:
+            $ref: '#/components/schemas/EstadoSolicitud'
+      responses:
+        '200':
+          description: Solicitudes encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolicitudResumenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/solicitudes/tipo:
+    get:
+      tags: [Solicitudes]
+      summary: Consultar solicitudes por tipo
+      operationId: consultarSolicitudesPorTipo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tipo
+          in: query
+          required: true
+          description: Tipo de solicitud
+          schema:
+            $ref: '#/components/schemas/TipoSolicitud'
+      responses:
+        '200':
+          description: Solicitudes encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolicitudResumenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/solicitudes/responsable:
+    get:
+      tags: [Solicitudes]
+      summary: Consultar solicitudes por responsable
+      operationId: consultarSolicitudesPorResponsable
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: identificacionResponsable
+          in: query
+          required: true
+          description: Identificacion del responsable asociado
+          schema:
+            type: string
+            minLength: 5
+            maxLength: 20
+      responses:
+        '200':
+          description: Solicitudes encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolicitudResumenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/solicitudes/{codigo}/clasificacion:
+    patch:
+      tags: [Solicitudes]
+      summary: Clasificar solicitud
+      operationId: clasificarSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClasificarSolicitudRequest'
+      responses:
+        '200':
+          description: Solicitud clasificada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/{codigo}/prioridad:
+    patch:
+      tags: [Solicitudes]
+      summary: Priorizar solicitud
+      operationId: priorizarSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriorizarSolicitudRequest'
+      responses:
+        '200':
+          description: Solicitud priorizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/{codigo}/asignacion:
+    patch:
+      tags: [Solicitudes]
+      summary: Asignar responsable a solicitud
+      operationId: asignarResponsableSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsignarResponsableRequest'
+      responses:
+        '200':
+          description: Responsable asignado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/{codigo}/estado:
+    patch:
+      tags: [Solicitudes]
+      summary: Cambiar estado de solicitud
+      description: >
+        Actualmente esta operacion soporta la transicion hacia `ATENDIDA`,
+        de acuerdo con la implementacion vigente del dominio.
+      operationId: cambiarEstadoSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CambiarEstadoRequest'
+      responses:
+        '200':
+          description: Estado de la solicitud actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/{codigo}/cierre:
+    patch:
+      tags: [Solicitudes]
+      summary: Cerrar solicitud
+      operationId: cerrarSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CerrarSolicitudRequest'
+      responses:
+        '200':
+          description: Solicitud cerrada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudDetalleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/solicitudes/{codigo}/historial:
+    get:
+      tags: [Solicitudes]
+      summary: Consultar historial de una solicitud
+      operationId: consultarHistorialSolicitud
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CodigoSolicitudPath'
+      responses:
+        '200':
+          description: Historial de eventos de la solicitud
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventoHistorialResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CodigoSolicitudPath:
+      name: codigo
+      in: path
+      required: true
+      description: Codigo unico de la solicitud
+      schema:
+        type: integer
+        format: int64
+    IdentificacionPath:
+      name: identificacion
+      in: path
+      required: true
+      description: Identificacion del usuario
+      schema:
+        type: string
+        minLength: 5
+        maxLength: 20
+
+  schemas:
+    Rol:
+      type: string
+      enum: [ESTUDIANTE, ADMINISTRATIVO, COORDINADOR, DOCENTE]
+
+    EstadoSolicitud:
+      type: string
+      enum: [REGISTRADA, CLASIFICADA, EN_ATENCION, ATENDIDA, CERRADA]
+
+    NivelPrioridad:
+      type: string
+      enum: [ALTA, MEDIA, BAJA]
+
+    CanalOrigen:
+      type: string
+      enum: [CSU, SAC, EMAIL, PRESENCIAL, TELEFONO, PORTAL_WEB, CORREO_CERTIFICADO]
+
+    TipoAccion:
+      type: string
+      enum: [CREACION, ASIGNACION, CAMBIO_ESTADO, CIERRE, CLASIFICADA]
+
+    TipoSolicitud:
+      type: string
+      enum:
+        - REGISTRO_ASIGNATURA
+        - HOMOLOGACION
+        - CANCELACION_ASIGNATURA
+        - SOLICITUD_CUPOS
+        - CONSULTA_ACADEMICA
+
+    CrearUsuarioRequest:
+      type: object
+      additionalProperties: false
+      required: [nombre, identificacion, correo, activo, rol]
+      properties:
+        nombre:
+          type: string
+          minLength: 3
+          maxLength: 150
+        identificacion:
+          type: string
+          minLength: 5
+          maxLength: 20
+        correo:
+          type: string
+          format: email
+          maxLength: 200
+        activo:
+          type: boolean
+        rol:
+          $ref: '#/components/schemas/Rol'
+
+    CrearSolicitudRequest:
+      type: object
+      additionalProperties: false
+      required: [tipoSolicitud, descripcion, canalOrigen, identificacionSolicitante]
+      properties:
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitud'
+        descripcion:
+          type: string
+          minLength: 10
+          maxLength: 1000
+        canalOrigen:
+          $ref: '#/components/schemas/CanalOrigen'
+        identificacionSolicitante:
+          type: string
+          minLength: 5
+          maxLength: 20
+
+    ClasificarSolicitudRequest:
+      type: object
+      additionalProperties: false
+      required: [tipoSolicitud, identificacionUsuario, observacion]
+      properties:
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitud'
+        identificacionUsuario:
+          type: string
+          minLength: 5
+          maxLength: 20
+        observacion:
+          type: string
+          minLength: 5
+          maxLength: 500
+
+    AsignarResponsableRequest:
+      type: object
+      additionalProperties: false
+      required: [identificacionCoordinador, identificacionResponsable, observacion]
+      properties:
+        identificacionCoordinador:
+          type: string
+          minLength: 5
+          maxLength: 20
+        identificacionResponsable:
+          type: string
+          minLength: 5
+          maxLength: 20
+        observacion:
+          type: string
+          minLength: 5
+          maxLength: 500
+
+    CambiarEstadoRequest:
+      type: object
+      additionalProperties: false
+      required: [nuevoEstado, identificacionUsuario, observacion]
+      properties:
+        nuevoEstado:
+          type: string
+          enum: [ATENDIDA]
+        identificacionUsuario:
+          type: string
+          minLength: 5
+          maxLength: 20
+        observacion:
+          type: string
+          minLength: 5
+          maxLength: 500
+
+    CerrarSolicitudRequest:
+      type: object
+      additionalProperties: false
+      required: [identificacionUsuario, observacionCierre]
+      properties:
+        identificacionUsuario:
+          type: string
+          minLength: 5
+          maxLength: 20
+        observacionCierre:
+          type: string
+          minLength: 5
+          maxLength: 500
+
+    PriorizarSolicitudRequest:
+      type: object
+      additionalProperties: false
+      required: [identificacionUsuario, nivelPrioridad, justificacion]
+      properties:
+        identificacionUsuario:
+          type: string
+          minLength: 5
+          maxLength: 20
+        nivelPrioridad:
+          $ref: '#/components/schemas/NivelPrioridad'
+        justificacion:
+          type: string
+          minLength: 5
+          maxLength: 500
+
+    UsuarioResumenDTO:
+      type: object
+      additionalProperties: false
+      required: [nombre, identificacion, correo, activo, rol]
+      properties:
+        nombre:
+          type: string
+          maxLength: 150
+        identificacion:
+          type: string
+          minLength: 5
+          maxLength: 20
+        correo:
+          type: string
+          maxLength: 200
+        activo:
+          type: boolean
+        rol:
+          type: string
+          maxLength: 50
+
+    TipoSolicitudDTO:
+      type: object
+      additionalProperties: false
+      required: [codigo, nombre]
+      properties:
+        codigo:
+          $ref: '#/components/schemas/TipoSolicitud'
+        nombre:
+          type: string
+          maxLength: 100
+
+    PrioridadDTO:
+      type: object
+      additionalProperties: false
+      required: [nivel, descripcion]
+      properties:
+        nivel:
+          $ref: '#/components/schemas/NivelPrioridad'
+        descripcion:
+          type: string
+          maxLength: 500
+
+    EventoHistorialResponse:
+      type: object
+      additionalProperties: false
+      required: [fechaHora, estado, accion, observacion, responsable]
+      properties:
+        fechaHora:
+          type: string
+          format: date-time
+        estado:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        accion:
+          $ref: '#/components/schemas/TipoAccion'
+        observacion:
+          type: string
+          maxLength: 500
+        responsable:
+          $ref: '#/components/schemas/UsuarioResumenDTO'
+
+    SolicitudResumenResponse:
+      type: object
+      additionalProperties: false
+      required: [codigo, tipoSolicitud, canalOrigen, estado, fechaHoraRegistro]
+      properties:
+        codigo:
+          type: integer
+          format: int64
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitudDTO'
+        canalOrigen:
+          $ref: '#/components/schemas/CanalOrigen'
+        estado:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        fechaHoraRegistro:
+          type: string
+          format: date-time
+        usuarioSolicitante:
+          $ref: '#/components/schemas/UsuarioResumenDTO'
+        prioridad:
+          oneOf:
+            - $ref: '#/components/schemas/PrioridadDTO'
+            - type: 'null'
+
+    SolicitudDetalleResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - codigo
+        - tipoSolicitud
+        - descripcion
+        - canalOrigen
+        - fechaHoraRegistro
+        - estado
+        - usuarioSolicitante
+        - historial
+      properties:
+        codigo:
+          type: integer
+          format: int64
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitudDTO'
+        descripcion:
+          type: string
+          maxLength: 1000
+        canalOrigen:
+          $ref: '#/components/schemas/CanalOrigen'
+        fechaHoraRegistro:
+          type: string
+          format: date-time
+        fechaCierre:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        estado:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        usuarioSolicitante:
+          $ref: '#/components/schemas/UsuarioResumenDTO'
+        prioridad:
+          oneOf:
+            - $ref: '#/components/schemas/PrioridadDTO'
+            - type: 'null'
+        historial:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventoHistorialResponse'
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [timestamp, status, error, message, path]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+          maxLength: 100
+        message:
+          type: string
+          maxLength: 500
+        path:
+          type: string
+          maxLength: 300
+        validationErrors:
+          oneOf:
+            - type: object
+              additionalProperties:
+                type: string
+            - type: 'null'
+
+  responses:
+    BadRequest:
+      description: Solicitud invalida o error de validacion
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: No autenticado o token invalido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Operacion no autorizada para el rol actual
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

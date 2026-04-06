@@ -2,22 +2,31 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
 import org.springframework.stereotype.Service;
 
+import co.edu.uniquindio.Proyecto_Avanzada.application.command.AsignarResponsableCommand;
+import co.edu.uniquindio.Proyecto_Avanzada.application.command.CambiarEstadoCommand;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
+import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 
 @Service
 public class AtencionSolicitudesApplicationService {
 
-    private AtencionSolicitudesService dominio;
-    private IRepositorioSolicitud repositorio;
+    private final AtencionSolicitudesService dominio;
+    private final IRepositorioSolicitud repositorio;
+    private final IRepositorioUsuario repositorioUsuario;
 
     public AtencionSolicitudesApplicationService() {
         this.dominio = new AtencionSolicitudesService();
         this.repositorio = RepositorioSolicitud.getInstancia();
+        this.repositorioUsuario = RepositorioUsuario.getInstancia();
     }
 
     public Solicitud asignarResponsable(Usuario user, Solicitud solicitud, String descripcion) throws SolicitudException {
@@ -30,5 +39,48 @@ public class AtencionSolicitudesApplicationService {
         Solicitud solicitudAtendida = dominio.atenderSolicitud(user, solicitud, observacion); // actualmente void, adaptamos later
         repositorio.guardarSolicitud(solicitudAtendida);
         return solicitudAtendida;
+    }
+
+    public SolicitudDetalleResponse asignarResponsable(Long codigoSolicitud, AsignarResponsableCommand command)
+            throws SolicitudException {
+        Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
+        Usuario coordinador = obtenerUsuario(command.identificacionCoordinador());
+        Usuario responsableAsignado = obtenerUsuario(command.identificacionResponsable());
+
+        String observacion = "%s Responsable asignado: %s".formatted(
+                command.observacion(),
+                responsableAsignado.getIdentificacion());
+
+        Solicitud solicitudAsignada = dominio.asignarResponsable(coordinador, solicitud, observacion);
+        return SolicitudResponseMapper.toDetalleResponse(solicitudAsignada);
+    }
+
+    public SolicitudDetalleResponse cambiarEstado(Long codigoSolicitud, CambiarEstadoCommand command)
+            throws SolicitudException {
+        Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
+        Usuario usuario = obtenerUsuario(command.identificacionUsuario());
+
+        if (command.nuevoEstado() != EstadoSolicitud.ATENDIDA) {
+            throw new IllegalArgumentException(
+                    "La operacion cambiarEstado solo soporta actualmente la transicion a ATENDIDA");
+        }
+
+        Solicitud solicitudAtendida = dominio.atenderSolicitud(usuario, solicitud, command.observacion());
+        return SolicitudResponseMapper.toDetalleResponse(solicitudAtendida);
+    }
+
+    private Solicitud obtenerSolicitud(Long codigoSolicitud) {
+        return repositorio.obtenerPorId(codigoSolicitud)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe una solicitud con codigo: " + codigoSolicitud));
+    }
+
+    private Usuario obtenerUsuario(String identificacion) {
+        Usuario usuario = repositorioUsuario.obtenerUsuarioIdentificacion(identificacion);
+        if (usuario == null) {
+            throw new IllegalArgumentException(
+                    "No existe un usuario registrado con identificacion: " + identificacion);
+        }
+        return usuario;
     }
 }

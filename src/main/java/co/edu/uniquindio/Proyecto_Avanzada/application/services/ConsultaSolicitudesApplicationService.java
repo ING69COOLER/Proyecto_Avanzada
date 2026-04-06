@@ -4,11 +4,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudResumenResponse;
+import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
@@ -16,11 +21,13 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 @Service
 public class ConsultaSolicitudesApplicationService {
 
-    private IRepositorioSolicitud repositorio;
-    private ConsultaSolicitudesService dominio;
+    private final IRepositorioSolicitud repositorio;
+    private final IRepositorioUsuario repositorioUsuario;
+    private final ConsultaSolicitudesService dominio;
 
     public ConsultaSolicitudesApplicationService() {
         this.repositorio = RepositorioSolicitud.getInstancia();
+        this.repositorioUsuario = RepositorioUsuario.getInstancia();
         this.dominio = new ConsultaSolicitudesService();
     }
 
@@ -48,6 +55,39 @@ public class ConsultaSolicitudesApplicationService {
     public List<Solicitud> consultarPorResponsable(Usuario responsable) {
         List<Solicitud> solicitudes = repositorio.listar();
         return dominio.consultarPorResponsable(solicitudes, responsable);
+    }
+
+    public List<SolicitudResumenResponse> consultarResumenPorEstado(EstadoSolicitud estado) {
+        return SolicitudResponseMapper.toResumenResponseList(consultarPorEstado(estado));
+    }
+
+    public List<SolicitudResumenResponse> consultarResumenPorTipo(TipoSolicitud tipo) {
+        return SolicitudResponseMapper.toResumenResponseList(consultarPorTipo(tipo));
+    }
+
+    public List<SolicitudResumenResponse> consultarResumenPorPrioridad(Prioridad prioridad) {
+        return SolicitudResponseMapper.toResumenResponseList(consultarPorPrioridad(prioridad));
+    }
+
+    public List<SolicitudResumenResponse> consultarResumenPorResponsable(String identificacionResponsable) {
+        Usuario responsable = obtenerUsuario(identificacionResponsable);
+        return SolicitudResponseMapper.toResumenResponseList(consultarPorResponsable(responsable));
+    }
+
+    public SolicitudDetalleResponse obtenerDetalle(Long codigoSolicitud) {
+        Solicitud solicitud = repositorio.obtenerPorId(codigoSolicitud)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe una solicitud con codigo: " + codigoSolicitud));
+        return SolicitudResponseMapper.toDetalleResponse(solicitud);
+    }
+
+    private Usuario obtenerUsuario(String identificacion) {
+        Usuario usuario = repositorioUsuario.obtenerUsuarioIdentificacion(identificacion);
+        if (usuario == null) {
+            throw new IllegalArgumentException(
+                    "No existe un usuario registrado con identificacion: " + identificacion);
+        }
+        return usuario;
     }
 
 }

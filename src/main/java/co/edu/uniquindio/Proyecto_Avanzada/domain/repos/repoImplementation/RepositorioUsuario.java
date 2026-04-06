@@ -1,5 +1,6 @@
 package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
@@ -10,7 +11,9 @@ public class RepositorioUsuario implements IRepositorioUsuario{
     private static RepositorioUsuario instancia;
     private List<Usuario> usuarios;
 
-    private RepositorioUsuario(){}
+    private RepositorioUsuario(){
+        this.usuarios = new ArrayList<>();
+    }
 
     public static RepositorioUsuario getInstancia(){
         if (instancia == null) {
@@ -26,7 +29,10 @@ public class RepositorioUsuario implements IRepositorioUsuario{
 
     @Override
     public Usuario obtenerUsuarioIdentificacion(String id) {
-        return (Usuario)usuarios.stream().filter((val) -> val.getIdentificacion().equals(id));
+        return usuarios.stream()
+                .filter(usuario -> usuario.getIdentificacion().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
 }
