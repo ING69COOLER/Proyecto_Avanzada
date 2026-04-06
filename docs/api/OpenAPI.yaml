@@ -20,6 +20,9 @@ paths:
     post:
       tags: [Usuarios]
       summary: Registrar usuario
+      description: >
+        Registra un nuevo usuario en el sistema con su informacion basica,
+        estado de activacion y rol asociado.
       operationId: registrarUsuario
       security:
         - bearerAuth: []
@@ -37,14 +40,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/UsuarioResumenDTO'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes:
     post:
       tags: [Solicitudes]
       summary: Crear solicitud
+      description: >
+        Crea una nueva solicitud academica asociada a un solicitante,
+        indicando el tipo de solicitud, su descripcion y el canal de origen.
       operationId: crearSolicitud
       security:
         - bearerAuth: []
@@ -62,14 +88,99 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags: [Solicitudes]
+      summary: Consultar solicitudes con filtros
+      description: >
+        Permite consultar solicitudes filtrando por uno o varios criterios.
+        Se pueden combinar los parametros `estado`, `tipo` e
+        `identificacionResponsable` en una misma peticion.
+      operationId: consultarSolicitudes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estado
+          in: query
+          required: false
+          description: Estado actual de la solicitud
+          schema:
+            $ref: '#/components/schemas/EstadoSolicitud'
+        - name: tipo
+          in: query
+          required: false
+          description: Tipo de solicitud
+          schema:
+            $ref: '#/components/schemas/TipoSolicitud'
+        - name: identificacionResponsable
+          in: query
+          required: false
+          description: Identificacion del responsable asociado
+          schema:
+            $ref: '#/components/schemas/Identificacion'
+      responses:
+        '200':
+          description: Solicitudes encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolicitudResumenResponse'
+        '400':
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}:
     get:
       tags: [Solicitudes]
       summary: Obtener detalle de solicitud
+      description: >
+        Consulta la informacion completa de una solicitud a partir de su
+        codigo unico, incluyendo datos generales, prioridad e historial.
       operationId: obtenerDetalleSolicitud
       security:
         - bearerAuth: []
@@ -83,100 +194,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
-
-  /api/solicitudes/estado:
-    get:
-      tags: [Solicitudes]
-      summary: Consultar solicitudes por estado
-      operationId: consultarSolicitudesPorEstado
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: estado
-          in: query
-          required: true
-          description: Estado actual de la solicitud
-          schema:
-            $ref: '#/components/schemas/EstadoSolicitud'
-      responses:
-        '200':
-          description: Solicitudes encontradas
+          description: Recurso no encontrado
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SolicitudResumenResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /api/solicitudes/tipo:
-    get:
-      tags: [Solicitudes]
-      summary: Consultar solicitudes por tipo
-      operationId: consultarSolicitudesPorTipo
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: tipo
-          in: query
-          required: true
-          description: Tipo de solicitud
-          schema:
-            $ref: '#/components/schemas/TipoSolicitud'
-      responses:
-        '200':
-          description: Solicitudes encontradas
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operacion no autorizada para el rol actual
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SolicitudResumenResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /api/solicitudes/responsable:
-    get:
-      tags: [Solicitudes]
-      summary: Consultar solicitudes por responsable
-      operationId: consultarSolicitudesPorResponsable
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: identificacionResponsable
-          in: query
-          required: true
-          description: Identificacion del responsable asociado
-          schema:
-            type: string
-            minLength: 5
-            maxLength: 20
-      responses:
-        '200':
-          description: Solicitudes encontradas
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SolicitudResumenResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/clasificacion:
     patch:
       tags: [Solicitudes]
       summary: Clasificar solicitud
+      description: >
+        Clasifica una solicitud existente, definiendo su tipo y registrando
+        la observacion correspondiente del usuario que realiza la accion.
       operationId: clasificarSolicitud
       security:
         - bearerAuth: []
@@ -196,18 +244,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/prioridad:
     patch:
       tags: [Solicitudes]
       summary: Priorizar solicitud
+      description: >
+        Asigna o actualiza el nivel de prioridad de una solicitud y guarda la
+        justificacion asociada a la decision tomada.
       operationId: priorizarSolicitud
       security:
         - bearerAuth: []
@@ -227,18 +300,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/asignacion:
     patch:
       tags: [Solicitudes]
       summary: Asignar responsable a solicitud
+      description: >
+        Asocia un responsable a la solicitud y registra la observacion de la
+        asignacion realizada por el coordinador.
       operationId: asignarResponsableSolicitud
       security:
         - bearerAuth: []
@@ -258,13 +356,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/estado:
     patch:
@@ -292,18 +412,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/cierre:
     patch:
       tags: [Solicitudes]
       summary: Cerrar solicitud
+      description: >
+        Cierra formalmente una solicitud y almacena la observacion final
+        registrada por el usuario que ejecuta el cierre.
       operationId: cerrarSolicitud
       security:
         - bearerAuth: []
@@ -323,18 +468,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudDetalleResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Solicitud invalida o error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/solicitudes/{codigo}/historial:
     get:
       tags: [Solicitudes]
       summary: Consultar historial de una solicitud
+      description: >
+        Recupera la secuencia de eventos registrados sobre una solicitud,
+        incluyendo estados, acciones, observaciones y responsables.
       operationId: consultarHistorialSolicitud
       security:
         - bearerAuth: []
@@ -350,9 +520,29 @@ paths:
                 items:
                   $ref: '#/components/schemas/EventoHistorialResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: No autenticado o token invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Recurso no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operacion no autorizada para el rol actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
@@ -370,36 +560,46 @@ components:
       schema:
         type: integer
         format: int64
+        example: 1001
     IdentificacionPath:
       name: identificacion
       in: path
       required: true
       description: Identificacion del usuario
       schema:
-        type: string
-        minLength: 5
-        maxLength: 20
+        $ref: '#/components/schemas/Identificacion'
 
   schemas:
+    Identificacion:
+      type: string
+      minLength: 5
+      maxLength: 20
+      example: "1090123456"
+
     Rol:
       type: string
       enum: [ESTUDIANTE, ADMINISTRATIVO, COORDINADOR, DOCENTE]
+      example: ESTUDIANTE
 
     EstadoSolicitud:
       type: string
       enum: [REGISTRADA, CLASIFICADA, EN_ATENCION, ATENDIDA, CERRADA]
+      example: REGISTRADA
 
     NivelPrioridad:
       type: string
       enum: [ALTA, MEDIA, BAJA]
+      example: ALTA
 
     CanalOrigen:
       type: string
       enum: [CSU, SAC, EMAIL, PRESENCIAL, TELEFONO, PORTAL_WEB, CORREO_CERTIFICADO]
+      example: PORTAL_WEB
 
     TipoAccion:
       type: string
       enum: [CREACION, ASIGNACION, CAMBIO_ESTADO, CIERRE, CLASIFICADA]
+      example: CREACION
 
     TipoSolicitud:
       type: string
@@ -409,6 +609,7 @@ components:
         - CANCELACION_ASIGNATURA
         - SOLICITUD_CUPOS
         - CONSULTA_ACADEMICA
+      example: HOMOLOGACION
 
     CrearUsuarioRequest:
       type: object
@@ -420,9 +621,7 @@ components:
           minLength: 3
           maxLength: 150
         identificacion:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         correo:
           type: string
           format: email
@@ -431,6 +630,12 @@ components:
           type: boolean
         rol:
           $ref: '#/components/schemas/Rol'
+      example:
+        nombre: "Laura Fernanda Gomez"
+        identificacion: "1090123456"
+        correo: "laura.gomez@uqvirtual.edu.co"
+        activo: true
+        rol: ESTUDIANTE
 
     CrearSolicitudRequest:
       type: object
@@ -446,9 +651,12 @@ components:
         canalOrigen:
           $ref: '#/components/schemas/CanalOrigen'
         identificacionSolicitante:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
+      example:
+        tipoSolicitud: HOMOLOGACION
+        descripcion: "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion."
+        canalOrigen: PORTAL_WEB
+        identificacionSolicitante: "1090123456"
 
     ClasificarSolicitudRequest:
       type: object
@@ -458,13 +666,15 @@ components:
         tipoSolicitud:
           $ref: '#/components/schemas/TipoSolicitud'
         identificacionUsuario:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         observacion:
           type: string
           minLength: 5
           maxLength: 500
+      example:
+        tipoSolicitud: HOMOLOGACION
+        identificacionUsuario: "80012345"
+        observacion: "La solicitud fue validada y clasificada segun el contenido adjunto."
 
     AsignarResponsableRequest:
       type: object
@@ -472,17 +682,17 @@ components:
       required: [identificacionCoordinador, identificacionResponsable, observacion]
       properties:
         identificacionCoordinador:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         identificacionResponsable:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         observacion:
           type: string
           minLength: 5
           maxLength: 500
+      example:
+        identificacionCoordinador: "80012345"
+        identificacionResponsable: "90067890"
+        observacion: "Se asigna el caso al docente responsable del area."
 
     CambiarEstadoRequest:
       type: object
@@ -493,13 +703,15 @@ components:
           type: string
           enum: [ATENDIDA]
         identificacionUsuario:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         observacion:
           type: string
           minLength: 5
           maxLength: 500
+      example:
+        nuevoEstado: ATENDIDA
+        identificacionUsuario: "90067890"
+        observacion: "La solicitud fue gestionada y se envio respuesta al estudiante."
 
     CerrarSolicitudRequest:
       type: object
@@ -507,13 +719,14 @@ components:
       required: [identificacionUsuario, observacionCierre]
       properties:
         identificacionUsuario:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         observacionCierre:
           type: string
           minLength: 5
           maxLength: 500
+      example:
+        identificacionUsuario: "80012345"
+        observacionCierre: "Se cierra la solicitud luego de confirmar la solucion con el estudiante."
 
     PriorizarSolicitudRequest:
       type: object
@@ -521,15 +734,17 @@ components:
       required: [identificacionUsuario, nivelPrioridad, justificacion]
       properties:
         identificacionUsuario:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         nivelPrioridad:
           $ref: '#/components/schemas/NivelPrioridad'
         justificacion:
           type: string
           minLength: 5
           maxLength: 500
+      example:
+        identificacionUsuario: "80012345"
+        nivelPrioridad: ALTA
+        justificacion: "El tramite debe resolverse antes del cierre de inscripciones."
 
     UsuarioResumenDTO:
       type: object
@@ -540,9 +755,7 @@ components:
           type: string
           maxLength: 150
         identificacion:
-          type: string
-          minLength: 5
-          maxLength: 20
+          $ref: '#/components/schemas/Identificacion'
         correo:
           type: string
           maxLength: 200
@@ -551,6 +764,12 @@ components:
         rol:
           type: string
           maxLength: 50
+      example:
+        nombre: "Laura Fernanda Gomez"
+        identificacion: "1090123456"
+        correo: "laura.gomez@uqvirtual.edu.co"
+        activo: true
+        rol: ESTUDIANTE
 
     TipoSolicitudDTO:
       type: object
@@ -562,6 +781,9 @@ components:
         nombre:
           type: string
           maxLength: 100
+      example:
+        codigo: HOMOLOGACION
+        nombre: "Homologacion"
 
     PrioridadDTO:
       type: object
@@ -573,6 +795,9 @@ components:
         descripcion:
           type: string
           maxLength: 500
+      example:
+        nivel: ALTA
+        descripcion: "Prioridad alta por cercania al cierre academico."
 
     EventoHistorialResponse:
       type: object
@@ -591,6 +816,17 @@ components:
           maxLength: 500
         responsable:
           $ref: '#/components/schemas/UsuarioResumenDTO'
+      example:
+        fechaHora: "2026-04-06T10:15:30Z"
+        estado: REGISTRADA
+        accion: CREACION
+        observacion: "Solicitud creada por el estudiante desde el portal web."
+        responsable:
+          nombre: "Laura Fernanda Gomez"
+          identificacion: "1090123456"
+          correo: "laura.gomez@uqvirtual.edu.co"
+          activo: true
+          rol: ESTUDIANTE
 
     SolicitudResumenResponse:
       type: object
@@ -615,6 +851,23 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PrioridadDTO'
             - type: 'null'
+      example:
+        codigo: 1001
+        tipoSolicitud:
+          codigo: HOMOLOGACION
+          nombre: "Homologacion"
+        canalOrigen: PORTAL_WEB
+        estado: EN_ATENCION
+        fechaHoraRegistro: "2026-04-06T10:15:30Z"
+        usuarioSolicitante:
+          nombre: "Laura Fernanda Gomez"
+          identificacion: "1090123456"
+          correo: "laura.gomez@uqvirtual.edu.co"
+          activo: true
+          rol: ESTUDIANTE
+        prioridad:
+          nivel: ALTA
+          descripcion: "Prioridad alta por cercania al cierre academico."
 
     SolicitudDetalleResponse:
       type: object
@@ -659,6 +912,46 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EventoHistorialResponse'
+      example:
+        codigo: 1001
+        tipoSolicitud:
+          codigo: HOMOLOGACION
+          nombre: "Homologacion"
+        descripcion: "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion."
+        canalOrigen: PORTAL_WEB
+        fechaHoraRegistro: "2026-04-06T10:15:30Z"
+        fechaCierre: null
+        estado: EN_ATENCION
+        usuarioSolicitante:
+          nombre: "Laura Fernanda Gomez"
+          identificacion: "1090123456"
+          correo: "laura.gomez@uqvirtual.edu.co"
+          activo: true
+          rol: ESTUDIANTE
+        prioridad:
+          nivel: ALTA
+          descripcion: "Prioridad alta por cercania al cierre academico."
+        historial:
+          - fechaHora: "2026-04-06T10:15:30Z"
+            estado: REGISTRADA
+            accion: CREACION
+            observacion: "Solicitud creada por el estudiante desde el portal web."
+            responsable:
+              nombre: "Laura Fernanda Gomez"
+              identificacion: "1090123456"
+              correo: "laura.gomez@uqvirtual.edu.co"
+              activo: true
+              rol: ESTUDIANTE
+          - fechaHora: "2026-04-06T11:00:00Z"
+            estado: CLASIFICADA
+            accion: CLASIFICADA
+            observacion: "Solicitud clasificada por coordinacion."
+            responsable:
+              nombre: "Carlos Andres Ruiz"
+              identificacion: "80012345"
+              correo: "carlos.ruiz@uniquindio.edu.co"
+              activo: true
+              rol: COORDINADOR
 
     ErrorResponse:
       type: object
@@ -685,32 +978,11 @@ components:
               additionalProperties:
                 type: string
             - type: 'null'
-
-  responses:
-    BadRequest:
-      description: Solicitud invalida o error de validacion
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-
-    Unauthorized:
-      description: No autenticado o token invalido
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-
-    Forbidden:
-      description: Operacion no autorizada para el rol actual
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-
-    NotFound:
-      description: Recurso no encontrado
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+      example:
+        timestamp: "2026-04-06T11:25:00Z"
+        status: 400
+        error: "Bad Request"
+        message: "La solicitud contiene datos invalidos."
+        path: "/api/solicitudes"
+        validationErrors:
+          descripcion: "La descripcion debe tener al menos 10 caracteres."
