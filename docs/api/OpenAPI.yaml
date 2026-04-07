@@ -560,7 +560,7 @@ components:
       schema:
         type: integer
         format: int64
-        example: 1001
+        examples: [1001]
     IdentificacionPath:
       name: identificacion
       in: path
@@ -574,42 +574,37 @@ components:
       type: string
       minLength: 5
       maxLength: 20
-      example: "1090123456"
+      examples: ["1090123456"]
 
     Rol:
       type: string
       enum: [ESTUDIANTE, ADMINISTRATIVO, COORDINADOR, DOCENTE]
-      example: ESTUDIANTE
+      examples: [ESTUDIANTE, ADMINISTRATIVO, COORDINADOR, DOCENTE]
 
     EstadoSolicitud:
       type: string
       enum: [REGISTRADA, CLASIFICADA, EN_ATENCION, ATENDIDA, CERRADA]
-      example: REGISTRADA
+      examples: [REGISTRADA, CLASIFICADA, EN_ATENCION, ATENDIDA, CERRADA]
 
     NivelPrioridad:
       type: string
       enum: [ALTA, MEDIA, BAJA]
-      example: ALTA
+      examples: [ALTA, MEDIA, BAJA]
 
     CanalOrigen:
       type: string
       enum: [CSU, SAC, EMAIL, PRESENCIAL, TELEFONO, PORTAL_WEB, CORREO_CERTIFICADO]
-      example: PORTAL_WEB
+      examples: [CSU, SAC, EMAIL, PRESENCIAL, TELEFONO, PORTAL_WEB, CORREO_CERTIFICADO]
 
     TipoAccion:
       type: string
       enum: [CREACION, ASIGNACION, CAMBIO_ESTADO, CIERRE, CLASIFICADA]
-      example: CREACION
+      examples: [CREACION, ASIGNACION, CAMBIO_ESTADO, CIERRE, CLASIFICADA]
 
     TipoSolicitud:
       type: string
-      enum:
-        - REGISTRO_ASIGNATURA
-        - HOMOLOGACION
-        - CANCELACION_ASIGNATURA
-        - SOLICITUD_CUPOS
-        - CONSULTA_ACADEMICA
-      example: HOMOLOGACION
+      enum: ["REGISTRO_ASIGNATURA","HOMOLOGACION","CANCELACION_ASIGNATURA","SOLICITUD_CUPOS","CONSULTA_ACADEMICA"]
+      examples: ["REGISTRO_ASIGNATURA","HOMOLOGACION","CANCELACION_ASIGNATURA","SOLICITUD_CUPOS","CONSULTA_ACADEMICA"]
 
     CrearUsuarioRequest:
       type: object
@@ -630,12 +625,7 @@ components:
           type: boolean
         rol:
           $ref: '#/components/schemas/Rol'
-      example:
-        nombre: "Laura Fernanda Gomez"
-        identificacion: "1090123456"
-        correo: "laura.gomez@uqvirtual.edu.co"
-        activo: true
-        rol: ESTUDIANTE
+      examples: [{nombre: "Laura Fernanda Gomez", identificacion: "1090123456", correo: "laura.gomez@uqvirtual.edu.co", activo: true, rol: "ESTUDIANTE"}, {nombre: "carlos alonso barahona alvarz", identificacion:"1094896340", correo: "carlosa.barahonaa@uqvirutual.edu.co", activo: true, rol: "ESTUDIANTE"}]
 
     CrearSolicitudRequest:
       type: object
@@ -652,11 +642,9 @@ components:
           $ref: '#/components/schemas/CanalOrigen'
         identificacionSolicitante:
           $ref: '#/components/schemas/Identificacion'
-      example:
-        tipoSolicitud: HOMOLOGACION
-        descripcion: "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion."
-        canalOrigen: PORTAL_WEB
-        identificacionSolicitante: "1090123456"
+      examples: [{tipoSolicitud: HOMOLOGACION ,
+                descripcion: "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion.", 
+                canalOrigen: PORTAL_WEB ,identificacionSolicitante: "1090123456"}]
 
     ClasificarSolicitudRequest:
       type: object
@@ -671,10 +659,10 @@ components:
           type: string
           minLength: 5
           maxLength: 500
-      example:
-        tipoSolicitud: HOMOLOGACION
-        identificacionUsuario: "80012345"
-        observacion: "La solicitud fue validada y clasificada segun el contenido adjunto."
+      examples:
+        [{tipoSolicitud: HOMOLOGACION, 
+        identificacionUsuario: "80012345", 
+        observacion: "La solicitud fue validada y clasificada segun el contenido adjunto."}, ]
 
     AsignarResponsableRequest:
       type: object
@@ -689,10 +677,10 @@ components:
           type: string
           minLength: 5
           maxLength: 500
-      example:
-        identificacionCoordinador: "80012345"
-        identificacionResponsable: "90067890"
-        observacion: "Se asigna el caso al docente responsable del area."
+      examples:
+        [{"identificacionCoordinador": "80012345",
+        "identificacionResponsable": "90067890",
+        "observacion": "Se asigna el caso al docente responsable del area."}]
 
     CambiarEstadoRequest:
       type: object
@@ -708,10 +696,10 @@ components:
           type: string
           minLength: 5
           maxLength: 500
-      example:
-        nuevoEstado: ATENDIDA
-        identificacionUsuario: "90067890"
-        observacion: "La solicitud fue gestionada y se envio respuesta al estudiante."
+      examples:
+        [{nuevoEstado: ATENDIDA ,
+        identificacionUsuario: "90067890", 
+        observacion: "La solicitud fue gestionada y se envio respuesta al estudiante."}]
 
     CerrarSolicitudRequest:
       type: object
@@ -724,9 +712,9 @@ components:
           type: string
           minLength: 5
           maxLength: 500
-      example:
-        identificacionUsuario: "80012345"
-        observacionCierre: "Se cierra la solicitud luego de confirmar la solucion con el estudiante."
+      examples:
+        [{"identificacionUsuario": "80012345",
+        "observacionCierre": "Se cierra la solicitud luego de confirmar la solucion con el estudiante."}]
 
     PriorizarSolicitudRequest:
       type: object
@@ -741,10 +729,10 @@ components:
           type: string
           minLength: 5
           maxLength: 500
-      example:
-        identificacionUsuario: "80012345"
-        nivelPrioridad: ALTA
-        justificacion: "El tramite debe resolverse antes del cierre de inscripciones."
+      examples:
+        [{identificacionUsuario: "80012345", 
+        nivelPrioridad: ALTA, 
+        justificacion: "El tramite debe resolverse antes del cierre de inscripciones."}]
 
     UsuarioResumenDTO:
       type: object
@@ -764,12 +752,7 @@ components:
         rol:
           type: string
           maxLength: 50
-      example:
-        nombre: "Laura Fernanda Gomez"
-        identificacion: "1090123456"
-        correo: "laura.gomez@uqvirtual.edu.co"
-        activo: true
-        rol: ESTUDIANTE
+      examples: [{"nombre":"Laura Fernanda Gomez","identificacion":"1090123456","correo":"laura.gomez@uqvirtual.edu.co","activo":true,"rol":"ESTUDIANTE"}]
 
     TipoSolicitudDTO:
       type: object
@@ -781,9 +764,8 @@ components:
         nombre:
           type: string
           maxLength: 100
-      example:
-        codigo: HOMOLOGACION
-        nombre: "Homologacion"
+      examples:
+        [{"codigo":"HOMOLOGACION","nombre":"Homologacion"}]
 
     PrioridadDTO:
       type: object
@@ -795,9 +777,9 @@ components:
         descripcion:
           type: string
           maxLength: 500
-      example:
-        nivel: ALTA
-        descripcion: "Prioridad alta por cercania al cierre academico."
+      examples:
+        [{"nivel": "ALTA",
+          "descripcion": "Prioridad alta por cercania al cierre academico."}]
 
     EventoHistorialResponse:
       type: object
@@ -816,17 +798,16 @@ components:
           maxLength: 500
         responsable:
           $ref: '#/components/schemas/UsuarioResumenDTO'
-      example:
-        fechaHora: "2026-04-06T10:15:30Z"
-        estado: REGISTRADA
-        accion: CREACION
-        observacion: "Solicitud creada por el estudiante desde el portal web."
-        responsable:
-          nombre: "Laura Fernanda Gomez"
-          identificacion: "1090123456"
-          correo: "laura.gomez@uqvirtual.edu.co"
-          activo: true
-          rol: ESTUDIANTE
+      exampls:
+        [{"fechaHora": "2026-04-06T10:15:30Z",
+        "estado": "REGISTRADA",
+        "accion": "CREACION",
+        "observacion": "Solicitud creada por el estudiante desde el portal web.",
+        "responsable": {"nombre":"Laura Fernanda Gomez",
+                        "identificacion":"1090123456",
+                        "correo":"laura.gomez@uqvirtual.edu.co",
+                        "activo":true,
+                        "rol":"ESTUDIANTE"}}]
 
     SolicitudResumenResponse:
       type: object
@@ -851,23 +832,20 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PrioridadDTO'
             - type: 'null'
-      example:
-        codigo: 1001
-        tipoSolicitud:
-          codigo: HOMOLOGACION
-          nombre: "Homologacion"
-        canalOrigen: PORTAL_WEB
-        estado: EN_ATENCION
-        fechaHoraRegistro: "2026-04-06T10:15:30Z"
-        usuarioSolicitante:
-          nombre: "Laura Fernanda Gomez"
-          identificacion: "1090123456"
-          correo: "laura.gomez@uqvirtual.edu.co"
-          activo: true
-          rol: ESTUDIANTE
-        prioridad:
-          nivel: ALTA
-          descripcion: "Prioridad alta por cercania al cierre academico."
+      examples:
+        [{"codigo": 1001,
+        "tipoSolicitud": {"codigo":"HOMOLOGACION",
+                          "nombre":"Homologacion"},
+        "canalOrigen": "PORTAL_WEB",
+        "estado": "EN_ATENCION",
+        "fechaHoraRegistro": "2026-04-06T10:15:30Z",
+        "usuarioSolicitante": {"nombre":"Laura Fernanda Gomez",
+                              "identificacion":"1090123456",
+                              "correo":"laura.gomez@uqvirtual.edu.co",
+                              "activo":true,"rol":"ESTUDIANTE"},
+        "prioridad":
+          {"nivel":"ALTA",
+          "descripcion":"Prioridad alta por cercania al cierre academico."}}]
 
     SolicitudDetalleResponse:
       type: object
@@ -912,46 +890,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EventoHistorialResponse'
-      example:
-        codigo: 1001
-        tipoSolicitud:
-          codigo: HOMOLOGACION
-          nombre: "Homologacion"
-        descripcion: "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion."
-        canalOrigen: PORTAL_WEB
-        fechaHoraRegistro: "2026-04-06T10:15:30Z"
-        fechaCierre: null
-        estado: EN_ATENCION
-        usuarioSolicitante:
-          nombre: "Laura Fernanda Gomez"
-          identificacion: "1090123456"
-          correo: "laura.gomez@uqvirtual.edu.co"
-          activo: true
-          rol: ESTUDIANTE
-        prioridad:
-          nivel: ALTA
-          descripcion: "Prioridad alta por cercania al cierre academico."
-        historial:
-          - fechaHora: "2026-04-06T10:15:30Z"
-            estado: REGISTRADA
-            accion: CREACION
-            observacion: "Solicitud creada por el estudiante desde el portal web."
-            responsable:
-              nombre: "Laura Fernanda Gomez"
-              identificacion: "1090123456"
-              correo: "laura.gomez@uqvirtual.edu.co"
-              activo: true
-              rol: ESTUDIANTE
-          - fechaHora: "2026-04-06T11:00:00Z"
-            estado: CLASIFICADA
-            accion: CLASIFICADA
-            observacion: "Solicitud clasificada por coordinacion."
-            responsable:
-              nombre: "Carlos Andres Ruiz"
-              identificacion: "80012345"
-              correo: "carlos.ruiz@uniquindio.edu.co"
-              activo: true
-              rol: COORDINADOR
+      examples:
+        [{"codigo":1001,"tipoSolicitud":
+          {"codigo":"HOMOLOGACION",
+          "nombre":"Homologacion"},
+          "descripcion": "Solicito la homologacion de la asignatura Calculo Integral cursada en otra institucion.", 
+          "canalOrigen": "PORTAL_WEB",
+          "fechaHoraRegistro": "2026-04-06T10:15:30Z", 
+          "fechaCierre": null,
+          "estado": "EN_ATENCION",
+          "usuarioSolicitante": {"nombre": "Laura Fernanda Gomez",
+                                "identificacion":"1090123456",
+                                "correo":"laura.gomez@uqvirtual.edu.co",
+                                "activo":true,
+                                "rol":"ESTUDIANTE"},
+          "prioridad": {"nivel":"ALTA",
+                        "descripcion":"Prioridad alta por cercania al cierre academico."},
+          "historial": [{"fechaHora":"2026-04-06T10:15:30Z",
+                        "estado":"REGISTRADA",
+                        "accion":"CREACION",
+                        "observacion":"Solicitud creada por el estudiante desde el portal web."
+                        ,"responsable":{"nombre":"Laura Fernanda Gomez",
+                                        "identificacion":"1090123456",
+                                        "correo":"laura.gomez@uqvirtual.edu.co",
+                                        "activo":true,
+                                        "rol":"ESTUDIANTE"}},{"fechaHora":"2026-04-06T11:00:00Z",
+                                        "estado":"CLASIFICADA",
+                                        "accion":"CLASIFICADA",
+                                        "observacion":"Solicitud clasificada por coordinacion.",
+                                        "responsable":{"nombre":"Carlos Andres Ruiz",
+                                        "identificacion":"80012345",
+                                        "correo":"carlos.ruiz@uniquindio.edu.co","activo":true,"rol":"COORDINADOR"}}]}]
 
     ErrorResponse:
       type: object
@@ -978,11 +947,11 @@ components:
               additionalProperties:
                 type: string
             - type: 'null'
-      example:
-        timestamp: "2026-04-06T11:25:00Z"
-        status: 400
-        error: "Bad Request"
-        message: "La solicitud contiene datos invalidos."
-        path: "/api/solicitudes"
-        validationErrors:
-          descripcion: "La descripcion debe tener al menos 10 caracteres."
+      examples:
+        [{"timestamp": "2026-04-06T11:25:00Z",
+        "status": 400,
+        "error": "Bad Request",
+        "message": "La solicitud contiene datos invalidos.",
+        "path": "/api/solicitudes",
+        "validationErrors":
+          {"descripcion":"La descripcion debe tener al menos 10 caracteres."}}]
