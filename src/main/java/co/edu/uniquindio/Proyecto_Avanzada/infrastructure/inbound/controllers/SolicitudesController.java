@@ -49,23 +49,23 @@ public class SolicitudesController {
 
     @GetMapping
     public ResponseEntity<List<SolicitudResumenResponse>> consultarSolicitudes(
-            @RequestParam(required = false) EstadoSolicitud estado,
-            @RequestParam(required = false) TipoSolicitud tipo,
-            @RequestParam(required = false) String identificacionResponsable) {
+            @RequestParam(name="estado", required = false) EstadoSolicitud estado,
+            @RequestParam(name="tipo", required = false) TipoSolicitud tipo,
+            @RequestParam(name="identificacionResponsable", required = false) String identificacionResponsable) {
 
         List<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(estado, tipo, identificacionResponsable);
         return ResponseEntity.ok(SolicitudResponseMapper.toResumenResponseList(solicitudes));
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<SolicitudDetalleResponse> obtenerDetalleSolicitud(@PathVariable Long codigo) {
+    public ResponseEntity<SolicitudDetalleResponse> obtenerDetalleSolicitud(@PathVariable("codigo") Long codigo) {
         Solicitud solicitud = obtenerDetalleSolicitudUseCase.ejecutar(codigo);
         return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/clasificacion")
     public ResponseEntity<SolicitudDetalleResponse> clasificarSolicitud(
-            @PathVariable Long codigo,
+            @PathVariable("codigo") Long codigo,
             @Valid @RequestBody ClasificarSolicitudRequest request) throws SolicitudException {
 
         Solicitud solicitud = clasificarSolicitudUseCase.ejecutar(
@@ -78,7 +78,7 @@ public class SolicitudesController {
 
     @PatchMapping("/{codigo}/prioridad")
     public ResponseEntity<SolicitudDetalleResponse> priorizarSolicitud(
-            @PathVariable Long codigo,
+            @PathVariable("codigo") Long codigo,
             @Valid @RequestBody PriorizarSolicitudRequest request) throws SolicitudException {
 
         Solicitud solicitud = priorizarSolicitudUseCase.ejecutar(
@@ -91,7 +91,7 @@ public class SolicitudesController {
 
     @PatchMapping("/{codigo}/asignacion")
     public ResponseEntity<SolicitudDetalleResponse> asignarResponsableSolicitud(
-            @PathVariable Long codigo,
+            @PathVariable("codigo") Long codigo,
             @Valid @RequestBody AsignarResponsableRequest request) throws SolicitudException {
 
         Solicitud solicitud = asignarResponsableUseCase.ejecutar(
@@ -104,7 +104,7 @@ public class SolicitudesController {
 
     @PatchMapping("/{codigo}/estado")
     public ResponseEntity<SolicitudDetalleResponse> cambiarEstadoSolicitud(
-            @PathVariable Long codigo,
+            @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CambiarEstadoRequest request) throws SolicitudException {
 
         Solicitud solicitud = cambiarEstadoUseCase.ejecutar(
@@ -117,7 +117,7 @@ public class SolicitudesController {
 
     @PatchMapping("/{codigo}/cierre")
     public ResponseEntity<SolicitudDetalleResponse> cerrarSolicitud(
-            @PathVariable Long codigo,
+            @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CerrarSolicitudRequest request) throws SolicitudException {
 
         Solicitud solicitud = cerrarSolicitudUseCase.ejecutar(
@@ -128,7 +128,7 @@ public class SolicitudesController {
     }
 
     @GetMapping("/{codigo}/historial")
-    public ResponseEntity<List<EventoHistorialResponse>> consultarHistorialSolicitud(@PathVariable Long codigo) {
+    public ResponseEntity<List<EventoHistorialResponse>> consultarHistorialSolicitud(@PathVariable("codigo") Long codigo) {
         Solicitud solicitud = obtenerDetalleSolicitudUseCase.ejecutar(codigo);
         return ResponseEntity.ok(SolicitudResponseMapper.toHistorialResponseList(solicitud.getHistorial()));
     }

@@ -77,10 +77,12 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
+        // TODO: remove debug message before production
+        String debugMsg = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         ErrorResponse body = ErrorResponseMapper.from(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "Error interno del servidor",
+                debugMsg,
                 request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);

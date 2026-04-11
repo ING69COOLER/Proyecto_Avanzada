@@ -10,6 +10,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Repository;
 
@@ -30,15 +31,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RepositorioSolicitud implements IRepositorioSolicitud {
 
-        private List<Solicitud> solicitudes;
+    private List<Solicitud> solicitudes;
+    private final AtomicLong secuencia = new AtomicLong(1);
 
     /**
-     * Constructor privado (patron Singleton).
-     * Inicializa la lista de solicitudes en memoria.
+     * Constructor. Inicializa la lista de solicitudes en memoria.
      */
     public RepositorioSolicitud() {
         this.solicitudes = new ArrayList<>();
-        System.out.println("[REPO] RepositorioSolicitud inicializado (Singleton)");
+        System.out.println("[REPO] RepositorioSolicitud inicializado");
     }
 
     /**
@@ -59,10 +60,27 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      */
     @Override
     public void guardarSolicitud(Solicitud solicitud) {
-        if (solicitud != null) {
+        if (solicitud == null) return;
+        // Si no tiene ID, asignar uno nuevo (insertar)
+        if (solicitud.getCodigo() == null) {
+            solicitud.setCodigo(secuencia.getAndIncrement());
             solicitudes.add(solicitud);
-            System.out.println("[REPO] Solicitud guardada: "
-                    + solicitud.getTipo() + " - " + solicitud.getDescripcion());
+            System.out.println("[REPO] Solicitud creada con ID: " + solicitud.getCodigo());
+        } else {
+            // Si tiene ID, actualizar (upsert)
+            boolean actualizada = false;
+            for (int i = 0; i < solicitudes.size(); i++) {
+                if (solicitudes.get(i).getCodigo().equals(solicitud.getCodigo())) {
+                    solicitudes.set(i, solicitud);
+                    actualizada = true;
+                    System.out.println("[REPO] Solicitud actualizada: ID " + solicitud.getCodigo());
+                    break;
+                }
+            }
+            if (!actualizada) {
+                solicitudes.add(solicitud);
+                System.out.println("[REPO] Solicitud insertada con ID existente: " + solicitud.getCodigo());
+            }
         }
     }
 
