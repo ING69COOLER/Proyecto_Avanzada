@@ -1,33 +1,29 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.command.AsignarResponsableCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.command.CambiarEstadoCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.AtencionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 
 @Service
+@RequiredArgsConstructor
 public class AtencionSolicitudesApplicationService {
 
     private final AtencionSolicitudesService dominio;
     private final IRepositorioSolicitud repositorio;
     private final IRepositorioUsuario repositorioUsuario;
 
-    public AtencionSolicitudesApplicationService() {
-        this.dominio = new AtencionSolicitudesService();
-        this.repositorio = RepositorioSolicitud.getInstancia();
-        this.repositorioUsuario = RepositorioUsuario.getInstancia();
-    }
+    
 
     public Solicitud asignarResponsable(Usuario user, Solicitud solicitud, String descripcion) throws SolicitudException {
         Solicitud solicitudAsignada = dominio.asignarResponsable(user, solicitud, descripcion); // actualmente devuelve void en el dominio, pero mantendremos dans

@@ -1,17 +1,16 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.command.CrearSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.RegistroSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.RegistroSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
@@ -20,17 +19,14 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class RegistroSolicitudesApplicationService {
 
     private final RegistroSolicitudesService dominio;
     private final IRepositorioSolicitud repositorio;
     private final IRepositorioUsuario repositorioUsuario;
 
-    public RegistroSolicitudesApplicationService() {
-        this.dominio = new RegistroSolicitudesService();
-        this.repositorio = RepositorioSolicitud.getInstancia();
-        this.repositorioUsuario = RepositorioUsuario.getInstancia();
-    }
+    
 
     public Solicitud registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
                                     String descripcion, CanalOrigen canalOrigen){

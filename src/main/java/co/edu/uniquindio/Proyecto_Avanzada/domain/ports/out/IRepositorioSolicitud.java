@@ -1,4 +1,4 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;

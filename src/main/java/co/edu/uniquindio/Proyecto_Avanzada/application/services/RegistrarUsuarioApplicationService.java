@@ -1,19 +1,20 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.RegistrarUsuarioService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.RegistrarUsuarioService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 
+import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class RegistrarUsuarioApplicationService {
 
-    private RegistrarUsuarioService dominio;
-    private IRepositorioUsuario repositorio;
+    private final RegistrarUsuarioService dominio;
+    private final IRepositorioUsuario repositorio;
 
-    public RegistrarUsuarioApplicationService() {
-        this.dominio = new RegistrarUsuarioService();
-        this.repositorio = RepositorioUsuario.getInstancia();
-    }
+    
 
     public Usuario registrarUsuario(Usuario usuario) {
 

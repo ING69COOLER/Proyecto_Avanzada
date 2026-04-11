@@ -1,4 +1,6 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration;
+package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.external;
+
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.*;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -25,7 +27,8 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 public class ModeloLenguajeGemini implements IModelo {
 
-    private final String apiKey = "AIzaSyBIK58aaCmT5_AMfjuPlSdXX8k_PJdzrYQ";
+    @org.springframework.beans.factory.annotation.Value("${gemini.api.key}")
+    private String apiKey;
 
     @Override
     public String generarResumenIA(String resumen) {

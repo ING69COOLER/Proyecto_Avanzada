@@ -3,33 +3,29 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudResumenResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ConsultaSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 @Service
+@RequiredArgsConstructor
 public class ConsultaSolicitudesApplicationService {
 
     private final IRepositorioSolicitud repositorio;
     private final IRepositorioUsuario repositorioUsuario;
     private final ConsultaSolicitudesService dominio;
 
-    public ConsultaSolicitudesApplicationService() {
-        this.repositorio = RepositorioSolicitud.getInstancia();
-        this.repositorioUsuario = RepositorioUsuario.getInstancia();
-        this.dominio = new ConsultaSolicitudesService();
-    }
+    
 
     public List<Solicitud> consultarPorEstado(EstadoSolicitud estado) {
         if (estado == null) {

@@ -8,9 +8,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.AtencionSolicitudesService;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.AtencionSolicitudesService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.PriorizacionService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ResumenSolicitudService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;

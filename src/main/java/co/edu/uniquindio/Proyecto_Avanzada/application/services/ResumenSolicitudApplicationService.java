@@ -4,24 +4,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.ResumenSolicitudService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IModeloLenguaje;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ResumenSolicitudService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 
 @Service
+@RequiredArgsConstructor
 public class ResumenSolicitudApplicationService {
 
-    private ResumenSolicitudService dominio;
-    private IRepositorioSolicitud repositorio;
-
-    public ResumenSolicitudApplicationService(IModeloLenguaje modeloLenguaje) {
-        this.dominio = new ResumenSolicitudService(modeloLenguaje);
-        this.repositorio = RepositorioSolicitud.getInstancia();
-    }
+    private final ResumenSolicitudService dominio;
+    private final IRepositorioSolicitud repositorio;
 
     public String generarResumenSolicitud(Solicitud solicitud) throws SolicitudException {
         if (solicitud == null) {

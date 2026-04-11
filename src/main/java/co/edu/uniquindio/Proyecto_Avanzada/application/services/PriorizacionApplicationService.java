@@ -1,32 +1,28 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.command.PriorizarSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices.PriorizacionService;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.PriorizacionService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation.RepositorioUsuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 
 @Service
+@RequiredArgsConstructor
 public class PriorizacionApplicationService {
 
     private final PriorizacionService dominio;
     private final IRepositorioSolicitud repositorio;
     private final IRepositorioUsuario repositorioUsuario;
 
-    public PriorizacionApplicationService() {
-        this.dominio = new PriorizacionService();
-        this.repositorio = RepositorioSolicitud.getInstancia();
-        this.repositorioUsuario = RepositorioUsuario.getInstancia();
-    }
+    
 
     public Solicitud priorizarSolicitud(Usuario usuario, String justificacion,
             Solicitud solicitud, NivelPrioridad prioridad) throws SolicitudException {

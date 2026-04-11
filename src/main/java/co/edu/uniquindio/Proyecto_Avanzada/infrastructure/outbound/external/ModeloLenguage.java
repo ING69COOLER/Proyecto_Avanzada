@@ -1,4 +1,6 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration;
+package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.external;
+
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.*;
 
 import java.util.Optional;
 

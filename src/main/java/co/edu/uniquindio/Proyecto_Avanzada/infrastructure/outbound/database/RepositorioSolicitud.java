@@ -1,8 +1,8 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation;
+package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 /**
  * RF-01 / RF-07: Implementacion del repositorio de solicitudes academicas.
@@ -27,17 +27,16 @@ import org.springframework.stereotype.Service;
  * de forma independiente en entornos sin persistencia.
  */
 
-@Service
+@Repository
 public class RepositorioSolicitud implements IRepositorioSolicitud {
 
-    private static RepositorioSolicitud instancia;
-    private List<Solicitud> solicitudes;
+        private List<Solicitud> solicitudes;
 
     /**
      * Constructor privado (patron Singleton).
      * Inicializa la lista de solicitudes en memoria.
      */
-    private RepositorioSolicitud() {
+    public RepositorioSolicitud() {
         this.solicitudes = new ArrayList<>();
         System.out.println("[REPO] RepositorioSolicitud inicializado (Singleton)");
     }
@@ -49,12 +48,7 @@ public class RepositorioSolicitud implements IRepositorioSolicitud {
      *
      * @return Instancia unica de RepositorioSolicitud
      */
-    public static synchronized RepositorioSolicitud getInstancia() {
-        if (instancia == null) {
-            instancia = new RepositorioSolicitud();
-        }
-        return instancia;
-    }
+    
 
     /**
      * RF-01: Guarda una nueva solicitud registrada en el repositorio en memoria.

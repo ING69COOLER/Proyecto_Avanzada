@@ -1,4 +1,4 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.services;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ConsultaSolicitudesService {
    
 

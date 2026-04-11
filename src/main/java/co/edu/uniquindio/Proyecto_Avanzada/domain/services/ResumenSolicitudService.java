@@ -1,4 +1,4 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.IAIntegration.IModeloLenguaje;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IModeloLenguaje;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 

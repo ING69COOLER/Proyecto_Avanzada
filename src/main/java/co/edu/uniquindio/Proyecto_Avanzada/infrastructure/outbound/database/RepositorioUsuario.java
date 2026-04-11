@@ -1,25 +1,20 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoImplementation;
+package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.repos.repoInterfaces.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class RepositorioUsuario implements IRepositorioUsuario{
 
-    private static RepositorioUsuario instancia;
-    private List<Usuario> usuarios;
+        private List<Usuario> usuarios;
 
-    private RepositorioUsuario(){
+    public RepositorioUsuario(){
         this.usuarios = new ArrayList<>();
-    }
-
-    public static RepositorioUsuario getInstancia(){
-        if (instancia == null) {
-            instancia = new RepositorioUsuario();
-        }
-        return instancia;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.services;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
@@ -11,7 +11,10 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
  *
  */
 
+import org.springframework.stereotype.Service;
+
 // caso de uso
+@Service
 public class CierreSolicitudService {
     
     /**

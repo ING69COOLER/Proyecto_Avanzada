@@ -1,4 +1,4 @@
-package co.edu.uniquindio.Proyecto_Avanzada.domain.DomainServices;
+package co.edu.uniquindio.Proyecto_Avanzada.domain.services;
 
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
