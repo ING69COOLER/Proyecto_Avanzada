@@ -3,8 +3,6 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.AsignarResponsableCommand;
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.CambiarEstadoCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.AtencionSolicitudesService;
@@ -37,31 +35,37 @@ public class AtencionSolicitudesApplicationService {
         return solicitudAtendida;
     }
 
-    public SolicitudDetalleResponse asignarResponsable(Long codigoSolicitud, AsignarResponsableCommand command)
+        public SolicitudDetalleResponse asignarResponsable(Long codigoSolicitud,
+            String identificacionCoordinador,
+            String identificacionResponsable,
+            String observacionAsignacion)
             throws SolicitudException {
         Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
-        Usuario coordinador = obtenerUsuario(command.identificacionCoordinador());
-        Usuario responsableAsignado = obtenerUsuario(command.identificacionResponsable());
+        Usuario coordinador = obtenerUsuario(identificacionCoordinador);
+        Usuario responsableAsignado = obtenerUsuario(identificacionResponsable);
 
         String observacion = "%s Responsable asignado: %s".formatted(
-                command.observacion(),
+            observacionAsignacion,
                 responsableAsignado.getIdentificacion());
 
         Solicitud solicitudAsignada = dominio.asignarResponsable(coordinador, solicitud, observacion);
         return SolicitudResponseMapper.toDetalleResponse(solicitudAsignada);
     }
 
-    public SolicitudDetalleResponse cambiarEstado(Long codigoSolicitud, CambiarEstadoCommand command)
+    public SolicitudDetalleResponse cambiarEstado(Long codigoSolicitud,
+            EstadoSolicitud nuevoEstado,
+            String identificacionUsuario,
+            String observacion)
             throws SolicitudException {
         Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
-        Usuario usuario = obtenerUsuario(command.identificacionUsuario());
+        Usuario usuario = obtenerUsuario(identificacionUsuario);
 
-        if (command.nuevoEstado() != EstadoSolicitud.ATENDIDA) {
+        if (nuevoEstado != EstadoSolicitud.ATENDIDA) {
             throw new IllegalArgumentException(
                     "La operacion cambiarEstado solo soporta actualmente la transicion a ATENDIDA");
         }
 
-        Solicitud solicitudAtendida = dominio.atenderSolicitud(usuario, solicitud, command.observacion());
+        Solicitud solicitudAtendida = dominio.atenderSolicitud(usuario, solicitud, observacion);
         return SolicitudResponseMapper.toDetalleResponse(solicitudAtendida);
     }
 

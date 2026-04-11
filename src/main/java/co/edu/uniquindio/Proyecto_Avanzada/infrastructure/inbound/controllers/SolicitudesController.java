@@ -9,7 +9,6 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.PriorizarSoli
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.EventoHistorialResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudResumenResponse;
-import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.RequestCommandMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.application.services.AtencionSolicitudesApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.application.services.CierreSolicitudApplicationService;
 import co.edu.uniquindio.Proyecto_Avanzada.application.services.ClasificacionSolicitudesApplicationService;
@@ -49,7 +48,11 @@ public class SolicitudesController {
     @PostMapping
     public ResponseEntity<SolicitudDetalleResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
         SolicitudDetalleResponse response = registroSolicitudesApplicationService
-                .registrarSolicitud(RequestCommandMapper.toCommand(request));
+            .registrarSolicitud(
+                request.tipoSolicitud(),
+                request.descripcion(),
+                request.canalOrigen(),
+                request.identificacionSolicitante());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -75,7 +78,11 @@ public class SolicitudesController {
             @Valid @RequestBody ClasificarSolicitudRequest request) throws SolicitudException {
 
         SolicitudDetalleResponse response = clasificacionSolicitudesApplicationService
-                .clasificarSolicitud(codigo, RequestCommandMapper.toCommand(request));
+            .clasificarSolicitud(
+                codigo,
+                request.tipoSolicitud(),
+                request.identificacionUsuario(),
+                request.observacion());
         return ResponseEntity.ok(response);
     }
 
@@ -85,7 +92,11 @@ public class SolicitudesController {
             @Valid @RequestBody PriorizarSolicitudRequest request) throws SolicitudException {
 
         SolicitudDetalleResponse response = priorizacionApplicationService
-                .priorizarSolicitud(codigo, RequestCommandMapper.toCommand(request));
+            .priorizarSolicitud(
+                codigo,
+                request.identificacionUsuario(),
+                request.nivelPrioridad(),
+                request.justificacion());
         return ResponseEntity.ok(response);
     }
 
@@ -95,7 +106,11 @@ public class SolicitudesController {
             @Valid @RequestBody AsignarResponsableRequest request) throws SolicitudException {
 
         SolicitudDetalleResponse response = atencionSolicitudesApplicationService
-                .asignarResponsable(codigo, RequestCommandMapper.toCommand(request));
+            .asignarResponsable(
+                codigo,
+                request.identificacionCoordinador(),
+                request.identificacionResponsable(),
+                request.observacion());
         return ResponseEntity.ok(response);
     }
 
@@ -105,7 +120,11 @@ public class SolicitudesController {
             @Valid @RequestBody CambiarEstadoRequest request) throws SolicitudException {
 
         SolicitudDetalleResponse response = atencionSolicitudesApplicationService
-                .cambiarEstado(codigo, RequestCommandMapper.toCommand(request));
+            .cambiarEstado(
+                codigo,
+                request.nuevoEstado(),
+                request.identificacionUsuario(),
+                request.observacion());
         return ResponseEntity.ok(response);
     }
 
@@ -115,7 +134,10 @@ public class SolicitudesController {
             @Valid @RequestBody CerrarSolicitudRequest request) throws SolicitudException {
 
         SolicitudDetalleResponse response = cierreSolicitudApplicationService
-                .cerrarSolicitud(codigo, RequestCommandMapper.toCommand(request));
+            .cerrarSolicitud(
+                codigo,
+                request.identificacionUsuario(),
+                request.observacionCierre());
         return ResponseEntity.ok(response);
     }
 

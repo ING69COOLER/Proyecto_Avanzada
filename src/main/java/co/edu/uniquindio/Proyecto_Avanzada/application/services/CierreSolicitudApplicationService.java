@@ -3,7 +3,6 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.CerrarSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.CierreSolicitudService;
@@ -30,11 +29,13 @@ public class CierreSolicitudApplicationService {
         return solicitudCerrada;
     }
 
-    public SolicitudDetalleResponse cerrarSolicitud(Long codigoSolicitud, CerrarSolicitudCommand command)
+    public SolicitudDetalleResponse cerrarSolicitud(Long codigoSolicitud,
+            String identificacionUsuario,
+            String observacionCierre)
             throws SolicitudException {
         Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
-        Usuario usuario = obtenerUsuario(command.identificacionUsuario());
-        Solicitud solicitudCerrada = dominio.cerrarSolicitud(usuario, solicitud, command.observacionCierre());
+        Usuario usuario = obtenerUsuario(identificacionUsuario);
+        Solicitud solicitudCerrada = dominio.cerrarSolicitud(usuario, solicitud, observacionCierre);
         return SolicitudResponseMapper.toDetalleResponse(solicitudCerrada);
     }
 

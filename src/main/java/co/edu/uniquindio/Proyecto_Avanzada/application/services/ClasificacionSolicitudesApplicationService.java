@@ -3,7 +3,6 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.ClasificarSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ClasificacionSolicitudesService;
@@ -32,15 +31,18 @@ public class ClasificacionSolicitudesApplicationService {
         return solicitudClasificada;
     }
 
-    public SolicitudDetalleResponse clasificarSolicitud(Long codigoSolicitud, ClasificarSolicitudCommand command)
+        public SolicitudDetalleResponse clasificarSolicitud(Long codigoSolicitud,
+            TipoSolicitud tipoSolicitud,
+            String identificacionUsuario,
+            String observacion)
             throws SolicitudException {
         Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
-        Usuario usuario = obtenerUsuario(command.identificacionUsuario());
+        Usuario usuario = obtenerUsuario(identificacionUsuario);
         Solicitud solicitudClasificada = dominio.clasificarSolicitud(
                 solicitud,
-                command.tipoSolicitud(),
+            tipoSolicitud,
                 usuario,
-                command.observacion());
+            observacion);
         return SolicitudResponseMapper.toDetalleResponse(solicitudClasificada);
     }
 

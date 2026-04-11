@@ -3,7 +3,6 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.CrearSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.RegistroSolicitudesService;
@@ -45,13 +44,16 @@ public class RegistroSolicitudesApplicationService {
         return solicitud;
     }
 
-    public SolicitudDetalleResponse registrarSolicitud(CrearSolicitudCommand command) {
-        Usuario solicitante = obtenerUsuario(command.identificacionSolicitante());
+    public SolicitudDetalleResponse registrarSolicitud(TipoSolicitud tipoSolicitud,
+            String descripcion,
+            CanalOrigen canalOrigen,
+            String identificacionSolicitante) {
+        Usuario solicitante = obtenerUsuario(identificacionSolicitante);
         Solicitud solicitud = registrarSolicitudBasica(
                 solicitante,
-                command.tipoSolicitud(),
-                command.descripcion(),
-                command.canalOrigen());
+                tipoSolicitud,
+                descripcion,
+                canalOrigen);
         return SolicitudResponseMapper.toDetalleResponse(solicitud);
     }
 

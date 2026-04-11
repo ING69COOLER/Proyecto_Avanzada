@@ -3,7 +3,6 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-import co.edu.uniquindio.Proyecto_Avanzada.application.command.PriorizarSolicitudCommand;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.PriorizacionService;
@@ -32,15 +31,18 @@ public class PriorizacionApplicationService {
         return solicitudPrioridad;
     }
 
-    public SolicitudDetalleResponse priorizarSolicitud(Long codigoSolicitud, PriorizarSolicitudCommand command)
+        public SolicitudDetalleResponse priorizarSolicitud(Long codigoSolicitud,
+            String identificacionUsuario,
+            NivelPrioridad nivelPrioridad,
+            String justificacion)
             throws SolicitudException {
         Solicitud solicitud = obtenerSolicitud(codigoSolicitud);
-        Usuario usuario = obtenerUsuario(command.identificacionUsuario());
+        Usuario usuario = obtenerUsuario(identificacionUsuario);
         Solicitud solicitudPriorizada = dominio.priorizarSolicitud(
                 usuario,
-                command.justificacion(),
+            justificacion,
                 solicitud,
-                command.nivelPrioridad());
+            nivelPrioridad);
         return SolicitudResponseMapper.toDetalleResponse(solicitudPriorizada);
     }
 
