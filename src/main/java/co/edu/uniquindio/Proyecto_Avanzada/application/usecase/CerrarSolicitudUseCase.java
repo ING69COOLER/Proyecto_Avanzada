@@ -16,7 +16,7 @@ public class CerrarSolicitudUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final CierreSolicitudService dominio;
 
-    public void ejecutar(Long codigoSolicitud, String identificacionUsuario, String observacion) throws SolicitudException {
+    public Solicitud ejecutar(Long codigoSolicitud, String identificacionUsuario, String observacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));
                 
@@ -27,5 +27,6 @@ public class CerrarSolicitudUseCase {
         
         Solicitud solicitudCerrada = dominio.cerrarSolicitud(usuario, solicitud, observacion);
         solicitudRepository.guardarSolicitud(solicitudCerrada);
+        return solicitudCerrada;
     }
 }

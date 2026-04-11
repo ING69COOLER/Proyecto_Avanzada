@@ -17,7 +17,7 @@ public class PriorizarSolicitudUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final PriorizacionService dominio;
 
-    public void ejecutar(Long codigoSolicitud, String identificacionUsuario, NivelPrioridad prioridad, String justificacion) throws SolicitudException {
+    public Solicitud ejecutar(Long codigoSolicitud, String identificacionUsuario, NivelPrioridad prioridad, String justificacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));
         Usuario usuario = usuarioRepository.obtenerUsuarioIdentificacion(identificacionUsuario);
@@ -27,5 +27,6 @@ public class PriorizarSolicitudUseCase {
         
         Solicitud solicitudPriorizada = dominio.priorizarSolicitud(usuario, justificacion, solicitud, prioridad);
         solicitudRepository.guardarSolicitud(solicitudPriorizada);
+        return solicitudPriorizada;
     }
 }

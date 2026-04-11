@@ -17,7 +17,7 @@ public class ClasificarSolicitudUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final ClasificacionSolicitudesService dominio;
 
-    public void ejecutar(Long codigoSolicitud, String identificacionUsuario, TipoSolicitud tipoSolicitud, String justificacion) throws SolicitudException {
+    public Solicitud ejecutar(Long codigoSolicitud, String identificacionUsuario, TipoSolicitud tipoSolicitud, String justificacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));
         Usuario usuario = usuarioRepository.obtenerUsuarioIdentificacion(identificacionUsuario);
@@ -27,5 +27,6 @@ public class ClasificarSolicitudUseCase {
         
         Solicitud solicitudClasificada = dominio.clasificarSolicitud(solicitud, tipoSolicitud, usuario, justificacion);
         solicitudRepository.guardarSolicitud(solicitudClasificada);
+        return solicitudClasificada;
     }
 }

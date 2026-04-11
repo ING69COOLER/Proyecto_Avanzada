@@ -16,7 +16,7 @@ public class AsignarResponsableUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final AtencionSolicitudesService dominio;
 
-    public void ejecutar(Long codigoSolicitud, String coordinadorId, String responsableId, String observacion) throws SolicitudException {
+    public Solicitud ejecutar(Long codigoSolicitud, String coordinadorId, String responsableId, String observacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));
                 
@@ -30,6 +30,7 @@ public class AsignarResponsableUseCase {
         String observacionFinal = observacion + " Responsable asignado: " + responsable.getIdentificacion();
         Solicitud solicitudAsignada = dominio.asignarResponsable(coordinador, solicitud, observacionFinal);
         
-        solicitudRepository.guardarSolicitud(solicitudAsignada); // Actualizar en el repositorio
+        solicitudRepository.guardarSolicitud(solicitudAsignada);
+        return solicitudAsignada; // Actualizar en el repositorio
     }
 }

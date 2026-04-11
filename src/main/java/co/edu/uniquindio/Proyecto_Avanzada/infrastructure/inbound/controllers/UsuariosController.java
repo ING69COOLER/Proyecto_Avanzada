@@ -3,7 +3,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.inbound.controllers;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CrearUsuarioRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.UsuarioResumenDTO;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
-import co.edu.uniquindio.Proyecto_Avanzada.application.services.RegistrarUsuarioApplicationService;
+import co.edu.uniquindio.Proyecto_Avanzada.application.usecase.RegistrarUsuarioUseCase;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UsuariosController {
 
-    private final RegistrarUsuarioApplicationService registrarUsuarioApplicationService;
+    private final RegistrarUsuarioUseCase registrarUsuarioUseCase;
 
     @PostMapping("/registro")
     public ResponseEntity<UsuarioResumenDTO> registrarUsuario(@Valid @RequestBody CrearUsuarioRequest request) {
@@ -31,7 +31,7 @@ public class UsuariosController {
                 request.activo(),
                 request.rol());
 
-        Usuario usuarioRegistrado = registrarUsuarioApplicationService.registrarUsuario(usuario);
+        Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario);
         UsuarioResumenDTO response = SolicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

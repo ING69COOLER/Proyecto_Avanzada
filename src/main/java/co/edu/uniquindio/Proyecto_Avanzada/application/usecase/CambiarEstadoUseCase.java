@@ -17,7 +17,7 @@ public class CambiarEstadoUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final AtencionSolicitudesService dominio;
 
-    public void ejecutar(Long codigoSolicitud, String identificacionUsuario, EstadoSolicitud nuevoEstado, String observacion) throws SolicitudException {
+    public Solicitud ejecutar(Long codigoSolicitud, String identificacionUsuario, EstadoSolicitud nuevoEstado, String observacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));
                 
@@ -33,5 +33,6 @@ public class CambiarEstadoUseCase {
         
         Solicitud solicitudAtendida = dominio.atenderSolicitud(usuario, solicitud, observacion);
         solicitudRepository.guardarSolicitud(solicitudAtendida);
+        return solicitudAtendida;
     }
 }
