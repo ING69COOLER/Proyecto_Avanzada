@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.services;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,35 @@ public class ConsultaSolicitudesApplicationService {
     public List<SolicitudResumenResponse> consultarResumenPorResponsable(String identificacionResponsable) {
         Usuario responsable = obtenerUsuario(identificacionResponsable);
         return SolicitudResponseMapper.toResumenResponseList(consultarPorResponsable(responsable));
+    }
+
+    public List<SolicitudResumenResponse> consultarResumen(EstadoSolicitud estado,
+            TipoSolicitud tipo,
+            String identificacionResponsable) {
+        List<Solicitud> solicitudes = repositorio.listar();
+
+        if (estado != null) {
+            solicitudes = solicitudes.stream()
+                    .filter(s -> Objects.equals(s.getEstado(), estado))
+                    .toList();
+        }
+
+        if (tipo != null) {
+            solicitudes = solicitudes.stream()
+                    .filter(s -> Objects.equals(s.getTipo(), tipo))
+                    .toList();
+        }
+
+        if (identificacionResponsable != null && !identificacionResponsable.isBlank()) {
+            Usuario responsable = obtenerUsuario(identificacionResponsable);
+            solicitudes = solicitudes.stream()
+                    .filter(solicitud -> solicitud.obtenerUsuariosDeHistorias().stream()
+                            .anyMatch(usuario -> usuario != null
+                                    && Objects.equals(usuario.getIdentificacion(), responsable.getIdentificacion())))
+                    .toList();
+        }
+
+        return SolicitudResponseMapper.toResumenResponseList(solicitudes);
     }
 
     public SolicitudDetalleResponse obtenerDetalle(Long codigoSolicitud) {
