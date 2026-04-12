@@ -122,13 +122,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: estado
+        - name: estadoSolicitud
           in: query
           required: false
           description: Estado actual de la solicitud
           schema:
             $ref: '#/components/schemas/EstadoSolicitud'
-        - name: tipo
+        - name: tipoSolicitud
           in: query
           required: false
           description: Tipo de solicitud
@@ -140,6 +140,14 @@ paths:
           description: Identificacion del responsable asociado
           schema:
             $ref: '#/components/schemas/Identificacion'
+        - name: prioridadSolicitud
+          in: query
+          required: false
+          description: Prioridad de la solicitud
+          schema:
+            $ref: '#/components/schemas/NivelPrioridad'
+
+
       responses:
         '200':
           description: Solicitudes encontradas

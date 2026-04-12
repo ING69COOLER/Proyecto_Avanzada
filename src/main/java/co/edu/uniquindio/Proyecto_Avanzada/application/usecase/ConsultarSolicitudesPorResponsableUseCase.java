@@ -21,8 +21,10 @@ public class ConsultarSolicitudesPorResponsableUseCase {
         if (responsable == null) {
             throw new IllegalArgumentException("Usuario responsable no encontrado");
         }
+
+        dominio.consultasValidacion(responsable);
+        // busqueda personalizada de responsables de solicitud
         
-        List<Solicitud> todas = repository.listar();
-        return dominio.consultarPorResponsable(todas, responsable);
+        return repository.consultarResponsable(responsable);
     }
 }

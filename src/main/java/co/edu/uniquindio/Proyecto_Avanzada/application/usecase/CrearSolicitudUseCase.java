@@ -22,8 +22,8 @@ public class CrearSolicitudUseCase {
         if (solicitante == null) {
             throw new IllegalArgumentException("Usuario no encontrado con identificación: " + identificacionSolicitante);
         }
-        
-        Solicitud solicitud = dominio.registrarSolicitudBasica(solicitante, tipo, descripcion, canalOrigen);
+        // hace falta la de crear solicitud con todo 
+        Solicitud solicitud = dominio.registrarSolicitud(solicitante, tipo, descripcion, canalOrigen);
         solicitudRepository.guardarSolicitud(solicitud);
         return solicitud;
     }

@@ -8,16 +8,23 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 @Service
 @RequiredArgsConstructor
+// consulta las solicitudes filtradas por tipo, estado, JAJAJAJJJAAJJAJAJ ESTA ES LA UNICA QUE SE USA
 public class ConsultarSolicitudesFiltradasUseCase {
     private final IRepositorioSolicitud repository;
     private final IRepositorioUsuario usuarioRepository;
-
-    public List<Solicitud> ejecutar(EstadoSolicitud estado, TipoSolicitud tipo, String identificacionResponsable) {
+    private final ConsultaSolicitudesService dominio;
+    private final ConsultarSolicitudesPorPrioridadUseCase consultarSolicitudesPorPrioridadUseCase;
+    // se podran listar por consulta mas compleja de jpa
+    public List<Solicitud> ejecutar(EstadoSolicitud estado, TipoSolicitud tipo, String identificacionResponsableAtencion, NivelPrioridad nivelPrioridad, String identificacionResponsableAccion) {
+        dominio.consultasValidacion(usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsableAccion));
         List<Solicitud> solicitudes = repository.listar();
 
         if (estado != null) {
@@ -32,8 +39,8 @@ public class ConsultarSolicitudesFiltradasUseCase {
                     .toList();
         }
 
-        if (identificacionResponsable != null && !identificacionResponsable.isBlank()) {
-            Usuario responsable = usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsable);
+        if (identificacionResponsableAtencion != null && !identificacionResponsableAtencion.isBlank()) {
+            Usuario responsable = usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsableAtencion);
             if(responsable != null) {
                 solicitudes = solicitudes.stream()
                         .filter(solicitud -> solicitud.obtenerUsuariosDeHistorias().stream()
@@ -41,6 +48,10 @@ public class ConsultarSolicitudesFiltradasUseCase {
                                         && Objects.equals(usuario.getIdentificacion(), responsable.getIdentificacion())))
                         .toList();
             }
+        }
+
+        if (nivelPrioridad != null) {
+            consultarSolicitudesPorPrioridadUseCase.ejecutar(nivelPrioridad);
         }
 
         return solicitudes;

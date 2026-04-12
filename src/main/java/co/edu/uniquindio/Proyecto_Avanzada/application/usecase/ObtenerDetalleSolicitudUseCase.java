@@ -9,7 +9,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitu
 @RequiredArgsConstructor
 public class ObtenerDetalleSolicitudUseCase {
     private final IRepositorioSolicitud repository;
-
+// falta verificacion de identidad
     public Solicitud ejecutar(Long codigoSolicitud) {
         return repository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe una solicitud con codigo: " + codigoSolicitud));

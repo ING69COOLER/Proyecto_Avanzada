@@ -14,6 +14,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.usecase.*;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,11 +50,13 @@ public class SolicitudesController {
 
     @GetMapping
     public ResponseEntity<List<SolicitudResumenResponse>> consultarSolicitudes(
-            @RequestParam(name="estado", required = false) EstadoSolicitud estado,
-            @RequestParam(name="tipo", required = false) TipoSolicitud tipo,
-            @RequestParam(name="identificacionResponsable", required = false) String identificacionResponsable) {
-
-        List<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(estado, tipo, identificacionResponsable);
+            @RequestParam(name="estadoSolicitud", required = false) EstadoSolicitud estado,
+            @RequestParam(name="tipoSolicitud", required = false) TipoSolicitud tipo,
+            @RequestParam(name="identificacionResponsable", required = false) String identificacionResponsableAtencion,
+            @RequestParam(name="prioridadSolicitud", required = false) NivelPrioridad prioridadSolicitud) {
+        // este endpoint tiene el problema de que como no tengo el jwt, no puedo identificar quien lo esta consumiendo, por lo que 
+        // no puedo "quitar" la verificacion y no puedo consumirla ya que el dominio chilla, por lo que lo dejo null
+        List<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(estado, tipo, identificacionResponsableAtencion, prioridadSolicitud, null);
         return ResponseEntity.ok(SolicitudResponseMapper.toResumenResponseList(solicitudes));
     }
 

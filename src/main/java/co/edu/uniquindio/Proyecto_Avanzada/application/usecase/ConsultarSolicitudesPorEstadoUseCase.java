@@ -5,14 +5,19 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 
 @Service
 @RequiredArgsConstructor
 public class ConsultarSolicitudesPorEstadoUseCase {
     private final IRepositorioSolicitud repository;
-
-    public List<Solicitud> ejecutar(EstadoSolicitud estado) {
+    private final IRepositorioUsuario users;
+    private final ConsultaSolicitudesService dominio;
+    // falta vefificacion de identidad
+    public List<Solicitud> ejecutar(EstadoSolicitud estado, String identificacion) {
+        dominio.consultasValidacion(users.obtenerUsuarioIdentificacion(identificacion));
         return repository.consultarEstado(estado);
     }
 }

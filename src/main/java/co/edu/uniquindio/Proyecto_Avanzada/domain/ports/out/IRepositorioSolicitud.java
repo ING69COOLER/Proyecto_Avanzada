@@ -3,6 +3,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import java.util.List;
@@ -33,6 +34,8 @@ public interface IRepositorioSolicitud {
      * RF-07: Consulta solicitudes por prioridad
      */
     public List<Solicitud> consultarPrioridad(Prioridad prioridad);
+
+    public List<Solicitud> consultarPorNivelPrioridad(NivelPrioridad nivelPrioridad);
     
     /**
      * RF-07: Consulta solicitudes asignadas a un responsable
@@ -43,5 +46,4 @@ public interface IRepositorioSolicitud {
     public Optional<Solicitud> obtenerPorId(Long id);
 
     public List<Solicitud> listar();
-   
 }

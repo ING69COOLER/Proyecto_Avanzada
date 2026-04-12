@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.repository;
 
 import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.entity.SolicitudJPAEntity;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;

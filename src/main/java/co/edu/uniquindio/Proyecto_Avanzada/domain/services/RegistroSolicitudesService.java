@@ -21,7 +21,7 @@ Solicitud(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen,
 public class RegistroSolicitudesService {
 
     // metodo para crear solicitud incluyendo reglas validadas en usuario
-    public Solicitud registrarSolicitudBasica(Usuario responsableCreacion, TipoSolicitud tipo, 
+    public Solicitud registrarSolicitud(Usuario responsableCreacion, TipoSolicitud tipo, 
                                     String descripcion, CanalOrigen canalOrigen){
 
         if(!responsableCreacion.puedeRegistrarSolicitud()){
@@ -31,26 +31,8 @@ public class RegistroSolicitudesService {
         LocalDateTime fechaHoraRegistro = LocalDateTime.now();
 
         Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegistro,  null,  null,
+                    fechaHoraRegistro,  null,  EstadoSolicitud.REGISTRADA,
                     responsableCreacion,  null);
-
-        return solicitud;
-
-    }
-
-    public Solicitud registrarSolicitudCompleta(TipoSolicitud tipo, String descripcion, CanalOrigen canalOrigen, 
-                    LocalDateTime fechaCierre, EstadoSolicitud estado,
-                    Usuario usuarioSolicitante, Prioridad prioridad){
-
-        if(!usuarioSolicitante.puedeRegistrarSolicitud()){
-            throw new IllegalArgumentException("EL usuario es invalido");
-        }
-
-        LocalDateTime fechaHoraRegistro = LocalDateTime.now();
-
-        Solicitud solicitud = new Solicitud(tipo, descripcion, canalOrigen, 
-                    fechaHoraRegistro,  fechaCierre,  estado,
-                    usuarioSolicitante,  prioridad);
 
         return solicitud;
 

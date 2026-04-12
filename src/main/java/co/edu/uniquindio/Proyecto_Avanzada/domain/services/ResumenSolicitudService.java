@@ -41,6 +41,8 @@ public class ResumenSolicitudService {
      * @return Resumen textual de la solicitud
      * @throws SolicitudException Si la solicitud es nula
      */
+
+    // falta validacion de responsable
     public String generarResumenSolicitud(Solicitud solicitud) throws SolicitudException {
         if (solicitud == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula");

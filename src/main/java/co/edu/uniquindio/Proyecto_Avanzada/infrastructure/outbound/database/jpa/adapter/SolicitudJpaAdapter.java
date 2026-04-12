@@ -4,6 +4,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.entity.SolicitudJPAEntity;
@@ -66,6 +67,8 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
         );
     }
 
+    
+
     @Override
     public List<Solicitud> consultarResponsable(Usuario usuario) {
         // Filtrado en memoria sobre los resultados: el historial ya viene cargado (EAGER)
@@ -75,5 +78,10 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
                         .anyMatch(u -> u != null
                                 && u.getIdentificacion().equals(usuario.getIdentificacion())))
                 .toList();
+    }
+
+    @Override
+    public List<Solicitud> consultarPorNivelPrioridad(NivelPrioridad nivelPrioridad) {
+        return JpaEntityMapper.toDomainList(springRepo.findByPrioridadNivel(nivelPrioridad));
     }
 }

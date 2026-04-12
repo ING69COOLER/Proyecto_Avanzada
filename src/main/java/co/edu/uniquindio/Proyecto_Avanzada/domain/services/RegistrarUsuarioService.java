@@ -10,6 +10,7 @@ public class RegistrarUsuarioService {
     
 
     // METODO SOLICITADO
+    
     public Usuario registrarUsuario(Usuario usuario){
 
         if (usuario == null) {

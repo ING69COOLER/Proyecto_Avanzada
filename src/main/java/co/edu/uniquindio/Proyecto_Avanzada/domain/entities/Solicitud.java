@@ -253,6 +253,12 @@ public class Solicitud {
                     "Acceso denegado: solo el DOCENTE puede atender solicitudes." +
                             (user != null ? " Rol actual: " + user.getRol() : ""));
         }
+        // verifica que el que esta encargado de resolverla la resuelva y no cualquiera
+        if (historial.stream().filter((historial) -> historial.getResponsable().getIdentificacion().equals(user.getIdentificacion()) && historial.getEstado().equals(EstadoSolicitud.EN_ATENCION)).toList().isEmpty()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el asignado como responsable de responder solicitud puede atenderla" +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
         // RF-04: transicion de estado a ATENDIDA
         this.estado = EstadoSolicitud.ATENDIDA;
         // RF-06: registrar la atencion en el historial
