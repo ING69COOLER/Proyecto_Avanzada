@@ -204,7 +204,7 @@ public class Solicitud {
     public void priorizarSolicitud(NivelPrioridad prioridad,
             String justificacion) throws SolicitudException {
         validarNoEsterrada();
-        if (this.estado != EstadoSolicitud.CLASIFICADA && this.estado != EstadoSolicitud.EN_ATENCION) {
+        if (this.estado != EstadoSolicitud.CLASIFICADA) {
             throw new SolicitudException(
                     "La prioridad solo puede asignarse en estados CLASIFICADA o EN_ATENCION. Estado actual: "
                             + this.estado);
