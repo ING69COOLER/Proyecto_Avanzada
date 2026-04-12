@@ -168,11 +168,20 @@ public class Solicitud {
         // RF-08: no se puede modificar una solicitud cerrada
         validarNoEsterrada();
 
+        if (this.estado != EstadoSolicitud.REGISTRADA) {
+            throw new SolicitudException(
+                    "La solicitud solo puede clasificarse cuando esta en estado REGISTRADA. Estado actual: "
+                            + this.estado);
+        }
+
         if (tipoSolicitud == null) {
             throw new IllegalArgumentException("El tipo de solicitud no puede ser nulo");
         }
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo");
+        }
+        if (!usuario.puedeAsignar()) {
+            throw new SolicitudException("Acceso denegado: solo el COORDINADOR puede clasificar solicitudes.");
         }
         // RF-04: transicion de estado
         this.estado = EstadoSolicitud.CLASIFICADA;
@@ -195,6 +204,11 @@ public class Solicitud {
     public void priorizarSolicitud(NivelPrioridad prioridad,
             String justificacion) throws SolicitudException {
         validarNoEsterrada();
+        if (this.estado != EstadoSolicitud.CLASIFICADA && this.estado != EstadoSolicitud.EN_ATENCION) {
+            throw new SolicitudException(
+                    "La prioridad solo puede asignarse en estados CLASIFICADA o EN_ATENCION. Estado actual: "
+                            + this.estado);
+        }
         if (prioridad == null) {
             throw new IllegalArgumentException("El nivel de prioridad no puede ser nulo");
         }
@@ -213,6 +227,16 @@ public class Solicitud {
      */
     public void asignarResponsable(Usuario user, String descripcion) throws SolicitudException {
         validarNoEsterrada();
+        if (user == null || !user.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
+        if (!this.estado.equals(EstadoSolicitud.CLASIFICADA)) {
+            throw new SolicitudException(
+                    "para poder asignar un responsable, la solicitud debe de estar en estado de clasificada"
+                           );
+        }
         // RF-04: transicion de estado a EN_ATENCION
         this.estado = EstadoSolicitud.EN_ATENCION;
         // RF-06: registrar la asignacion en el historial
@@ -259,6 +283,11 @@ public class Solicitud {
                     "Acceso denegado: solo el asignado como responsable de responder solicitud puede atenderla" +
                             (user != null ? " Rol actual: " + user.getRol() : ""));
         }
+        if (!this.estado.equals(EstadoSolicitud.EN_ATENCION)) {
+            throw new SolicitudException(
+                    "la solicitud debe de estar en atencion antes de ser atendida" +
+                            (user != null ? " Rol actual: " + user.getRol() : ""));
+        }
         // RF-04: transicion de estado a ATENDIDA
         this.estado = EstadoSolicitud.ATENDIDA;
         // RF-06: registrar la atencion en el historial
@@ -290,6 +319,11 @@ public class Solicitud {
         }
         if (user == null) {
             throw new SolicitudException("El usuario no puede ser nulo, debe de haber un responsable");
+        }
+        if (!user.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede cerrar solicitudes." +
+                            " Rol actual: " + user.getRol());
         }
         // RF-08: la observacion de cierre es obligatoria
         if (observacion == null || observacion.trim().isEmpty()) {
