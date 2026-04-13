@@ -18,6 +18,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,15 +51,24 @@ public class SolicitudesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SolicitudResumenResponse>> consultarSolicitudes(
+    public ResponseEntity<Page<SolicitudResumenResponse>> consultarSolicitudes(
             @RequestParam(name="estadoSolicitud", required = false) EstadoSolicitud estado,
             @RequestParam(name="tipoSolicitud", required = false) TipoSolicitud tipo,
             @RequestParam(name="identificacionResponsable", required = false) String identificacionResponsableAtencion,
-            @RequestParam(name="prioridadSolicitud", required = false) NivelPrioridad prioridadSolicitud) {
+            @RequestParam(name="prioridadSolicitud", required = false) NivelPrioridad prioridadSolicitud,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         // este endpoint tiene el problema de que como no tengo el jwt, no puedo identificar quien lo esta consumiendo, por lo que 
         // no puedo "quitar" la verificacion y no puedo consumirla ya que el dominio chilla, por lo que lo dejo null
-        List<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(estado, tipo, identificacionResponsableAtencion, prioridadSolicitud, null);
-        return ResponseEntity.ok(SolicitudResponseMapper.toResumenResponseList(solicitudes));
+        Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.
+        (
+                estado,
+                tipo,
+                identificacionResponsableAtencion,
+                prioridadSolicitud,
+                null,
+                PageRequest.of(page, size));
+        return ResponseEntity.ok(solicitudes.map(SolicitudResponseMapper::toResumenResponse));
     }
 
     @GetMapping("/{codigo}")

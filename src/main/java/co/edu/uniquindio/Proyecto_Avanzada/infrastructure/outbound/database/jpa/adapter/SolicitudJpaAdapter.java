@@ -12,6 +12,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.
 import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.repository.SolicitudSpringDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -48,6 +50,11 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
     @Override
     public List<Solicitud> listar() {
         return JpaEntityMapper.toDomainList(springRepo.findAll());
+    }
+
+    @Override
+    public Page<Solicitud> listar(Pageable pageable) {
+        return springRepo.findAll(pageable).map(JpaEntityMapper::toDomain);
     }
 
     @Override

@@ -6,6 +6,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Prioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,4 +48,6 @@ public interface IRepositorioSolicitud {
     public Optional<Solicitud> obtenerPorId(Long id);
 
     public List<Solicitud> listar();
+
+    public Page<Solicitud> listar(Pageable pageable);
 }
