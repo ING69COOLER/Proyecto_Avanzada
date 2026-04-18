@@ -16,7 +16,5 @@ public interface ErrorResponseMapper {
     @Mapping(target = "timestamp", expression = "java(java.time.OffsetDateTime.now())")
     ErrorResponse toErrorResponse(int status, String error, String message, String path, Map<String, String> validationErrors);
 
-    default ErrorResponse toErrorResponse(int status, String error, String message, String path) {
-        return toErrorResponse(status, error, message, path, null);
-    }
+   
 }

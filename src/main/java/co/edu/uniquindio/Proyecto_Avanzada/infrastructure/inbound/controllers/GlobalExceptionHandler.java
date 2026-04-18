@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
 
     private final ErrorResponseMapper mapper;
 
+    // Resuelve errores de validacion de @Valid en cuerpos JSON y responde 400 con detalle por campo.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException ex,
@@ -36,13 +37,14 @@ public class GlobalExceptionHandler {
         ErrorResponse body = mapper.toErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "La solicitud contiene datos invalidos.",
+                "La solicitud contiene datos invalidos." + ex.getMessage(),
                 request.getRequestURI(),
                 validationErrors);
 
         return ResponseEntity.badRequest().body(body);
     }
 
+    // Resuelve violaciones de restricciones (query/path params) y responde 400.
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex,
@@ -52,30 +54,47 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
-                request.getRequestURI());
+                request.getRequestURI(),
+            null);
 
         return ResponseEntity.badRequest().body(body);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, SolicitudException.class})
-    public ResponseEntity<ErrorResponse> handleBusinessErrors(
-            Exception ex,
+    // Resuelve IllegalArgumentException: por defecto responde 400, o 404 si el mensaje indica recurso inexistente.
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentErrors(
+            IllegalArgumentException ex,
             HttpServletRequest request) {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String message = ex.getMessage() != null ? ex.getMessage() : "Operacion invalida";
-        if (message.toLowerCase().contains("no existe") || message.toLowerCase().contains("no se encontro")) {
-            status = HttpStatus.NOT_FOUND;
-        }
         ErrorResponse body = mapper.toErrorResponse(
             status.value(),
             status.getReasonPhrase(),
-            message,
-            request.getRequestURI());
+            "operacion invalida: " + ex.getMessage(),
+            request.getRequestURI()
+        ,null);
 
         return ResponseEntity.status(status).body(body);
     }
 
+    // Resuelve SolicitudException: por defecto responde 400, o 404 si el mensaje indica recurso inexistente.
+    @ExceptionHandler(SolicitudException.class)
+    public ResponseEntity<ErrorResponse> handleSolicitudErrors(
+            SolicitudException ex,
+            HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorResponse body = mapper.toErrorResponse(
+            status.value(),
+            status.getReasonPhrase(),
+            "excepcion de solicitud: "+ ex.getMessage(),
+            request.getRequestURI()
+        , null);
+
+        return ResponseEntity.status(status).body(body);
+    }
+
+    // Fallback global para excepciones no controladas; responde 500.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedErrors(
             Exception ex,
@@ -87,7 +106,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 debugMsg,
-                request.getRequestURI());
+                request.getRequestURI(),
+            null);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
