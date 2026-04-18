@@ -1,7 +1,8 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.dto.request;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.RolEnumDTO;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,6 +28,7 @@ public record CrearUsuarioRequest(
         @NotNull(message = "El estado de actividad es obligatorio")
         Boolean activo,
 
+        @Valid
         @NotNull(message = "El rol del usuario es obligatorio")
-        Rol rol) {
+        RolEnumDTO rol) {
 }

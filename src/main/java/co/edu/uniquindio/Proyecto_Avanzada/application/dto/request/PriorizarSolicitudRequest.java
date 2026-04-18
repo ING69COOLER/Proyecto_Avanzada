@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.dto.request;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.NivelPrioridadEnumDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,8 +15,9 @@ public record PriorizarSolicitudRequest(
         @Size(min = 5, max = 20, message = "La identificacion del usuario debe tener entre 5 y 20 caracteres")
         String identificacionUsuario,
 
+        @Valid
         @NotNull(message = "El nivel de prioridad es obligatorio")
-        NivelPrioridad nivelPrioridad,
+        NivelPrioridadEnumDTO nivelPrioridad,
 
         @NotBlank(message = "La justificacion de prioridad es obligatoria")
         @Size(min = 5, max = 500, message = "La justificacion debe tener entre 5 y 500 caracteres")

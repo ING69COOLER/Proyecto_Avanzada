@@ -2,6 +2,7 @@ package co.edu.uniquindio.Proyecto_Avanzada.infrastructure.inbound.controllers;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CrearUsuarioRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.UsuarioResumenDTO;
+import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.EnumDtoMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.SolicitudResponseMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.application.usecase.RegistrarUsuarioUseCase;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
@@ -21,6 +22,7 @@ public class UsuariosController {
 
     private final RegistrarUsuarioUseCase registrarUsuarioUseCase;
     private final SolicitudResponseMapper solicitudResponseMapper;
+    private final EnumDtoMapper enumDtoMapper;
 
     @PostMapping("/registro")
     public ResponseEntity<UsuarioResumenDTO> registrarUsuario(@Valid @RequestBody CrearUsuarioRequest request) {
@@ -30,7 +32,7 @@ public class UsuariosController {
                 request.identificacion(),
                 request.correo(),
                 request.activo(),
-                request.rol());
+                enumDtoMapper.toRol(request.rol()));
 
         Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario);
         UsuarioResumenDTO response = solicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);

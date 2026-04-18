@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.EventoHistorialResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.PrioridadDTO;
@@ -22,7 +21,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
  * Mapper para transformar entidades del dominio de solicitudes en DTOs de respuesta.
  * Utiliza MapStruct para generar automáticamente los mapeos utilizando getters.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = EnumDtoMapper.class)
 public interface SolicitudResponseMapper {
 
     @Mapping(target = "tipoSolicitud", source = "tipo")
@@ -39,6 +38,8 @@ public interface SolicitudResponseMapper {
 
     UsuarioResumenDTO toUsuarioResumenDTO(Usuario usuario);
 
+    @Mapping(target = "codigo", source = "tipoSolicitud")
+    @Mapping(target = "nombre", source = "tipoSolicitud")
     TipoSolicitudDTO toTipoSolicitudDTO(TipoSolicitud tipoSolicitud);
 
     PrioridadDTO toPrioridadDTO(Prioridad prioridad);

@@ -3,8 +3,8 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.CanalOrigenEnumDTO;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.EstadoSolicitudEnumDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,16 +26,18 @@ public record SolicitudDetalleResponse(
         @Size(max = 1000, message = "La descripcion de la solicitud no puede superar los 1000 caracteres")
         String descripcion,
 
+        @Valid
         @NotNull(message = "El canal de origen es obligatorio")
-        CanalOrigen canalOrigen,
+        CanalOrigenEnumDTO canalOrigen,
 
         @NotNull(message = "La fecha de registro es obligatoria")
         LocalDateTime fechaHoraRegistro,
 
         LocalDateTime fechaCierre,
 
+        @Valid
         @NotNull(message = "El estado de la solicitud es obligatorio")
-        EstadoSolicitud estado,
+        EstadoSolicitudEnumDTO estado,
 
         @Valid
         @NotNull(message = "El usuario solicitante es obligatorio")

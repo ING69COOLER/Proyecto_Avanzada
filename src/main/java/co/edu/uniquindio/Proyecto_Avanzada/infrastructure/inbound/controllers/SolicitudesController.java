@@ -6,6 +6,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CerrarSolicit
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.ClasificarSolicitudRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.ConsultarSolicitudesFiltersRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CrearSolicitudRequest;
+import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.EnumDtoMapper;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.PriorizarSolicitudRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.EventoHistorialResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.SolicitudDetalleResponse;
@@ -41,27 +42,29 @@ public class SolicitudesController {
     private final CambiarEstadoUseCase cambiarEstadoUseCase;
     private final CerrarSolicitudUseCase cerrarSolicitudUseCase;
     private final SolicitudResponseMapper solicitudResponseMapper;
+    private final EnumDtoMapper enumDtoMapper;
 
     @PostMapping
     public ResponseEntity<SolicitudDetalleResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
         Solicitud solicitud = crearSolicitudUseCase.ejecutar(
-                request.tipoSolicitud(),
+                enumDtoMapper.toTipoSolicitud(request.tipoSolicitud()),
                 request.descripcion(),
-                request.canalOrigen(),
+                enumDtoMapper.toCanalOrigen(request.canalOrigen()),
                 request.identificacionSolicitante());
         return ResponseEntity.status(HttpStatus.CREATED).body(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
+    //validacion de identidad 
     @GetMapping
     public ResponseEntity<Page<SolicitudResumenResponse>> consultarSolicitudes(
             @ModelAttribute ConsultarSolicitudesFiltersRequest filters,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
-        
-        EstadoSolicitud estado = filters.estadoSolicitud() != null ? EstadoSolicitud.valueOf(filters.estadoSolicitud()) : null;
-        TipoSolicitud tipo = filters.tipoSolicitud() != null ? TipoSolicitud.valueOf(filters.tipoSolicitud()) : null;
-        NivelPrioridad prioridad = filters.prioridadSolicitud() != null ? NivelPrioridad.valueOf(filters.prioridadSolicitud()) : null;
-        
+
+        EstadoSolicitud estado = enumDtoMapper.toEstadoSolicitud(filters.estadoSolicitud());
+        TipoSolicitud tipo = enumDtoMapper.toTipoSolicitud(filters.tipoSolicitud());
+        NivelPrioridad prioridad = enumDtoMapper.toNivelPrioridad(filters.prioridadSolicitud());
+
         Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(
                 estado,
                 tipo,
@@ -86,7 +89,7 @@ public class SolicitudesController {
         Solicitud solicitud = clasificarSolicitudUseCase.ejecutar(
                 codigo,
                 request.identificacionUsuario(),
-                request.tipoSolicitud(),
+            enumDtoMapper.toTipoSolicitud(request.tipoSolicitud()),
                 request.observacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
@@ -99,7 +102,7 @@ public class SolicitudesController {
         Solicitud solicitud = priorizarSolicitudUseCase.ejecutar(
                 codigo,
                 request.identificacionUsuario(),
-                request.nivelPrioridad(),
+            enumDtoMapper.toNivelPrioridad(request.nivelPrioridad()),
                 request.justificacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
@@ -125,7 +128,7 @@ public class SolicitudesController {
         Solicitud solicitud = cambiarEstadoUseCase.ejecutar(
                 codigo,
                 request.identificacionUsuario(),
-                request.nuevoEstado(),
+            enumDtoMapper.toEstadoSolicitud(request.nuevoEstado()),
                 request.observacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }

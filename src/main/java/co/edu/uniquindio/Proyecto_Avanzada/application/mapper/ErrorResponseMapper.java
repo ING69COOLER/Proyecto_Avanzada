@@ -14,7 +14,14 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.ErrorRespons
 public interface ErrorResponseMapper {
 
     @Mapping(target = "timestamp", expression = "java(java.time.OffsetDateTime.now())")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "error", source = "error")
+    @Mapping(target = "message", source = "message")
+    @Mapping(target = "path", source = "path")
+    @Mapping(target = "validationErrors", source = "validationErrors")
     ErrorResponse toErrorResponse(int status, String error, String message, String path, Map<String, String> validationErrors);
 
-   
+    default ErrorResponse toErrorResponse(int status, String error, String message, String path) {
+        return toErrorResponse(status, error, message, path, null);
+    }
 }

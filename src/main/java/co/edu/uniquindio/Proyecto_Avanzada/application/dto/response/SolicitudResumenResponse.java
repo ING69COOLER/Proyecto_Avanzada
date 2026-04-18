@@ -2,8 +2,8 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.dto.response;
 
 import java.time.LocalDateTime;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.CanalOrigenEnumDTO;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.EstadoSolicitudEnumDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,11 +19,13 @@ public record SolicitudResumenResponse(
         @NotNull(message = "El tipo de solicitud es obligatorio")
         TipoSolicitudDTO tipoSolicitud,
 
+        @Valid
         @NotNull(message = "El canal de origen es obligatorio")
-        CanalOrigen canalOrigen,
+        CanalOrigenEnumDTO canalOrigen,
 
+        @Valid
         @NotNull(message = "El estado de la solicitud es obligatorio")
-        EstadoSolicitud estado,
+        EstadoSolicitudEnumDTO estado,
 
         @NotNull(message = "La fecha de registro es obligatoria")
         LocalDateTime fechaHoraRegistro,

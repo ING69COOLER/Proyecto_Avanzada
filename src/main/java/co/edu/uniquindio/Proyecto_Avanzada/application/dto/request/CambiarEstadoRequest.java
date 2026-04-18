@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.dto.request;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.EstadoSolicitudEnumDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,8 +11,9 @@ import jakarta.validation.constraints.Size;
  */
 public record CambiarEstadoRequest(
 
+        @Valid
         @NotNull(message = "El nuevo estado es obligatorio")
-        EstadoSolicitud nuevoEstado,
+        EstadoSolicitudEnumDTO nuevoEstado,
 
         @NotBlank(message = "La identificacion del usuario responsable es obligatoria")
         @Size(min = 5, max = 20, message = "La identificacion del usuario debe tener entre 5 y 20 caracteres")

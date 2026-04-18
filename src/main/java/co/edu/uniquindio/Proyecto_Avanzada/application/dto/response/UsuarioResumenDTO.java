@@ -1,5 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.dto.response;
 
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.RolEnumDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,10 +23,11 @@ public record UsuarioResumenDTO(
         @Size(max = 200, message = "El correo del usuario no puede superar los 200 caracteres")
         String correo,
 
+        @Valid
         @NotNull(message = "El estado de actividad del usuario es obligatorio")
         Boolean activo,
 
-        @NotBlank(message = "El rol del usuario no puede estar vacio")
-        @Size(max = 50, message = "El rol del usuario no puede superar los 50 caracteres")
-        String rol) {
+        @Valid
+        @NotNull(message = "El rol del usuario es obligatorio")
+        RolEnumDTO rol) {
 }

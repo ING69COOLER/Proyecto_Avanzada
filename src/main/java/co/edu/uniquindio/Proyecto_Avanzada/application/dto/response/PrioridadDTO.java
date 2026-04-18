@@ -1,6 +1,7 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.dto.response;
 
-import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.enums.NivelPrioridadEnumDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,8 +11,9 @@ import jakarta.validation.constraints.Size;
  */
 public record PrioridadDTO(
 
+        @Valid
         @NotNull(message = "El nivel de prioridad es obligatorio")
-        NivelPrioridad nivel,
+        NivelPrioridadEnumDTO nivel,
 
         @NotBlank(message = "La descripcion de la prioridad es obligatoria")
         @Size(max = 500, message = "La descripcion de la prioridad no puede superar los 500 caracteres")
