@@ -9,6 +9,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.CierreSolicitudService;
 import jakarta.transaction.Transactional;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class CerrarSolicitudUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final CierreSolicitudService dominio;
 
+    @PreAuthorize("hasAuthority('COORDINADOR')")
     public Solicitud ejecutar(Long codigoSolicitud, String identificacionUsuario, String observacion) throws SolicitudException {
         Solicitud solicitud = solicitudRepository.obtenerPorId(codigoSolicitud)
                 .orElseThrow(() -> new IllegalArgumentException("No existe solicitud con código: " + codigoSolicitud));

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +24,12 @@ public class UsuariosController {
     private final RegistrarUsuarioUseCase registrarUsuarioUseCase;
     private final SolicitudResponseMapper solicitudResponseMapper;
     private final EnumDtoMapper enumDtoMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/registro")
     public ResponseEntity<UsuarioResumenDTO> registrarUsuario(@Valid @RequestBody CrearUsuarioRequest request) {
+        String passwordHash = passwordEncoder.encode(request.password());
+
         Usuario usuario = new Usuario(
                 null,
                 request.nombre(),
@@ -34,7 +38,7 @@ public class UsuariosController {
                 request.activo(),
                 enumDtoMapper.toRol(request.rol()));
 
-        Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario);
+        Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario, passwordHash);
         UsuarioResumenDTO response = solicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

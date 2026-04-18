@@ -33,6 +33,9 @@ public class UsuarioJPAEntity {
     @Column(nullable = false)
     private Boolean activo;
 
+    @Column(nullable = false, length = 255)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Rol rol;

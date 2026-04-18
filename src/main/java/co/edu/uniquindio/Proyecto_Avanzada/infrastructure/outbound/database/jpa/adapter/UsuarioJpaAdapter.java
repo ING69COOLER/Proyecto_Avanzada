@@ -21,8 +21,9 @@ public class UsuarioJpaAdapter implements IRepositorioUsuario {
     private final UsuarioSpringDataRepository springRepo;
 
     @Override
-    public void guardarUsuario(Usuario usuario) {
+    public void guardarUsuario(Usuario usuario, String passwordHash) {
         UsuarioJPAEntity entity = JpaEntityMapper.toJpa(usuario);
+        entity.setPassword(passwordHash);
         springRepo.save(entity);
     }
 
