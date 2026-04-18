@@ -7,10 +7,12 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.CierreSolicitudService;
+import jakarta.transaction.Transactional;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CerrarSolicitudUseCase {
     private final IRepositorioSolicitud solicitudRepository;
     private final IRepositorioUsuario usuarioRepository;

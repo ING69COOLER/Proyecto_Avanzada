@@ -6,11 +6,11 @@
 
 ## Integrantes
 
-| Nombre                         | Identificación |
-| ------------------------------ | -------------- |
-| Manuel Pineda Varela           | 1092455543     |
-| Santiago Solarte Trujillo      | 1059355828     |
-| Carlos Alonso Barahona Alvarez | 1094896340     |
+| Nombre                         | 
+| ------------------------------ | 
+| Manuel Pineda                  | 
+| Santiago Solarte               | 
+| Carlos Alonso Barahona         | 
 
 ---
 

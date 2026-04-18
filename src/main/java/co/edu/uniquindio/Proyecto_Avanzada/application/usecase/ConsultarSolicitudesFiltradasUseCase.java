@@ -16,9 +16,11 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesSe
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 // consulta las solicitudes filtradas por tipo, estado, JAJAJAJJJAAJJAJAJ ESTA ES LA UNICA QUE SE USA
 public class ConsultarSolicitudesFiltradasUseCase {
     private final IRepositorioSolicitud repository;

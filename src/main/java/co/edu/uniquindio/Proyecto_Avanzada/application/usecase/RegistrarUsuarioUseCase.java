@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.RegistrarUsuarioService;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RegistrarUsuarioUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final RegistrarUsuarioService dominio;

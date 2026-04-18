@@ -4,9 +4,11 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ObtenerDetalleSolicitudUseCase {
     private final IRepositorioSolicitud repository;
 // falta verificacion de identidad

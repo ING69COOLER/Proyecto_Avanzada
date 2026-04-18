@@ -9,9 +9,11 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ClasificacionSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ClasificarSolicitudUseCase {
     private final IRepositorioSolicitud solicitudRepository;
     private final IRepositorioUsuario usuarioRepository;

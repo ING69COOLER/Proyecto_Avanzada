@@ -8,9 +8,11 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitu
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ConsultarSolicitudesPorTipoUseCase {
     private final IRepositorioSolicitud repository;
     private final IRepositorioUsuario usuarioRepository;

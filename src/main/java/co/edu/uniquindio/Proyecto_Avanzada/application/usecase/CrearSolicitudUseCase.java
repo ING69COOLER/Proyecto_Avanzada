@@ -8,10 +8,12 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitu
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.CanalOrigen;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
+import jakarta.transaction.Transactional;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.RegistroSolicitudesService;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CrearSolicitudUseCase {
     private final IRepositorioSolicitud solicitudRepository;
     private final IRepositorioUsuario usuarioRepository;
