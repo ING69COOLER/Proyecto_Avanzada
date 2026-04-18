@@ -5,6 +5,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.mapper.ErrorResponseMappe
 import co.edu.uniquindio.Proyecto_Avanzada.domain.exception.SolicitudException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,7 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final ErrorResponseMapper mapper;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
@@ -28,7 +33,7 @@ public class GlobalExceptionHandler {
             validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        ErrorResponse body = ErrorResponseMapper.from(
+        ErrorResponse body = mapper.toErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "La solicitud contiene datos invalidos.",
@@ -43,7 +48,7 @@ public class GlobalExceptionHandler {
             ConstraintViolationException ex,
             HttpServletRequest request) {
 
-        ErrorResponse body = ErrorResponseMapper.from(
+        ErrorResponse body = mapper.toErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
@@ -62,12 +67,11 @@ public class GlobalExceptionHandler {
         if (message.toLowerCase().contains("no existe") || message.toLowerCase().contains("no se encontro")) {
             status = HttpStatus.NOT_FOUND;
         }
-
-        ErrorResponse body = ErrorResponseMapper.from(
-                status.value(),
-                status.getReasonPhrase(),
-                message,
-                request.getRequestURI());
+        ErrorResponse body = mapper.toErrorResponse(
+            status.value(),
+            status.getReasonPhrase(),
+            message,
+            request.getRequestURI());
 
         return ResponseEntity.status(status).body(body);
     }
@@ -79,7 +83,7 @@ public class GlobalExceptionHandler {
 
         // TODO: remove debug message before production
         String debugMsg = ex.getClass().getSimpleName() + ": " + ex.getMessage();
-        ErrorResponse body = ErrorResponseMapper.from(
+        ErrorResponse body = mapper.toErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 debugMsg,

@@ -1,7 +1,10 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.mapper;
 
-import java.util.Collections;
 import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.EventoHistorialResponse;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.PrioridadDTO;
@@ -17,112 +20,27 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 
 /**
  * Mapper para transformar entidades del dominio de solicitudes en DTOs de respuesta.
+ * Utiliza MapStruct para generar automáticamente los mapeos utilizando getters.
  */
-public final class SolicitudResponseMapper {
+@Mapper(componentModel = "spring")
+public interface SolicitudResponseMapper {
 
-    private SolicitudResponseMapper() {
-    }
+    @Mapping(target = "tipoSolicitud", source = "tipo")
+    SolicitudDetalleResponse toDetalleResponse(Solicitud solicitud);
 
-    public static SolicitudDetalleResponse toDetalleResponse(Solicitud solicitud) {
-        return new SolicitudDetalleResponse(
-                solicitud.getCodigo(),
-                toTipoSolicitudDTO(solicitud.getTipo()),
-                solicitud.getDescripcion(),
-                solicitud.getCanalOrigen(),
-                solicitud.getFechaHoraRegistro(),
-                solicitud.getFechaCierre(),
-                solicitud.getEstado(),
-                toUsuarioResumenDTO(solicitud.getUsuarioSolicitante()),
-                toPrioridadDTO(solicitud.getPrioridad()),
-                toHistorialResponseList(solicitud.getHistorial()));
-    }
+    @Mapping(target = "tipoSolicitud", source = "tipo")
+    SolicitudResumenResponse toResumenResponse(Solicitud solicitud);
 
-    public static SolicitudResumenResponse toResumenResponse(Solicitud solicitud) {
-        return new SolicitudResumenResponse(
-                solicitud.getCodigo(),
-                toTipoSolicitudDTO(solicitud.getTipo()),
-                solicitud.getCanalOrigen(),
-                solicitud.getEstado(),
-                solicitud.getFechaHoraRegistro(),
-                toUsuarioResumenDTO(solicitud.getUsuarioSolicitante()),
-                toPrioridadDTO(solicitud.getPrioridad()));
-    }
+    List<SolicitudResumenResponse> toResumenResponseList(List<Solicitud> solicitudes);
 
-    public static List<SolicitudResumenResponse> toResumenResponseList(List<Solicitud> solicitudes) {
-        if (solicitudes == null) {
-            return Collections.emptyList();
-        }
-        return solicitudes.stream()
-                .map(SolicitudResponseMapper::toResumenResponse)
-                .toList();
-    }
+    List<EventoHistorialResponse> toHistorialResponseList(List<HistorialSolicitud> historial);
 
-    public static List<EventoHistorialResponse> toHistorialResponseList(List<HistorialSolicitud> historial) {
-        if (historial == null) {
-            return Collections.emptyList();
-        }
-        return historial.stream()
-                .map(SolicitudResponseMapper::toEventoHistorialResponse)
-                .toList();
-    }
+    EventoHistorialResponse toEventoHistorialResponse(HistorialSolicitud evento);
 
-    public static EventoHistorialResponse toEventoHistorialResponse(HistorialSolicitud evento) {
-        return new EventoHistorialResponse(
-                evento.getFechaHora(),
-                evento.getEstado(),
-                evento.getAccion(),
-                evento.getObservacion(),
-                toUsuarioResumenDTO(evento.getResponsable()));
-    }
+    UsuarioResumenDTO toUsuarioResumenDTO(Usuario usuario);
 
-    public static UsuarioResumenDTO toUsuarioResumenDTO(Usuario usuario) {
-        if (usuario == null) {
-            return null;
-        }
-        return new UsuarioResumenDTO(
-                usuario.getNombre(),
-                usuario.getIdentificacion(),
-                usuario.getCorreo(),
-                usuario.getActivo(),
-                usuario.getRol() != null ? usuario.getRol().name() : null);
-    }
+    TipoSolicitudDTO toTipoSolicitudDTO(TipoSolicitud tipoSolicitud);
 
-    public static TipoSolicitudDTO toTipoSolicitudDTO(TipoSolicitud tipoSolicitud) {
-        if (tipoSolicitud == null) {
-            return null;
-        }
-        return new TipoSolicitudDTO(tipoSolicitud, humanizeEnum(tipoSolicitud.name()));
-    }
+    PrioridadDTO toPrioridadDTO(Prioridad prioridad);
 
-    public static PrioridadDTO toPrioridadDTO(Prioridad prioridad) {
-        if (prioridad == null) {
-            return null;
-        }
-        return new PrioridadDTO(prioridad.nivel(), prioridad.descripcion());
-    }
-
-    private static String humanizeEnum(String value) {
-        if (value == null || value.isBlank()) {
-            return value;
-        }
-        return value.toLowerCase()
-                .replace('_', ' ')
-                .transform(SolicitudResponseMapper::capitalizeWords);
-    }
-
-    private static String capitalizeWords(String value) {
-        String[] words = value.split(" ");
-        StringBuilder builder = new StringBuilder();
-        for (String word : words) {
-            if (word.isBlank()) {
-                continue;
-            }
-            if (!builder.isEmpty()) {
-                builder.append(' ');
-            }
-            builder.append(Character.toUpperCase(word.charAt(0)))
-                    .append(word.substring(1));
-        }
-        return builder.toString();
-    }
 }

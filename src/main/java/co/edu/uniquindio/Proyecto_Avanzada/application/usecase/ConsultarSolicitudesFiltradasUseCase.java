@@ -3,13 +3,13 @@ package co.edu.uniquindio.Proyecto_Avanzada.application.usecase;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Solicitud;
-import co.edu.uniquindio.Proyecto_Avanzada.domain.entities.Usuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
@@ -24,12 +24,15 @@ public class ConsultarSolicitudesFiltradasUseCase {
     private final IRepositorioSolicitud repository;
     private final IRepositorioUsuario usuarioRepository;
     private final ConsultaSolicitudesService dominio;
+    private final ConsultarSolicitudesPorEstadoUseCase consultarSolicitudesPorEstadoUseCase;
+    private final ConsultarSolicitudesPorTipoUseCase consultarSolicitudesPorTipoUseCase;
+    private final ConsultarSolicitudesPorResponsableUseCase consultarSolicitudesPorResponsableUseCase;
     private final ConsultarSolicitudesPorPrioridadUseCase consultarSolicitudesPorPrioridadUseCase;
     // se podran listar por consulta mas compleja de jpa
     public Page<Solicitud> ejecutar(EstadoSolicitud estado, TipoSolicitud tipo, String identificacionResponsableAtencion, NivelPrioridad nivelPrioridad, String identificacionResponsableAccion, Pageable pageable) {
         Pageable pageableEfectivo = pageable != null ? pageable : PageRequest.of(0, 10);
         dominio.consultasValidacion(usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsableAccion));
-
+        //
         boolean sinFiltros = estado == null
                 && tipo == null
                 && (identificacionResponsableAtencion == null || identificacionResponsableAtencion.isBlank())
@@ -39,37 +42,47 @@ public class ConsultarSolicitudesFiltradasUseCase {
             return repository.listar(pageableEfectivo);
         }
 
-        List<Solicitud> solicitudes = nivelPrioridad != null
-                ? consultarSolicitudesPorPrioridadUseCase.ejecutar(nivelPrioridad)
-                : repository.listar();
-
+        List<Solicitud> solicitudes = repository.listar();
+        //consultar solicitudes por caso de uso, mejor buscarlas en la db en vez de guevonear con esto,
+        //implementar solo verificacion en el caso de uso
         if (estado != null) {
+            List<Solicitud> solicitudesPorEstado = consultarSolicitudesPorEstadoUseCase.ejecutar(estado, identificacionResponsableAccion);
+            Set<Long> codigosPorEstado = solicitudesPorEstado.stream()
+                .map(Solicitud::getCodigo)
+                .collect(Collectors.toSet());
             solicitudes = solicitudes.stream()
-                    .filter(s -> Objects.equals(s.getEstado(), estado))
+                .filter(s -> codigosPorEstado.contains(s.getCodigo()))
                     .toList();
         }
-
+        // lo mismo que de la anterior
         if (tipo != null) {
+            List<Solicitud> solicitudesPorTipo = consultarSolicitudesPorTipoUseCase.ejecutar(tipo, identificacionResponsableAccion);
+            Set<Long> codigosPorTipo = solicitudesPorTipo.stream()
+                .map(Solicitud::getCodigo)
+                .collect(Collectors.toSet());
             solicitudes = solicitudes.stream()
-                    .filter(s -> Objects.equals(s.getTipo(), tipo))
+                .filter(s -> codigosPorTipo.contains(s.getCodigo()))
                     .toList();
         }
-
+        // lo mismo que la anterior 
         if (identificacionResponsableAtencion != null && !identificacionResponsableAtencion.isBlank()) {
-            Usuario responsable = usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsableAtencion);
-            if(responsable != null) {
-                solicitudes = solicitudes.stream()
-                        .filter(solicitud -> solicitud.obtenerUsuariosDeHistorias().stream()
-                                .anyMatch(usuario -> usuario != null
-                                        && Objects.equals(usuario.getIdentificacion(), responsable.getIdentificacion())))
-                        .toList();
-            }
+            List<Solicitud> solicitudesPorResponsable = consultarSolicitudesPorResponsableUseCase
+                .ejecutar(identificacionResponsableAtencion);
+            Set<Long> codigosPorResponsable = solicitudesPorResponsable.stream()
+                .map(Solicitud::getCodigo)
+                .collect(Collectors.toSet());
+            solicitudes = solicitudes.stream()
+                .filter(s -> codigosPorResponsable.contains(s.getCodigo()))
+                .toList();
         }
 
         if (nivelPrioridad != null) {
+            List<Solicitud> solicitudesPorPrioridad = consultarSolicitudesPorPrioridadUseCase.ejecutar(nivelPrioridad);
+            Set<Long> codigosPorPrioridad = solicitudesPorPrioridad.stream()
+                .map(Solicitud::getCodigo)
+                .collect(Collectors.toSet());
             solicitudes = solicitudes.stream()
-                    .filter(solicitud -> solicitud.getPrioridad() != null
-                            && Objects.equals(solicitud.getPrioridad().nivel(), nivelPrioridad))
+                .filter(s -> codigosPorPrioridad.contains(s.getCodigo()))
                     .toList();
         }
 

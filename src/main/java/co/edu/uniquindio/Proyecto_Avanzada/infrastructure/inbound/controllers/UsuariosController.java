@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuariosController {
 
     private final RegistrarUsuarioUseCase registrarUsuarioUseCase;
+    private final SolicitudResponseMapper solicitudResponseMapper;
 
     @PostMapping("/registro")
     public ResponseEntity<UsuarioResumenDTO> registrarUsuario(@Valid @RequestBody CrearUsuarioRequest request) {
@@ -32,7 +33,7 @@ public class UsuariosController {
                 request.rol());
 
         Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario);
-        UsuarioResumenDTO response = SolicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);
+        UsuarioResumenDTO response = solicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

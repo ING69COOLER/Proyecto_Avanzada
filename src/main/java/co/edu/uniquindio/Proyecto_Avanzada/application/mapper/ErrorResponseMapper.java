@@ -1,36 +1,22 @@
 package co.edu.uniquindio.Proyecto_Avanzada.application.mapper;
 
-import java.time.OffsetDateTime;
 import java.util.Map;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.ErrorResponse;
 
 /**
- * Mapper para construir respuestas de error consistentes para la API.
+ * Mapper para construir respuestas de error consistentes para la API usando MapStruct.
  */
-public final class ErrorResponseMapper {
+@Mapper(componentModel = "spring")
+public interface ErrorResponseMapper {
 
-    private ErrorResponseMapper() {
-    }
+    @Mapping(target = "timestamp", expression = "java(java.time.OffsetDateTime.now())")
+    ErrorResponse toErrorResponse(int status, String error, String message, String path, Map<String, String> validationErrors);
 
-    public static ErrorResponse from(int status, String error, String message, String path) {
-        return new ErrorResponse(
-                OffsetDateTime.now(),
-                status,
-                error,
-                message,
-                path,
-                null);
-    }
-
-    public static ErrorResponse from(int status, String error, String message, String path,
-            Map<String, String> validationErrors) {
-        return new ErrorResponse(
-                OffsetDateTime.now(),
-                status,
-                error,
-                message,
-                path,
-                validationErrors);
+    default ErrorResponse toErrorResponse(int status, String error, String message, String path) {
+        return toErrorResponse(status, error, message, path, null);
     }
 }

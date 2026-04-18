@@ -39,6 +39,7 @@ public class SolicitudesController {
     private final AsignarResponsableUseCase asignarResponsableUseCase;
     private final CambiarEstadoUseCase cambiarEstadoUseCase;
     private final CerrarSolicitudUseCase cerrarSolicitudUseCase;
+    private final SolicitudResponseMapper solicitudResponseMapper;
 
     @PostMapping
     public ResponseEntity<SolicitudDetalleResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
@@ -47,7 +48,7 @@ public class SolicitudesController {
                 request.descripcion(),
                 request.canalOrigen(),
                 request.identificacionSolicitante());
-        return ResponseEntity.status(HttpStatus.CREATED).body(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.status(HttpStatus.CREATED).body(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @GetMapping
@@ -60,21 +61,20 @@ public class SolicitudesController {
             @RequestParam(name = "size", defaultValue = "10") int size) {
         // este endpoint tiene el problema de que como no tengo el jwt, no puedo identificar quien lo esta consumiendo, por lo que 
         // no puedo "quitar" la verificacion y no puedo consumirla ya que el dominio chilla, por lo que lo dejo null
-        Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.
-        (
+        Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(
                 estado,
                 tipo,
                 identificacionResponsableAtencion,
                 prioridadSolicitud,
                 null,
                 PageRequest.of(page, size));
-        return ResponseEntity.ok(solicitudes.map(SolicitudResponseMapper::toResumenResponse));
+        return ResponseEntity.ok(solicitudes.map(solicitudResponseMapper::toResumenResponse));
     }
 
     @GetMapping("/{codigo}")
     public ResponseEntity<SolicitudDetalleResponse> obtenerDetalleSolicitud(@PathVariable("codigo") Long codigo) {
         Solicitud solicitud = obtenerDetalleSolicitudUseCase.ejecutar(codigo);
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/clasificacion")
@@ -87,7 +87,7 @@ public class SolicitudesController {
                 request.identificacionUsuario(),
                 request.tipoSolicitud(),
                 request.observacion());
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/prioridad")
@@ -100,7 +100,7 @@ public class SolicitudesController {
                 request.identificacionUsuario(),
                 request.nivelPrioridad(),
                 request.justificacion());
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/asignacion")
@@ -113,7 +113,7 @@ public class SolicitudesController {
                 request.identificacionCoordinador(),
                 request.identificacionResponsable(),
                 request.observacion());
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/estado")
@@ -126,7 +126,7 @@ public class SolicitudesController {
                 request.identificacionUsuario(),
                 request.nuevoEstado(),
                 request.observacion());
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/cierre")
@@ -138,12 +138,12 @@ public class SolicitudesController {
                 codigo,
                 request.identificacionUsuario(),
                 request.observacionCierre());
-        return ResponseEntity.ok(SolicitudResponseMapper.toDetalleResponse(solicitud));
+        return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @GetMapping("/{codigo}/historial")
     public ResponseEntity<List<EventoHistorialResponse>> consultarHistorialSolicitud(@PathVariable("codigo") Long codigo) {
         Solicitud solicitud = obtenerDetalleSolicitudUseCase.ejecutar(codigo);
-        return ResponseEntity.ok(SolicitudResponseMapper.toHistorialResponseList(solicitud.getHistorial()));
+        return ResponseEntity.ok(solicitudResponseMapper.toHistorialResponseList(solicitud.getHistorial()));
     }
 }
