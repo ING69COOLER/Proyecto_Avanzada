@@ -4,6 +4,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.AsignarRespon
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CambiarEstadoRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CerrarSolicitudRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.ClasificarSolicitudRequest;
+import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.ConsultarSolicitudesFiltersRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.CrearSolicitudRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.request.PriorizarSolicitudRequest;
 import co.edu.uniquindio.Proyecto_Avanzada.application.dto.response.EventoHistorialResponse;
@@ -53,19 +54,19 @@ public class SolicitudesController {
 
     @GetMapping
     public ResponseEntity<Page<SolicitudResumenResponse>> consultarSolicitudes(
-            @RequestParam(name="estadoSolicitud", required = false) EstadoSolicitud estado,
-            @RequestParam(name="tipoSolicitud", required = false) TipoSolicitud tipo,
-            @RequestParam(name="identificacionResponsable", required = false) String identificacionResponsableAtencion,
-            @RequestParam(name="prioridadSolicitud", required = false) NivelPrioridad prioridadSolicitud,
+            @ModelAttribute ConsultarSolicitudesFiltersRequest filters,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
-        // este endpoint tiene el problema de que como no tengo el jwt, no puedo identificar quien lo esta consumiendo, por lo que 
-        // no puedo "quitar" la verificacion y no puedo consumirla ya que el dominio chilla, por lo que lo dejo null
+        
+        EstadoSolicitud estado = filters.estadoSolicitud() != null ? EstadoSolicitud.valueOf(filters.estadoSolicitud()) : null;
+        TipoSolicitud tipo = filters.tipoSolicitud() != null ? TipoSolicitud.valueOf(filters.tipoSolicitud()) : null;
+        NivelPrioridad prioridad = filters.prioridadSolicitud() != null ? NivelPrioridad.valueOf(filters.prioridadSolicitud()) : null;
+        
         Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(
                 estado,
                 tipo,
-                identificacionResponsableAtencion,
-                prioridadSolicitud,
+                filters.identificacionResponsable(),
+                prioridad,
                 null,
                 PageRequest.of(page, size));
         return ResponseEntity.ok(solicitudes.map(solicitudResponseMapper::toResumenResponse));
