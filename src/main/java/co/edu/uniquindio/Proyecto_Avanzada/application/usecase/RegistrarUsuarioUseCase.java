@@ -14,12 +14,12 @@ public class RegistrarUsuarioUseCase {
     private final IRepositorioUsuario usuarioRepository;
     private final RegistrarUsuarioService dominio;
 
-    public Usuario ejecutar(Usuario usuario) {
+    public Usuario ejecutar(Usuario usuario, String password) {
         if (usuarioRepository.obtenerUsuarioIdentificacion(usuario.getIdentificacion()) != null) {
             throw new IllegalArgumentException("El usuario ya existe");
         }
         Usuario usuarioAprobado = dominio.registrarUsuario(usuario);
-        usuarioRepository.guardarUsuario(usuarioAprobado);
+        usuarioRepository.guardarUsuario(usuarioAprobado, password);
         return usuarioAprobado;
     }
 }

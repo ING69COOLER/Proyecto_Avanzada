@@ -7,6 +7,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.
 import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.outbound.database.jpa.repository.UsuarioSpringDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,10 +20,12 @@ import org.springframework.stereotype.Repository;
 public class UsuarioJpaAdapter implements IRepositorioUsuario {
 
     private final UsuarioSpringDataRepository springRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void guardarUsuario(Usuario usuario) {
+    public void guardarUsuario(Usuario usuario, String password) {
         UsuarioJPAEntity entity = JpaEntityMapper.toJpa(usuario);
+        entity.setPassword(passwordEncoder.encode(password));
         springRepo.save(entity);
     }
 

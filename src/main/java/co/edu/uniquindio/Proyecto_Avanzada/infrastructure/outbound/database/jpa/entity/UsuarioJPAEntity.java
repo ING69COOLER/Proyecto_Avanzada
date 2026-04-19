@@ -30,6 +30,9 @@ public class UsuarioJPAEntity {
     @Column(nullable = false, length = 200)
     private String correo;
 
+    @Column(nullable = false, length = 255)
+    private String password;
+
     @Column(nullable = false)
     private Boolean activo;
 

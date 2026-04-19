@@ -25,10 +25,17 @@ public record CrearUsuarioRequest(
         @Size(max = 200, message = "El correo no puede superar los 200 caracteres")
         String correo,
 
+        @NotBlank(message = "La contraseña del usuario es obligatoria")
+        @Size(min = 8, max = 255, message = "La contraseña debe tener entre 8 y 255 caracteres")
+        String password,
+
         @NotNull(message = "El estado de actividad es obligatorio")
         Boolean activo,
 
         @Valid
         @NotNull(message = "El rol del usuario es obligatorio")
-        RolEnumDTO rol) {
+        RolEnumDTO rol) 
+        
+        
+        {
 }

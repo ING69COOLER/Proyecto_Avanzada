@@ -34,7 +34,7 @@ public class UsuariosController {
                 request.activo(),
                 enumDtoMapper.toRol(request.rol()));
 
-        Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario);
+        Usuario usuarioRegistrado = registrarUsuarioUseCase.ejecutar(usuario, request.password());
         UsuarioResumenDTO response = solicitudResponseMapper.toUsuarioResumenDTO(usuarioRegistrado);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
