@@ -10,7 +10,7 @@ def test_security():
     print("\n1. Registrando Estudiante...")
     estudiante_payload = {
         "nombre": "Estudiante Prueba",
-        "identificacion": "30001",
+        "identificacion": "50001",
         "correo": "estudiante@test.com",
         "password": "password123",
         "rol": { "codigo": "ESTUDIANTE" },
@@ -26,7 +26,7 @@ def test_security():
     print("\n2. Registrando Coordinador...")
     coord_payload = {
         "nombre": "Coordinador Prueba",
-        "identificacion": "30002",
+        "identificacion": "50002",
         "correo": "coord@test.com",
         "password": "password123",
         "rol": { "codigo": "COORDINADOR" },

@@ -50,7 +50,7 @@ public class ClasificacionSolicitudesService {
         }
         // RF-13: verificar que el usuario tenga el rol de COORDINADOR (RN2)
         if (!usuario.puedeClasificarSolicitud()) {
-            throw new IllegalArgumentException(
+            throw new SolicitudException(
                     "Acceso denegado: el usuario no tiene el rol para clasificar solicitudes." +
                             " Rol actual: " + usuario.getRol());
         }

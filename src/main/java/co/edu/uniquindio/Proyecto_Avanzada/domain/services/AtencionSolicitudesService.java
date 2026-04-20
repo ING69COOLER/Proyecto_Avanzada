@@ -44,7 +44,7 @@ public class AtencionSolicitudesService {
         }
         // RF-13: verificar que el usuario tenga rol de COORDINADOR
         if (!user.puedeAsignar()) {
-            throw new IllegalArgumentException(
+            throw new SolicitudException(
                     "Acceso denegado: el usuario no tiene el rol para asignar responsables." +
                             " Rol actual: " + user.getRol());
         }
@@ -89,14 +89,14 @@ public class AtencionSolicitudesService {
         }
         // RF-05: el usuario debe haber sido asignado previamente a esta solicitud
         
-        if (!solicitud.obtenerUsuariosDeHistorias().stream().filter((usuario) -> usuario.getIdentificacion()
+        if (solicitud.obtenerUsuariosDeHistorias().stream().filter((usuario) -> usuario.getIdentificacion()
                                                     .equals(user.getIdentificacion())).toList().isEmpty()) 
                                                     {
             throw new IllegalArgumentException("El usuario no es el responsable asignado a esta solicitud");    
         }
         // RF-13: verificar que el usuario tenga rol de DOCENTE
         if (!user.puedeAtenderSolicitud()) {
-            throw new IllegalArgumentException(
+            throw new SolicitudException(
                     "Acceso denegado: el usuario no tiene el rol para atender solicitudes." +
                             " Rol actual: " + user.getRol());
         }

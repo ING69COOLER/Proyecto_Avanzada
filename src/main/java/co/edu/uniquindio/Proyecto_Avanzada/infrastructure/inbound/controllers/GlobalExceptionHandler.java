@@ -93,19 +93,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(body);
     }
 
-    // Resuelve SolicitudException: por defecto responde 400, o 404 si el mensaje indica recurso inexistente.
+    // Resuelve SolicitudException: Si el mensaje contiene "Acceso denegado" responde 403, de lo contrario 400.
     @ExceptionHandler(SolicitudException.class)
     public ResponseEntity<ErrorResponse> handleSolicitudErrors(
             SolicitudException ex,
             HttpServletRequest request) {
 
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        boolean isForbidden = ex.getMessage().toLowerCase().contains("acceso denegado");
+        HttpStatus status = isForbidden ? HttpStatus.FORBIDDEN : HttpStatus.BAD_REQUEST;
+        
         ErrorResponse body = mapper.toErrorResponse(
             status.value(),
             status.getReasonPhrase(),
-            "excepcion de solicitud: "+ ex.getMessage(),
-            request.getRequestURI()
-        , null);
+            ex.getMessage(),
+            request.getRequestURI(),
+            null);
 
         return ResponseEntity.status(status).body(body);
     }

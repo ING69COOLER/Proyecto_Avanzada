@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +46,6 @@ public class SolicitudesController {
     private final EnumDtoMapper enumDtoMapper;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ESTUDIANTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DOCENTE')")
     public ResponseEntity<SolicitudDetalleResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
         String identificacionSolicitante = getAuthenticatedUsername();
         Solicitud solicitud = crearSolicitudUseCase.ejecutar(
@@ -86,7 +84,6 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/clasificacion")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> clasificarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody ClasificarSolicitudRequest request) throws SolicitudException {
@@ -101,7 +98,6 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/prioridad")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> priorizarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody PriorizarSolicitudRequest request) throws SolicitudException {
@@ -116,7 +112,6 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/asignacion")
-    @PreAuthorize("hasRole('COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> asignarResponsableSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody AsignarResponsableRequest request) throws SolicitudException {
@@ -131,7 +126,6 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/estado")
-    @PreAuthorize("hasAnyRole('DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> cambiarEstadoSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CambiarEstadoRequest request) throws SolicitudException {
@@ -146,7 +140,6 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/cierre")
-    @PreAuthorize("hasAnyRole('DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> cerrarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CerrarSolicitudRequest request) throws SolicitudException {
