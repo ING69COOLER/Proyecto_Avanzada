@@ -16,6 +16,8 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
  */
 @Data
 public class Usuario {
+    /** ID unico del usuario */
+    private Long id;
 
     /** Nombre completo del usuario */
     private String nombre;
@@ -36,11 +38,16 @@ public class Usuario {
         if (identificacion == null || identificacion.isBlank() || identificacion.isEmpty()) {
             throw new IllegalArgumentException("la identificacion no puede ser vacia ni nula");
         }
+        this.id = id;
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.correo = correo;
         this.activo = activo;
         this.rol = rol;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     /**

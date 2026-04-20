@@ -16,6 +16,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.infrastructure.security.jwt.JwtServic
 
 @Configuration
 @EnableWebSecurity
+@org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean

@@ -11,8 +11,6 @@ import jakarta.validation.constraints.Size;
  */
 public record PriorizarSolicitudRequest(
 
-        @NotBlank(message = "La identificacion del usuario que prioriza es obligatoria")
-        @Size(min = 5, max = 20, message = "La identificacion del usuario debe tener entre 5 y 20 caracteres")
         String identificacionUsuario,
 
         @Valid

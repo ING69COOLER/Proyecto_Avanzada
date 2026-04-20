@@ -24,6 +24,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,12 +47,14 @@ public class SolicitudesController {
     private final EnumDtoMapper enumDtoMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ESTUDIANTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DOCENTE')")
     public ResponseEntity<SolicitudDetalleResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
+        String identificacionSolicitante = getAuthenticatedUsername();
         Solicitud solicitud = crearSolicitudUseCase.ejecutar(
                 enumDtoMapper.toTipoSolicitud(request.tipoSolicitud()),
                 request.descripcion(),
                 enumDtoMapper.toCanalOrigen(request.canalOrigen()),
-                request.identificacionSolicitante());
+                identificacionSolicitante);
         return ResponseEntity.status(HttpStatus.CREATED).body(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
@@ -82,65 +86,75 @@ public class SolicitudesController {
     }
 
     @PatchMapping("/{codigo}/clasificacion")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> clasificarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody ClasificarSolicitudRequest request) throws SolicitudException {
 
+        String identificacionUsuario = getAuthenticatedUsername();
         Solicitud solicitud = clasificarSolicitudUseCase.ejecutar(
                 codigo,
-                request.identificacionUsuario(),
+                identificacionUsuario,
             enumDtoMapper.toTipoSolicitud(request.tipoSolicitud()),
                 request.observacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/prioridad")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> priorizarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody PriorizarSolicitudRequest request) throws SolicitudException {
 
+        String identificacionUsuario = getAuthenticatedUsername();
         Solicitud solicitud = priorizarSolicitudUseCase.ejecutar(
                 codigo,
-                request.identificacionUsuario(),
+                identificacionUsuario,
             enumDtoMapper.toNivelPrioridad(request.nivelPrioridad()),
                 request.justificacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/asignacion")
+    @PreAuthorize("hasRole('COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> asignarResponsableSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody AsignarResponsableRequest request) throws SolicitudException {
 
+        String identificacionCoordinador = getAuthenticatedUsername();
         Solicitud solicitud = asignarResponsableUseCase.ejecutar(
                 codigo,
-                request.identificacionCoordinador(),
+                identificacionCoordinador,
                 request.identificacionResponsable(),
                 request.observacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/estado")
+    @PreAuthorize("hasAnyRole('DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> cambiarEstadoSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CambiarEstadoRequest request) throws SolicitudException {
 
+        String identificacionUsuario = getAuthenticatedUsername();
         Solicitud solicitud = cambiarEstadoUseCase.ejecutar(
                 codigo,
-                request.identificacionUsuario(),
+                identificacionUsuario,
             enumDtoMapper.toEstadoSolicitud(request.nuevoEstado()),
                 request.observacion());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
 
     @PatchMapping("/{codigo}/cierre")
+    @PreAuthorize("hasAnyRole('DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR')")
     public ResponseEntity<SolicitudDetalleResponse> cerrarSolicitud(
             @PathVariable("codigo") Long codigo,
             @Valid @RequestBody CerrarSolicitudRequest request) throws SolicitudException {
 
+        String identificacionUsuario = getAuthenticatedUsername();
         Solicitud solicitud = cerrarSolicitudUseCase.ejecutar(
                 codigo,
-                request.identificacionUsuario(),
+                identificacionUsuario,
                 request.observacionCierre());
         return ResponseEntity.ok(solicitudResponseMapper.toDetalleResponse(solicitud));
     }
@@ -149,5 +163,9 @@ public class SolicitudesController {
     public ResponseEntity<List<EventoHistorialResponse>> consultarHistorialSolicitud(@PathVariable("codigo") Long codigo) {
         Solicitud solicitud = obtenerDetalleSolicitudUseCase.ejecutar(codigo);
         return ResponseEntity.ok(solicitudResponseMapper.toHistorialResponseList(solicitud.getHistorial()));
+    }
+
+    private String getAuthenticatedUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

@@ -1,0 +1,8 @@
+{
+  "nombre": "Manuel Pineda",
+  "identificacion": "12345678",
+  "correo": "manuel@example.com",
+  "password": "password123",
+  "rol": { "codigo": "ESTUDIANTE" },
+  "activo": true
+}

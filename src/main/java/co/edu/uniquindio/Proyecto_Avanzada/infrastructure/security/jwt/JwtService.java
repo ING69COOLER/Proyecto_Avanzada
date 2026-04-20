@@ -26,6 +26,7 @@ public class JwtService {
 
     //crear token
     private String getToken(Map<String, Object> extraClaims, CustomUserDetails usuario) {
+        extraClaims.put("role", usuario.user().getRol().name());
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(usuario.getUsername())

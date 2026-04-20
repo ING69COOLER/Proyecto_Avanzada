@@ -23,6 +23,22 @@ public class GlobalExceptionHandler {
 
     private final ErrorResponseMapper mapper;
 
+    // Resuelve errores de seguridad (403 Forbidden)
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse body = mapper.toErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                "Acceso denegado: No tiene los permisos necesarios para esta operacion.",
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
     // Resuelve errores de validacion de @Valid en cuerpos JSON y responde 400 con detalle por campo.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
@@ -92,6 +108,38 @@ public class GlobalExceptionHandler {
         , null);
 
         return ResponseEntity.status(status).body(body);
+    }
+
+    // Resuelve Gateway timeout o errores de integracion externa (Bad Gateway)
+    @ExceptionHandler(org.springframework.web.client.HttpServerErrorException.BadGateway.class)
+    public ResponseEntity<ErrorResponse> handleBadGateway(
+            org.springframework.web.client.HttpServerErrorException.BadGateway ex,
+            HttpServletRequest request) {
+
+        ErrorResponse body = mapper.toErrorResponse(
+                HttpStatus.BAD_GATEWAY.value(),
+                HttpStatus.BAD_GATEWAY.getReasonPhrase(),
+                "Error en el servicio externo (502): " + ex.getMessage(),
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
+    }
+
+    // Resuelve Service Unavailable (503)
+    @ExceptionHandler(org.springframework.web.client.HttpServerErrorException.ServiceUnavailable.class)
+    public ResponseEntity<ErrorResponse> handleServiceUnavailable(
+            org.springframework.web.client.HttpServerErrorException.ServiceUnavailable ex,
+            HttpServletRequest request) {
+
+        ErrorResponse body = mapper.toErrorResponse(
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                "Servicio no disponible temporalmente (503): " + ex.getMessage(),
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(body);
     }
 
     // Fallback global para excepciones no controladas; responde 500.

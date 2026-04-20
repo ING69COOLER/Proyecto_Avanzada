@@ -15,8 +15,6 @@ public record CambiarEstadoRequest(
         @NotNull(message = "El nuevo estado es obligatorio")
         EstadoSolicitudEnumDTO nuevoEstado,
 
-        @NotBlank(message = "La identificacion del usuario responsable es obligatoria")
-        @Size(min = 5, max = 20, message = "La identificacion del usuario debe tener entre 5 y 20 caracteres")
         String identificacionUsuario,
 
         @NotBlank(message = "La observacion del cambio de estado es obligatoria")

@@ -24,7 +24,5 @@ public record CrearSolicitudRequest(
         @NotNull(message = "El canal de origen es obligatorio")
         CanalOrigenEnumDTO canalOrigen,
 
-        @NotBlank(message = "La identificacion del solicitante es obligatoria")
-        @Size(min = 5, max = 20, message = "La identificacion del solicitante debe tener entre 5 y 20 caracteres")
         String identificacionSolicitante) {
 }

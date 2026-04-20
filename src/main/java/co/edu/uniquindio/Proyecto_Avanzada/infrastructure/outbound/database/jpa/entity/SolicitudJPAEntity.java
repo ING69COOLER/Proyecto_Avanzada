@@ -46,7 +46,7 @@ public class SolicitudJPAEntity {
     private EstadoSolicitud estado;
 
     // Relación con el usuario solicitante (embedded por simplicidad)
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_solicitante_id")
     private UsuarioJPAEntity usuarioSolicitante;
 

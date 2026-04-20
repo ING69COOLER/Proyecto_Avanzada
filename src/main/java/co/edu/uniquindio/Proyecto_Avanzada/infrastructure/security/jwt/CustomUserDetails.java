@@ -13,7 +13,7 @@ public record CustomUserDetails(UsuarioJPAEntity user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRol().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().name()));
     }
 
     @Override

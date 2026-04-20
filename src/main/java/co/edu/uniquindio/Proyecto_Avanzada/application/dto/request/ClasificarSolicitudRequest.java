@@ -15,8 +15,6 @@ public record ClasificarSolicitudRequest(
         @NotNull(message = "El tipo de solicitud clasificado es obligatorio")
         TipoSolicitudEnumDTO tipoSolicitud,
 
-        @NotBlank(message = "La identificacion del usuario que clasifica es obligatoria")
-        @Size(min = 5, max = 20, message = "La identificacion del usuario debe tener entre 5 y 20 caracteres")
         String identificacionUsuario,
 
         @NotBlank(message = "La observacion de clasificacion es obligatoria")

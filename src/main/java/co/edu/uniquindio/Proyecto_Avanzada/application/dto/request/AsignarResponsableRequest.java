@@ -8,8 +8,6 @@ import jakarta.validation.constraints.Size;
  */
 public record AsignarResponsableRequest(
 
-        @NotBlank(message = "La identificacion del coordinador es obligatoria")
-        @Size(min = 5, max = 20, message = "La identificacion del coordinador debe tener entre 5 y 20 caracteres")
         String identificacionCoordinador,
 
         @NotBlank(message = "La identificacion del responsable asignado es obligatoria")

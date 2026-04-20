@@ -27,6 +27,7 @@ public final class JpaEntityMapper {
     public static UsuarioJPAEntity toJpa(Usuario domain) {
         if (domain == null) return null;
         return UsuarioJPAEntity.builder()
+                .id(domain.getId())
                 .nombre(domain.getNombre())
                 .identificacion(domain.getIdentificacion())
                 .correo(domain.getCorreo())
