@@ -1,0 +1,7 @@
+<div class="form">
+  <h3>Cerrar Solicitud #{{ codigo }}</h3>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <label>Observación de cierre</label>
+  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
+  <button (click)="submit()">Cerrar</button>
+</div>

@@ -1,0 +1,12 @@
+<div class="form">
+  <h3>Clasificar Solicitud #{{ codigo }}</h3>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <label>Tipo</label>
+  <select [(ngModel)]="tipo" name="tipo">
+    <option value="">-- Seleccione --</option>
+    <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+  </select>
+  <label>Observación</label>
+  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
+  <button (click)="submit()">Clasificar</button>
+</div>

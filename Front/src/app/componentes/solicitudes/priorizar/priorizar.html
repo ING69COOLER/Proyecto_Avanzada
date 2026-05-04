@@ -1,0 +1,12 @@
+<div class="form">
+  <h3>Priorizar Solicitud #{{ codigo }}</h3>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <label>Nivel</label>
+  <select [(ngModel)]="nivel" name="nivel">
+    <option value="">-- Seleccione --</option>
+    <option *ngFor="let n of niveles" [value]="n">{{ n }}</option>
+  </select>
+  <label>Justificación</label>
+  <textarea [(ngModel)]="justificacion" name="justificacion"></textarea>
+  <button (click)="submit()">Priorizar</button>
+</div>

@@ -1,0 +1,9 @@
+<div class="form">
+  <h3>Asignar Responsable - Solicitud #{{ codigo }}</h3>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <label>Identificación Responsable</label>
+  <input [(ngModel)]="identificacion" name="identificacion" />
+  <label>Observación</label>
+  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
+  <button (click)="submit()">Asignar</button>
+</div>

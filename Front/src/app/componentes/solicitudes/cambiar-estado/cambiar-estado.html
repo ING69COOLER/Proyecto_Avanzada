@@ -1,0 +1,12 @@
+<div class="form">
+  <h3>Cambiar Estado - Solicitud #{{ codigo }}</h3>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <label>Estado</label>
+  <select [(ngModel)]="estado" name="estado">
+    <option value="">-- Seleccione --</option>
+    <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+  </select>
+  <label>Observación</label>
+  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
+  <button (click)="submit()">Cambiar</button>
+</div>

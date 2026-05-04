@@ -1,0 +1,22 @@
+<div class="crear-solicitud">
+  <h2>Crear Solicitud</h2>
+  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
+  <form (ngSubmit)="submit()">
+    <label>Tipo</label>
+    <select [(ngModel)]="tipoSolicitud" name="tipo">
+      <option value="">-- Seleccione --</option>
+      <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+    </select>
+
+    <label>Canal</label>
+    <select [(ngModel)]="canalOrigen" name="canal">
+      <option value="">-- Seleccione --</option>
+      <option *ngFor="let c of canales" [value]="c">{{ c }}</option>
+    </select>
+
+    <label>Descripción</label>
+    <textarea [(ngModel)]="descripcion" name="descripcion" rows="4"></textarea>
+
+    <button type="button" (click)="submit()">Crear</button>
+  </form>
+</div>

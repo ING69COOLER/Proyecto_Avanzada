@@ -1,0 +1,4 @@
+.crear-solicitud{max-width:720px;margin:1rem auto;padding:1rem;border:1px solid #ddd}
+.crear-solicitud label{display:block;margin-top:8px}
+.crear-solicitud select, .crear-solicitud textarea{width:100%;padding:6px}
+.mensaje{color:#b00;margin-bottom:8px}
