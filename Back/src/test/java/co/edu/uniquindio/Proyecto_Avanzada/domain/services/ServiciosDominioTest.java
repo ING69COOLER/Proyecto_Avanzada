@@ -117,7 +117,7 @@ class ServiciosDominioTest {
                     TipoSolicitud.SOLICITUD_CUPOS, "Test", CanalOrigen.PORTAL_WEB);
 
             // Act & Assert
-            assertThrows(IllegalArgumentException.class, () -> {
+            assertThrows(SolicitudException.class, () -> {
                 clasificacionService.clasificarSolicitud(solicitud, TipoSolicitud.HOMOLOGACION, 
                         estudianteActivo, "Intento de clasificar");
             });
@@ -220,7 +220,7 @@ class ServiciosDominioTest {
                     coordinador, "Clasificada");
 
             // Act & Assert
-            assertThrows(IllegalArgumentException.class, () -> {
+            assertThrows(SolicitudException.class, () -> {
                 atencionService.asignarResponsable(docente, solicitud, "Intento asignar");
             });
         }
