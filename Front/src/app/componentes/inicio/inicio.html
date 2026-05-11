@@ -1,1 +1,69 @@
-<p>inicio works!</p>
+<div class="hero-section">
+  <div class="container">
+    <div class="row align-items-center min-vh-75">
+      <div class="col-lg-7 text-center text-lg-start">
+        <h1 class="display-4 fw-bold mb-3">
+          <span class="text-gradient">Sistema de Triage</span><br>
+          Solicitudes Académicas
+        </h1>
+        <p class="lead text-muted mb-4">
+          Plataforma centralizada para registrar, clasificar, priorizar y gestionar
+          solicitudes académicas del Programa de Ingeniería de Sistemas y Computación
+          de la Universidad del Quindío.
+        </p>
+
+        <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+          @if (authService.isLoggedIn()) {
+            <a routerLink="/solicitudes" class="btn btn-primary btn-lg px-4">
+              <i class="bi bi-file-earmark-text me-2"></i> Ver Solicitudes
+            </a>
+            <a routerLink="/solicitudes/crear" class="btn btn-outline-primary btn-lg px-4">
+              <i class="bi bi-plus-circle me-2"></i> Nueva Solicitud
+            </a>
+          } @else {
+            <a routerLink="/login" class="btn btn-primary btn-lg px-4">
+              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+            </a>
+            <a routerLink="/registro" class="btn btn-outline-primary btn-lg px-4">
+              <i class="bi bi-person-plus me-2"></i> Registrarse
+            </a>
+          }
+        </div>
+      </div>
+
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="row g-3">
+          <!-- Feature cards -->
+          <div class="col-6">
+            <div class="card feature-card text-center p-3">
+              <i class="bi bi-clipboard-check feature-icon text-primary"></i>
+              <h6 class="mt-2 mb-1">Registro</h6>
+              <small class="text-muted">Solicitudes centralizadas</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card feature-card text-center p-3">
+              <i class="bi bi-tags feature-icon text-success"></i>
+              <h6 class="mt-2 mb-1">Clasificación</h6>
+              <small class="text-muted">Categorías definidas</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card feature-card text-center p-3">
+              <i class="bi bi-sort-numeric-up feature-icon text-warning"></i>
+              <h6 class="mt-2 mb-1">Priorización</h6>
+              <small class="text-muted">Atención inteligente</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card feature-card text-center p-3">
+              <i class="bi bi-robot feature-icon text-info"></i>
+              <h6 class="mt-2 mb-1">IA Asistente</h6>
+              <small class="text-muted">Sugerencias automáticas</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

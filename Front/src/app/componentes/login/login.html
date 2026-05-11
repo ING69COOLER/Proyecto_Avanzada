@@ -1,1 +1,112 @@
-<p>login works!</p>
+<div class="auth-wrapper">
+  <div class="card auth-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="auth-icon">
+        <i class="bi bi-shield-lock"></i>
+      </div>
+      <h4>Iniciar Sesión</h4>
+      <p>Ingrese sus credenciales para acceder al sistema</p>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Error alert -->
+      @if (errorMessage) {
+        <div class="alert alert-danger d-flex align-items-center fade-in" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- Identificación -->
+        <div class="mb-3">
+          <label for="loginUsername" class="form-label">
+            <i class="bi bi-person-badge me-1"></i> Identificación
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              id="loginUsername"
+              formControlName="username"
+              placeholder="Ingrese su número de identificación"
+              [class.is-invalid]="f['username'].touched && f['username'].invalid"
+              [class.is-valid]="f['username'].touched && f['username'].valid"
+              autocomplete="username"
+            />
+            @if (f['username'].touched && f['username'].errors) {
+              <div class="invalid-feedback">
+                @if (f['username'].errors['required']) {
+                  La identificación es obligatoria.
+                } @else if (f['username'].errors['minlength']) {
+                  Debe tener al menos 5 caracteres.
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-4">
+          <label for="loginPassword" class="form-label">
+            <i class="bi bi-lock me-1"></i> Contraseña
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-key"></i></span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              id="loginPassword"
+              formControlName="password"
+              placeholder="Ingrese su contraseña"
+              [class.is-invalid]="f['password'].touched && f['password'].invalid"
+              [class.is-valid]="f['password'].touched && f['password'].valid"
+              autocomplete="current-password"
+            />
+            <span class="input-group-text password-toggle" (click)="togglePassword()">
+              <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+            </span>
+            @if (f['password'].touched && f['password'].errors) {
+              <div class="invalid-feedback">
+                @if (f['password'].errors['required']) {
+                  La contraseña es obligatoria.
+                } @else if (f['password'].errors['minlength']) {
+                  Debe tener al menos 8 caracteres.
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="btn btn-primary w-100 py-2"
+          [disabled]="loading"
+          id="btnLogin"
+        >
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Ingresando...
+          } @else {
+            <i class="bi bi-box-arrow-in-right me-2"></i> Ingresar
+          }
+        </button>
+      </form>
+
+      <!-- Link a registro -->
+      <div class="text-center mt-4">
+        <p class="text-muted mb-0">
+          ¿No tiene una cuenta?
+          <a routerLink="/registro" class="text-decoration-none fw-semibold">Regístrese aquí</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

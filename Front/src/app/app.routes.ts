@@ -10,18 +10,19 @@ import { PriorizarSolicitud } from './componentes/solicitudes/priorizar/prioriza
 import { AsignarSolicitud } from './componentes/solicitudes/asignar/asignar';
 import { CambiarEstadoSolicitud } from './componentes/solicitudes/cambiar-estado/cambiar-estado';
 import { CerrarSolicitud } from './componentes/solicitudes/cerrar/cerrar';
+import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
   { path: 'login', component: Login },
   { path: 'registro', component: Registro },
-  { path: 'solicitudes', component: SolicitudesList },
-  { path: 'solicitudes/crear', component: CrearSolicitud },
-  { path: 'solicitudes/:codigo', component: SolicitudDetalle },
-  { path: 'solicitudes/:codigo/clasificar', component: ClasificarSolicitud },
-  { path: 'solicitudes/:codigo/priorizar', component: PriorizarSolicitud },
-  { path: 'solicitudes/:codigo/asignar', component: AsignarSolicitud },
-  { path: 'solicitudes/:codigo/estado', component: CambiarEstadoSolicitud },
-  { path: 'solicitudes/:codigo/cerrar', component: CerrarSolicitud },
+  { path: 'solicitudes', component: SolicitudesList, canActivate: [authGuard] },
+  { path: 'solicitudes/crear', component: CrearSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo', component: SolicitudDetalle, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo/clasificar', component: ClasificarSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo/priorizar', component: PriorizarSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo/asignar', component: AsignarSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo/estado', component: CambiarEstadoSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/:codigo/cerrar', component: CerrarSolicitud, canActivate: [authGuard] },
   { path: '**', pathMatch: 'full', redirectTo: '/' },
 ];
