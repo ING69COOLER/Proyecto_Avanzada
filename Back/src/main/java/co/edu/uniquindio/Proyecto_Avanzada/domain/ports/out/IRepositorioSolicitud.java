@@ -50,4 +50,12 @@ public interface IRepositorioSolicitud {
     public List<Solicitud> listar();
 
     public Page<Solicitud> listar(Pageable pageable);
+
+    public Page<Solicitud> consultarEstado(EstadoSolicitud estadoSolicitud, Pageable pageable);
+
+    public Page<Solicitud> consultarTipoSolicitud(TipoSolicitud tipoSolicitud, Pageable pageable);
+
+    public Page<Solicitud> consultarPorNivelPrioridad(NivelPrioridad nivelPrioridad, Pageable pageable);
+
+    public Page<Solicitud> consultarResponsable(Usuario usuario, Pageable pageable);
 }

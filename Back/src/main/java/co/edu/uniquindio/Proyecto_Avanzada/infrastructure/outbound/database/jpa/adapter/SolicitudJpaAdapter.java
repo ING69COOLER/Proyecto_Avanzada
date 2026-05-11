@@ -58,6 +58,27 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
     }
 
     @Override
+    public Page<Solicitud> consultarEstado(EstadoSolicitud estado, Pageable pageable) {
+        return springRepo.findByEstado(estado, pageable).map(JpaEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<Solicitud> consultarTipoSolicitud(TipoSolicitud tipo, Pageable pageable) {
+        return springRepo.findByTipo(tipo, pageable).map(JpaEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<Solicitud> consultarPorNivelPrioridad(NivelPrioridad nivelPrioridad, Pageable pageable) {
+        return springRepo.findByPrioridadNivel(nivelPrioridad, pageable).map(JpaEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<Solicitud> consultarResponsable(Usuario usuario, Pageable pageable) {
+        return springRepo.findByResponsableIdentificacion(usuario.getIdentificacion(), pageable)
+                .map(JpaEntityMapper::toDomain);
+    }
+
+    @Override
     public List<Solicitud> consultarEstado(EstadoSolicitud estado) {
         return JpaEntityMapper.toDomainList(springRepo.findByEstado(estado));
     }
