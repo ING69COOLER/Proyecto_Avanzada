@@ -1,10 +1,331 @@
-<div class="solicitudes-list">
-  <h2>Solicitudes</h2>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <a routerLink="/solicitudes/crear">Crear nueva solicitud</a>
-  <ul>
-    <li *ngFor="let s of solicitudes">
-      <a [routerLink]="['/solicitudes', s.codigo]">#{{ s.codigo }} - {{ s.tipo }} - {{ s.estado }}</a>
-    </li>
-  </ul>
-</div>
+<section class="dashboard-shell">
+  <div class="dashboard-hero">
+    <div>
+      <span class="eyebrow">Dashboard academico</span>
+      <h1>Solicitudes</h1>
+      <p>
+        Gestiona el flujo que corresponde a tu rol sin salir del panel.
+      </p>
+    </div>
+    <div class="role-card">
+      <span>Rol activo</span>
+      <strong>{{ displayCodigo(role) }}</strong>
+    </div>
+  </div>
+
+  <div class="tabs-bar" role="tablist" aria-label="Paneles disponibles">
+    @for (tab of visibleTabs; track tab.id) {
+      <button
+        type="button"
+        class="tab-button"
+        [class.active]="selectedTab === tab.id"
+        (click)="selectTab(tab.id)"
+      >
+        <i class="bi" [ngClass]="tab.icon"></i>
+        <span>{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+
+  @if (mensaje) {
+    <div class="alert-card alert-error fade-in">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span>{{ mensaje }}</span>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert-card alert-success fade-in">
+      <i class="bi bi-check-circle-fill"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  @if (selectedTab === 'registrar') {
+    <div class="panel request-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">Estudiante</span>
+          <h2>Registrar solicitud</h2>
+        </div>
+        <i class="bi bi-pencil-square panel-icon"></i>
+      </div>
+
+      <form class="request-form" (ngSubmit)="submitCrear()">
+        <div class="form-grid">
+          <label>
+            <span>Tipo de solicitud</span>
+            <select [(ngModel)]="crearForm.tipoSolicitud" name="tipoSolicitud">
+              <option value="">Selecciona un tipo</option>
+              @for (tipo of tipos; track tipo) {
+                <option [value]="tipo">{{ displayCodigo(tipo) }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Canal</span>
+            <select [(ngModel)]="crearForm.canalOrigen" name="canalOrigen">
+              @for (canal of canales; track canal) {
+                <option [value]="canal">{{ displayCodigo(canal) }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>Descripcion</span>
+          <textarea
+            [(ngModel)]="crearForm.descripcion"
+            name="descripcion"
+            rows="7"
+            placeholder="Cuenta que necesitas, agrega asignatura, grupo, codigo o contexto academico relevante."
+          ></textarea>
+        </label>
+
+        <div class="panel-actions">
+          <button class="primary-action" type="submit" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              Registrando
+            } @else {
+              <i class="bi bi-send-check"></i>
+              Registrar solicitud
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (selectedTab === 'listado') {
+    <div class="panel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">Bandeja operativa</span>
+          <h2>Solicitudes disponibles</h2>
+        </div>
+        <button type="button" class="ghost-action" (click)="load()" [disabled]="loading">
+          <i class="bi bi-arrow-clockwise"></i>
+          Actualizar
+        </button>
+      </div>
+
+      @if (loading) {
+        <div class="empty-state">
+          <span class="spinner-border" aria-hidden="true"></span>
+          Cargando solicitudes...
+        </div>
+      } @else if (!solicitudes.length) {
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          No hay solicitudes para mostrar.
+        </div>
+      } @else {
+        <div class="request-table">
+          @for (s of solicitudes; track s.codigo) {
+            <button
+              type="button"
+              class="request-row"
+              [class.selected]="selectedSolicitud?.codigo === s.codigo"
+              (click)="selectSolicitud(s)"
+            >
+              <span class="request-code">#{{ s.codigo }}</span>
+              <span>{{ displayCodigo(s.tipoSolicitud || s.tipo) }}</span>
+              <span class="status-pill">{{ displayCodigo(s.estado) }}</span>
+              <span>{{ displayCodigo(s.prioridad?.nivel || s.prioridad) }}</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (selectedTab !== 'registrar' && selectedTab !== 'listado') {
+    <div class="workspace-grid">
+      <aside class="panel side-panel">
+        <div class="panel-heading compact">
+          <div>
+            <span class="eyebrow">Solicitud activa</span>
+            <h2>Seleccion</h2>
+          </div>
+        </div>
+
+        <label>
+          <span>Escoger solicitud</span>
+          <select
+            [ngModel]="selectedSolicitud?.codigo || ''"
+            (ngModelChange)="selectSolicitudByCodigo($event)"
+            name="selectedSolicitud"
+          >
+            <option value="">Selecciona una solicitud</option>
+            @for (s of solicitudes; track s.codigo) {
+              <option [value]="s.codigo">#{{ s.codigo }} - {{ displayCodigo(s.tipoSolicitud || s.tipo) }}</option>
+            }
+          </select>
+        </label>
+
+        @if (selectedSolicitud) {
+          <div class="detail-stack">
+            <div>
+              <span>Codigo</span>
+              <strong>#{{ selectedSolicitud.codigo }}</strong>
+            </div>
+            <div>
+              <span>Tipo</span>
+              <strong>{{ displayCodigo(selectedSolicitud.tipoSolicitud || selectedSolicitud.tipo) }}</strong>
+            </div>
+            <div>
+              <span>Estado</span>
+              <strong>{{ displayCodigo(selectedSolicitud.estado) }}</strong>
+            </div>
+            <div>
+              <span>Prioridad</span>
+              <strong>{{ displayCodigo(selectedSolicitud.prioridad?.nivel || selectedSolicitud.prioridad) }}</strong>
+            </div>
+          </div>
+        }
+      </aside>
+
+      <div class="panel action-panel">
+        @if (selectedTab === 'clasificar') {
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Coordinacion</span>
+              <h2>Clasificar solicitud</h2>
+            </div>
+          </div>
+          <label>
+            <span>Tipo</span>
+            <select [(ngModel)]="actionForm.tipoSolicitud" name="actionTipo">
+              <option value="">Selecciona un tipo</option>
+              @for (tipo of tipos; track tipo) {
+                <option [value]="tipo">{{ displayCodigo(tipo) }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Observacion</span>
+            <textarea [(ngModel)]="actionForm.observacion" name="clasificarObs" rows="5"></textarea>
+          </label>
+          <button type="button" class="primary-action" (click)="submitClasificar()">
+            <i class="bi bi-tags"></i>
+            Clasificar
+          </button>
+        }
+
+        @if (selectedTab === 'priorizar') {
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Coordinacion</span>
+              <h2>Priorizar solicitud</h2>
+            </div>
+          </div>
+          <label>
+            <span>Nivel</span>
+            <select [(ngModel)]="actionForm.nivelPrioridad" name="actionPrioridad">
+              <option value="">Selecciona un nivel</option>
+              @for (nivel of niveles; track nivel) {
+                <option [value]="nivel">{{ displayCodigo(nivel) }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Justificacion</span>
+            <textarea [(ngModel)]="actionForm.observacion" name="priorizarObs" rows="5"></textarea>
+          </label>
+          <button type="button" class="primary-action" (click)="submitPriorizar()">
+            <i class="bi bi-sort-up"></i>
+            Priorizar
+          </button>
+        }
+
+        @if (selectedTab === 'asignar') {
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Coordinacion</span>
+              <h2>Asignar responsable</h2>
+            </div>
+          </div>
+          <label>
+            <span>Responsable</span>
+            <select [(ngModel)]="actionForm.identificacionResponsable" name="responsable">
+              <option value="">Selecciona un responsable</option>
+              @for (responsable of responsables; track responsable.identificacion) {
+                <option [value]="responsable.identificacion">{{ responsableLabel(responsable) }}</option>
+              }
+            </select>
+          </label>
+          @if (!responsables.length) {
+            <div class="empty-inline">
+              <i class="bi bi-info-circle"></i>
+              No hay docentes activos disponibles para asignar.
+            </div>
+          }
+          <label>
+            <span>Observacion</span>
+            <textarea [(ngModel)]="actionForm.observacion" name="asignarObs" rows="5"></textarea>
+          </label>
+          <button type="button" class="primary-action" (click)="submitAsignar()">
+            <i class="bi bi-person-check"></i>
+            Asignar
+          </button>
+        }
+
+        @if (selectedTab === 'atender') {
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Docente</span>
+              <h2>Atender solicitud</h2>
+            </div>
+          </div>
+          <label>
+            <span>Observacion de atencion</span>
+            <textarea [(ngModel)]="actionForm.observacion" name="atenderObs" rows="6"></textarea>
+          </label>
+          <button type="button" class="primary-action" (click)="submitAtender()">
+            <i class="bi bi-tools"></i>
+            Marcar como atendida
+          </button>
+        }
+
+        @if (selectedTab === 'cerrar') {
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Coordinacion</span>
+              <h2>Cerrar solicitud</h2>
+            </div>
+          </div>
+          <label>
+            <span>Observacion de cierre</span>
+            <textarea [(ngModel)]="actionForm.observacion" name="cerrarObs" rows="6"></textarea>
+          </label>
+          <button type="button" class="danger-action" (click)="submitCerrar()">
+            <i class="bi bi-check2-circle"></i>
+            Cerrar solicitud
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (selectedSolicitud?.historial?.length) {
+    <div class="panel history-panel">
+      <div class="panel-heading compact">
+        <div>
+          <span class="eyebrow">Trazabilidad</span>
+          <h2>Historial de la solicitud #{{ selectedSolicitud.codigo }}</h2>
+        </div>
+      </div>
+      <div class="timeline">
+        @for (h of selectedSolicitud.historial; track h.fechaHora) {
+          <div class="timeline-item">
+            <span>{{ h.fechaHora | date:'short' }}</span>
+            <strong>{{ displayCodigo(h.accion) }} - {{ displayCodigo(h.estado) }}</strong>
+            <p>{{ h.observacion }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

@@ -97,7 +97,7 @@ export class Registro {
     this.authService.register(payload).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = '¡Registro exitoso! Redirigiendo...';
+        this.successMessage = 'Registro exitoso. Redirigiendo...';
         setTimeout(() => {
           this.router.navigate(['/solicitudes']);
         }, 1500);

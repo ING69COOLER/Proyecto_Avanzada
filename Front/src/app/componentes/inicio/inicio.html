@@ -2,27 +2,53 @@
   <div class="container">
     <div class="row align-items-center min-vh-75">
       <div class="col-lg-7 text-center text-lg-start">
+        <span class="hero-kicker">Universidad del Quindío</span>
         <h1 class="display-4 fw-bold mb-3">
           <span class="text-gradient">Sistema de Triage</span><br>
           Solicitudes Académicas
         </h1>
         <p class="lead text-muted mb-4">
           Plataforma centralizada para registrar, clasificar, priorizar y gestionar
-          solicitudes académicas del Programa de Ingeniería de Sistemas y Computación
-          de la Universidad del Quindío.
+          solicitudes académicas del Programa de Ingeniería de Sistemas y Computación.
         </p>
 
-        <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+        <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
           @if (authService.isLoggedIn()) {
-            <a routerLink="/solicitudes" class="btn btn-primary btn-lg px-4">
-              <i class="bi bi-file-earmark-text me-2"></i> Ver Solicitudes
-            </a>
-            <a routerLink="/solicitudes/crear" class="btn btn-outline-primary btn-lg px-4">
-              <i class="bi bi-plus-circle me-2"></i> Nueva Solicitud
-            </a>
+            @if (authService.canRegisterSolicitudes()) {
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'registrar' }" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-clipboard-plus me-2"></i> Registrar solicitud
+              </a>
+            }
+
+            @if (authService.hasRole('ESTUDIANTE')) {
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'listado' }" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-inboxes me-2"></i> Mis solicitudes
+              </a>
+            }
+
+            @if (authService.canManageSolicitudes()) {
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'listado' }" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-inboxes me-2"></i> Bandeja general
+              </a>
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'asignar' }" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-person-check me-2"></i> Asignar
+              </a>
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'cerrar' }" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-check2-circle me-2"></i> Cerrar
+              </a>
+            }
+
+            @if (authService.canAttendSolicitudes()) {
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'listado' }" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-inboxes me-2"></i> Mis asignadas
+              </a>
+              <a routerLink="/solicitudes" [queryParams]="{ tab: 'atender' }" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-tools me-2"></i> Atender
+              </a>
+            }
           } @else {
             <a routerLink="/login" class="btn btn-primary btn-lg px-4">
-              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
             </a>
             <a routerLink="/registro" class="btn btn-outline-primary btn-lg px-4">
               <i class="bi bi-person-plus me-2"></i> Registrarse
@@ -33,10 +59,9 @@
 
       <div class="col-lg-5 mt-5 mt-lg-0">
         <div class="row g-3">
-          <!-- Feature cards -->
           <div class="col-6">
             <div class="card feature-card text-center p-3">
-              <i class="bi bi-clipboard-check feature-icon text-primary"></i>
+              <i class="bi bi-clipboard-check feature-icon text-info"></i>
               <h6 class="mt-2 mb-1">Registro</h6>
               <small class="text-muted">Solicitudes centralizadas</small>
             </div>
@@ -57,9 +82,9 @@
           </div>
           <div class="col-6">
             <div class="card feature-card text-center p-3">
-              <i class="bi bi-robot feature-icon text-info"></i>
-              <h6 class="mt-2 mb-1">IA Asistente</h6>
-              <small class="text-muted">Sugerencias automáticas</small>
+              <i class="bi bi-person-check feature-icon text-primary"></i>
+              <h6 class="mt-2 mb-1">Seguimiento</h6>
+              <small class="text-muted">Paneles por rol</small>
             </div>
           </div>
         </div>

@@ -30,7 +30,7 @@ public class AsignarResponsableUseCase {
         }
         
         String observacionFinal = observacion + " Responsable asignado: " + responsable.getIdentificacion();
-        Solicitud solicitudAsignada = dominio.asignarResponsable(coordinador, solicitud, observacionFinal);
+        Solicitud solicitudAsignada = dominio.asignarResponsable(coordinador, responsable, solicitud, observacionFinal);
         
         solicitudRepository.guardarSolicitud(solicitudAsignada);
         return solicitudAsignada; // Actualizar en el repositorio

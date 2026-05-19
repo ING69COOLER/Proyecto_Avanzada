@@ -12,6 +12,7 @@ import co.edu.uniquindio.Proyecto_Avanzada.domain.ports.out.IRepositorioUsuario;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.services.ConsultaSolicitudesService;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.EstadoSolicitud;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.NivelPrioridad;
+import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.Rol;
 import co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoSolicitud;
 import jakarta.transaction.Transactional;
 
@@ -28,6 +29,14 @@ public class ConsultarSolicitudesFiltradasUseCase {
         Pageable pageableEfectivo = pageable != null ? pageable : PageRequest.of(0, 10);
         Usuario usuarioAccion = usuarioRepository.obtenerUsuarioIdentificacion(identificacionResponsableAccion);
         dominio.consultasValidacion(usuarioAccion);
+
+        if (usuarioAccion.getRol() == Rol.DOCENTE || usuarioAccion.getRol() == Rol.ADMINISTRATIVO) {
+            return repository.consultarResponsable(usuarioAccion, pageableEfectivo);
+        }
+
+        if (usuarioAccion.getRol() == Rol.ESTUDIANTE) {
+            return repository.consultarSolicitante(usuarioAccion, pageableEfectivo);
+        }
 
         if (estado != null) {
             return repository.consultarEstado(estado, pageableEfectivo);

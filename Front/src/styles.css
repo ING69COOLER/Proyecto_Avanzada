@@ -1,197 +1,222 @@
 /* =============================================
-   Sistema de Triage - Estilos Globales
+   Sistema de Triage - Tema oscuro global
    ============================================= */
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #3b82f6;
-  --color-accent: #7c3aed;
-  --color-success: #059669;
-  --color-warning: #d97706;
-  --color-danger: #dc2626;
-  --color-bg: #f0f4f8;
-  --color-surface: #ffffff;
-  --color-text: #1e293b;
-  --color-text-muted: #64748b;
+  --color-primary: #14b8a6;
+  --color-primary-dark: #0f766e;
+  --color-primary-light: #5eead4;
+  --color-accent: #3b82f6;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-bg: #050816;
+  --color-surface: #0f172a;
+  --color-surface-2: #111827;
+  --color-text: #f8fafc;
+  --color-text-muted: #9fb1c7;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --border-radius: 0.75rem;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 8px;
+  --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 14px 36px rgba(0, 0, 0, 0.26);
+  --shadow-lg: 0 20px 54px rgba(0, 0, 0, 0.34);
+  --shadow-xl: 0 28px 80px rgba(0, 0, 0, 0.42);
+  --transition: all 0.22s ease;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
+html,
 body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
   font-family: var(--font-family);
-  background-color: var(--color-bg);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(20, 184, 166, 0.14), transparent 34%),
+    radial-gradient(circle at 88% 12%, rgba(59, 130, 246, 0.14), transparent 36%),
+    linear-gradient(135deg, #050816 0%, #0b1020 48%, #111827 100%);
+  background-attachment: fixed;
   color: var(--color-text);
-  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* =============================================
-   Navbar personalizado
-   ============================================= */
+a {
+  color: var(--color-primary-light);
+}
+
 .navbar {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%) !important;
+  background: rgba(5, 8, 22, 0.84) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   box-shadow: var(--shadow-md);
   padding: 0.75rem 0;
+  backdrop-filter: blur(18px);
 }
 
 .navbar-brand {
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: -0.025em;
+  color: #f8fafc;
+  font-weight: 800;
+  font-size: 1.16rem;
+  letter-spacing: 0;
 }
 
 .navbar .nav-link {
-  font-weight: 500;
-  transition: var(--transition);
-  border-radius: 0.5rem;
+  color: #b6c4d8;
+  font-weight: 650;
+  border-radius: 8px;
   padding: 0.5rem 1rem !important;
-}
-
-.navbar .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-/* =============================================
-   Cards estilizadas
-   ============================================= */
-.card {
-  border: none;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
   transition: var(--transition);
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: #f8fafc;
+  background: rgba(20, 184, 166, 0.14);
+}
+
+.card {
+  color: var(--color-text);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: var(--border-radius);
+  background: rgba(15, 23, 42, 0.84);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-
 .card-header {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: white;
-  font-weight: 600;
-  border-bottom: none;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.9), rgba(59, 130, 246, 0.86));
+  font-weight: 700;
   padding: 1.25rem 1.5rem;
 }
 
-/* =============================================
-   Formularios
-   ============================================= */
+.card-body {
+  background: rgba(15, 23, 42, 0.78);
+}
+
 .form-control,
 .form-select {
-  border-radius: 0.5rem;
-  border: 1.5px solid #d1d5db;
-  padding: 0.625rem 1rem;
-  font-size: 0.95rem;
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background-color: rgba(2, 6, 23, 0.7);
+  padding: 0.68rem 1rem;
   transition: var(--transition);
+}
+
+.form-control::placeholder {
+  color: #6f829b;
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  color: #f8fafc;
+  border-color: rgba(94, 234, 212, 0.72);
+  background-color: rgba(2, 6, 23, 0.82);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
 }
 
 .form-label {
-  font-weight: 500;
-  color: var(--color-text);
-  margin-bottom: 0.375rem;
-  font-size: 0.9rem;
+  color: #d8e4f2;
+  font-weight: 650;
+  margin-bottom: 0.4rem;
 }
 
-.form-floating > .form-control,
-.form-floating > .form-select {
-  border-radius: 0.5rem;
+.input-group-text {
+  color: #8ea4bd;
+  border-color: rgba(148, 163, 184, 0.22);
+  background-color: rgba(2, 6, 23, 0.86);
 }
 
-/* =============================================
-   Botones
-   ============================================= */
 .btn {
-  border-radius: 0.5rem;
-  font-weight: 600;
+  border-radius: 8px;
+  font-weight: 800;
   padding: 0.625rem 1.5rem;
+  letter-spacing: 0;
   transition: var(--transition);
-  letter-spacing: 0.01em;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   border: none;
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+  background: linear-gradient(135deg, #14b8a6, #2563eb);
+  box-shadow: 0 12px 28px rgba(20, 184, 166, 0.18);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, #1e40af 100%);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
   transform: translateY(-1px);
+  background: linear-gradient(135deg, #0d9488, #1d4ed8);
 }
 
+.btn-outline-primary {
+  color: #9ff7eb;
+  border-color: rgba(94, 234, 212, 0.46);
+}
+
+.btn-outline-primary:hover,
 .btn-outline-light:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: #f8fafc;
+  border-color: transparent;
+  background: rgba(20, 184, 166, 0.22);
 }
 
-/* =============================================
-   Alertas
-   ============================================= */
 .alert {
-  border-radius: 0.5rem;
-  border: none;
-  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 650;
 }
 
-/* =============================================
-   Auth pages (Login / Registro)
-   ============================================= */
+.alert-danger {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(127, 29, 29, 0.46);
+}
+
+.alert-success {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.28);
+  background: rgba(20, 83, 45, 0.42);
+}
+
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
 .auth-wrapper {
   min-height: calc(100vh - 72px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #ede9fe 50%, #fdf2f8 100%);
+  padding: 2.5rem 1rem;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 480px;
-  border-radius: 1rem;
+  max-width: 500px;
+  border-radius: 8px;
   box-shadow: var(--shadow-xl);
-  border: none;
-  overflow: hidden;
-  animation: fadeInUp 0.5s ease-out;
+  animation: fadeInUp 0.45s ease-out;
 }
 
 .auth-card .card-header {
   text-align: center;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 2rem 1.5rem 1.4rem;
 }
 
 .auth-card .card-header h4 {
   margin: 0;
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .auth-card .card-header p {
   margin: 0.5rem 0 0;
-  opacity: 0.85;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .auth-card .card-body {
@@ -199,36 +224,52 @@ body {
 }
 
 .auth-icon {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  width: 62px;
+  height: 62px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  font-size: 1.75rem;
+  border-radius: 8px;
+  color: #ecfeff;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 1.7rem;
 }
 
-/* =============================================
-   Footer
-   ============================================= */
 .app-footer {
-  background: var(--color-text);
-  color: rgba(255, 255, 255, 0.7);
-  padding: 1.5rem 0;
+  color: rgba(226, 232, 240, 0.68);
+  padding: 1.35rem 0;
   text-align: center;
   font-size: 0.875rem;
-  margin-top: auto;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(5, 8, 22, 0.78);
 }
 
-/* =============================================
-   Animaciones
-   ============================================= */
+.text-gradient {
+  color: #67e8f9;
+  background: linear-gradient(135deg, #5eead4, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.password-toggle {
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary-light);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -242,37 +283,5 @@ body {
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* =============================================
-   Utilidades
-   ============================================= */
-.text-gradient {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.invalid-feedback {
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-/* Input group icons */
-.input-group-text {
-  background-color: #f8fafc;
-  border-color: #d1d5db;
-  color: var(--color-text-muted);
-}
-
-/* Password toggle */
-.password-toggle {
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.password-toggle:hover {
-  color: var(--color-primary);
+  animation: fadeIn 0.28s ease-out;
 }

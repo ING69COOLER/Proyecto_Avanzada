@@ -74,7 +74,13 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
 
     @Override
     public Page<Solicitud> consultarResponsable(Usuario usuario, Pageable pageable) {
-        return springRepo.findByResponsableIdentificacion(usuario.getIdentificacion(), pageable)
+        return springRepo.findAsignadasByResponsableIdentificacion(usuario.getIdentificacion(), pageable)
+                .map(JpaEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<Solicitud> consultarSolicitante(Usuario usuario, Pageable pageable) {
+        return springRepo.findByUsuarioSolicitanteIdentificacion(usuario.getIdentificacion(), pageable)
                 .map(JpaEntityMapper::toDomain);
     }
 
@@ -102,9 +108,11 @@ public class SolicitudJpaAdapter implements IRepositorioSolicitud {
         // Filtrado en memoria sobre los resultados: el historial ya viene cargado (EAGER)
         return springRepo.findAll().stream()
                 .map(JpaEntityMapper::toDomain)
-                .filter(s -> s.obtenerUsuariosDeHistorias().stream()
-                        .anyMatch(u -> u != null
-                                && u.getIdentificacion().equals(usuario.getIdentificacion())))
+                .filter(s -> s.getHistorial().stream()
+                        .anyMatch(h -> h != null
+                                && h.getAccion() == co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion.ASIGNACION
+                                && h.getResponsable() != null
+                                && h.getResponsable().getIdentificacion().equals(usuario.getIdentificacion())))
                 .toList();
     }
 

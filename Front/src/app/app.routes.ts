@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { Inicio } from './componentes/inicio/inicio';
 import { Login } from './componentes/login/login';
 import { Registro } from './componentes/registro/registro';
-import { CrearSolicitud } from './componentes/solicitudes/crear/crear';
 import { SolicitudesList } from './componentes/solicitudes/list/list';
 import { SolicitudDetalle } from './componentes/solicitudes/detalle/detalle';
 import { ClasificarSolicitud } from './componentes/solicitudes/clasificar/clasificar';
@@ -17,7 +16,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'registro', component: Registro },
   { path: 'solicitudes', component: SolicitudesList, canActivate: [authGuard] },
-  { path: 'solicitudes/crear', component: CrearSolicitud, canActivate: [authGuard] },
+  { path: 'solicitudes/crear', redirectTo: 'solicitudes', pathMatch: 'full' },
   { path: 'solicitudes/:codigo', component: SolicitudDetalle, canActivate: [authGuard] },
   { path: 'solicitudes/:codigo/clasificar', component: ClasificarSolicitud, canActivate: [authGuard] },
   { path: 'solicitudes/:codigo/priorizar', component: PriorizarSolicitud, canActivate: [authGuard] },

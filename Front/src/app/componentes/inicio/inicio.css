@@ -2,34 +2,40 @@
   min-height: calc(100vh - 140px);
   display: flex;
   align-items: center;
-  padding: 3rem 0;
-  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #fdf2f8 100%);
+  padding: 4rem 0;
 }
 
 .min-vh-75 {
   min-height: 60vh;
 }
 
+.hero-kicker {
+  display: inline-flex;
+  margin-bottom: 0.85rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(94, 234, 212, 0.26);
+  border-radius: 8px;
+  color: #9ff7eb;
+  background: rgba(20, 184, 166, 0.12);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .feature-card {
-  border: none;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  cursor: default;
+  min-height: 150px;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.12), transparent 42%),
+    rgba(15, 23, 42, 0.78);
+  transition: transform 0.22s ease, border-color 0.22s ease;
 }
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.12);
+  border-color: rgba(94, 234, 212, 0.32);
 }
 
 .feature-icon {
   font-size: 2rem;
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }

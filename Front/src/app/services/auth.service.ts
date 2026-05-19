@@ -21,6 +21,8 @@ export interface TokenResponse {
   token: string;
 }
 
+export type UserRole = 'ESTUDIANTE' | 'ADMINISTRATIVO' | 'COORDINADOR' | 'DOCENTE';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private base = '/auth';
@@ -70,6 +72,36 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  getRole(): UserRole | null {
+    const role = this.getUserInfo()?.role;
+    return role || null;
+  }
+
+  getIdentification(): string | null {
+    return this.getUserInfo()?.sub || null;
+  }
+
+  hasRole(...roles: UserRole[]): boolean {
+    const role = this.getRole();
+    return !!role && roles.includes(role);
+  }
+
+  canRegisterSolicitudes(): boolean {
+    return this.hasRole('ESTUDIANTE', 'ADMINISTRATIVO');
+  }
+
+  canManageSolicitudes(): boolean {
+    return this.hasRole('COORDINADOR');
+  }
+
+  canAttendSolicitudes(): boolean {
+    return this.hasRole('DOCENTE', 'ADMINISTRATIVO');
+  }
+
+  canConsultSolicitudes(): boolean {
+    return this.canManageSolicitudes() || this.canAttendSolicitudes() || this.hasRole('ESTUDIANTE');
   }
 
   logout(): void {

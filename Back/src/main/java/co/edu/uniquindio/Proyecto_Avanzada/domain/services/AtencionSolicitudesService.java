@@ -59,6 +59,32 @@ public class AtencionSolicitudesService {
         return solicitud;
     }
 
+    public Solicitud asignarResponsable(Usuario coordinador, Usuario responsable, Solicitud solicitud,
+            String descripcion) throws SolicitudException {
+        if (coordinador == null) {
+            throw new IllegalArgumentException("El coordinador no puede ser nulo");
+        }
+        if (responsable == null) {
+            throw new IllegalArgumentException("El responsable no puede ser nulo");
+        }
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula");
+        }
+        if (!coordinador.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: el usuario no tiene el rol para asignar responsables." +
+                            " Rol actual: " + coordinador.getRol());
+        }
+        if (!responsable.puedeAtenderSolicitud()) {
+            throw new SolicitudException(
+                    "Acceso denegado: el responsable asignado no puede atender solicitudes." +
+                            " Rol actual: " + responsable.getRol());
+        }
+
+        solicitud.asignarResponsable(coordinador, responsable, descripcion);
+        return solicitud;
+    }
+
     /**
      * RF-04: Marca la solicitud como ATENDIDA, avanzando su ciclo de vida.
      * RF-13: Solo el DOCENTE puede atender solicitudes.

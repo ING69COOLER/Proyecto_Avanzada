@@ -104,17 +104,19 @@ public class Usuario {
 
     /**
      * RF-04 / RF-13: Verifica si el usuario puede atender (resolver) solicitudes.
-     * Solo el DOCENTE puede marcar una solicitud como atendida.
+     * DOCENTE y ADMINISTRATIVO pueden atender solicitudes asignadas.
      *
-     * @return true si el usuario esta activo y tiene rol DOCENTE
+     * @return true si el usuario esta activo y tiene rol DOCENTE o ADMINISTRATIVO
      */
     public boolean puedeAtenderSolicitud() {
-        return activo && rol.equals(Rol.DOCENTE);
+        return activo && (rol.equals(Rol.DOCENTE) || rol.equals(Rol.ADMINISTRATIVO));
     }
 
     public boolean puedeConsultarSolicitudes() {
         return activo && (rol == Rol.COORDINADOR ||
-                rol == Rol.DOCENTE);
+                rol == Rol.DOCENTE ||
+                rol == Rol.ADMINISTRATIVO ||
+                rol == Rol.ESTUDIANTE);
     }
 
     // SE QUE NO PUEDO PONER GETS ASI COMO ASI YA QUE QUEDA COMO ANEMICO
@@ -158,7 +160,10 @@ public class Usuario {
     }
 
     public void validarPuedeAtenderSolicitud() {
-        validarRol(Rol.DOCENTE, "atender solicitudes");
+        if (!puedeAtenderSolicitud()) {
+            throw new IllegalArgumentException(
+                    "Acceso denegado: no tiene permisos para atender solicitudes. Rol actual: " + this.rol);
+        }
     }
 
     public void validarPuedePriorizar() {

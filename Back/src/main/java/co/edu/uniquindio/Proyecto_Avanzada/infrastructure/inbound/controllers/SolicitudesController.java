@@ -66,13 +66,14 @@ public class SolicitudesController {
         EstadoSolicitud estado = enumDtoMapper.toEstadoSolicitud(filters.estadoSolicitud());
         TipoSolicitud tipo = enumDtoMapper.toTipoSolicitud(filters.tipoSolicitud());
         NivelPrioridad prioridad = enumDtoMapper.toNivelPrioridad(filters.prioridadSolicitud());
+        String identificacionUsuario = getAuthenticatedUsername();
 
         Page<Solicitud> solicitudes = consultarSolicitudesFiltradasUseCase.ejecutar(
                 estado,
                 tipo,
                 filters.identificacionResponsable(),
                 prioridad,
-                null,
+                identificacionUsuario,
                 PageRequest.of(page, size));
         return ResponseEntity.ok(solicitudes.map(solicitudResponseMapper::toResumenResponse));
     }

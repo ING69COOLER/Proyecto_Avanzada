@@ -1,19 +1,14 @@
 <div class="auth-wrapper">
   <div class="card auth-card">
-
-    <!-- Header -->
     <div class="card-header">
       <div class="auth-icon">
         <i class="bi bi-shield-lock"></i>
       </div>
-      <h4>Iniciar Sesión</h4>
+      <h4>Iniciar sesión</h4>
       <p>Ingrese sus credenciales para acceder al sistema</p>
     </div>
 
-    <!-- Body -->
     <div class="card-body">
-
-      <!-- Error alert -->
       @if (errorMessage) {
         <div class="alert alert-danger d-flex align-items-center fade-in" role="alert">
           <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -22,8 +17,6 @@
       }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-
-        <!-- Identificación -->
         <div class="mb-3">
           <label for="loginUsername" class="form-label">
             <i class="bi bi-person-badge me-1"></i> Identificación
@@ -52,7 +45,6 @@
           </div>
         </div>
 
-        <!-- Contraseña -->
         <div class="mb-4">
           <label for="loginPassword" class="form-label">
             <i class="bi bi-lock me-1"></i> Contraseña
@@ -84,13 +76,7 @@
           </div>
         </div>
 
-        <!-- Submit -->
-        <button
-          type="submit"
-          class="btn btn-primary w-100 py-2"
-          [disabled]="loading"
-          id="btnLogin"
-        >
+        <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="loading" id="btnLogin">
           @if (loading) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             Ingresando...
@@ -100,7 +86,6 @@
         </button>
       </form>
 
-      <!-- Link a registro -->
       <div class="text-center mt-4">
         <p class="text-muted mb-0">
           ¿No tiene una cuenta?

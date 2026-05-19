@@ -1,21 +1,19 @@
 <div class="solicitud-detalle" *ngIf="solicitud">
   <h2>Solicitud #{{ solicitud.codigo }}</h2>
-  <p><strong>Tipo:</strong> {{ solicitud.tipo }}</p>
-  <p><strong>Estado:</strong> {{ solicitud.estado }}</p>
+  <p><strong>Tipo:</strong> {{ solicitud.tipoSolicitud?.nombre || solicitud.tipo }}</p>
+  <p><strong>Estado:</strong> {{ solicitud.estado?.codigo || solicitud.estado }}</p>
   <p><strong>Descripcion:</strong> {{ solicitud.descripcion }}</p>
   <p><strong>Fecha registro:</strong> {{ solicitud.fechaHoraRegistro }}</p>
 
   <div class="acciones">
-    <a [routerLink]="['/solicitudes', solicitud.codigo, 'clasificar']">Clasificar</a> |
-    <a [routerLink]="['/solicitudes', solicitud.codigo, 'priorizar']">Priorizar</a> |
-    <a [routerLink]="['/solicitudes', solicitud.codigo, 'asignar']">Asignar</a> |
-    <a [routerLink]="['/solicitudes', solicitud.codigo, 'estado']">Cambiar Estado</a> |
-    <a [routerLink]="['/solicitudes', solicitud.codigo, 'cerrar']">Cerrar</a>
+    Gestiona esta solicitud desde las pestañas del dashboard.
   </div>
 
   <h3>Historial</h3>
   <ul>
-    <li *ngFor="let h of solicitud.historial">{{ h.fechaHora }} - {{ h.estado }} - {{ h.accion }} - {{ h.responsable?.nombre }} - {{ h.observacion }}</li>
+    <li *ngFor="let h of solicitud.historial">
+      {{ h.fechaHora }} - {{ h.estado?.codigo || h.estado }} - {{ h.accion?.codigo || h.accion }} - {{ h.responsable?.nombre }} - {{ h.observacion }}
+    </li>
   </ul>
 </div>
 <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>

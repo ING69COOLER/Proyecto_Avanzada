@@ -58,4 +58,6 @@ public interface IRepositorioSolicitud {
     public Page<Solicitud> consultarPorNivelPrioridad(NivelPrioridad nivelPrioridad, Pageable pageable);
 
     public Page<Solicitud> consultarResponsable(Usuario usuario, Pageable pageable);
+
+    public Page<Solicitud> consultarSolicitante(Usuario usuario, Pageable pageable);
 }

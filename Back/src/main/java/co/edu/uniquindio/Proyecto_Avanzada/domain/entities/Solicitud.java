@@ -243,6 +243,27 @@ public class Solicitud {
         this.crearHistoria(EstadoSolicitud.EN_ATENCION, TipoAccion.ASIGNACION, user, descripcion);
     }
 
+    public void asignarResponsable(Usuario coordinador, Usuario responsableAsignado, String descripcion) throws SolicitudException {
+        validarNoEsterrada();
+        if (coordinador == null || !coordinador.puedeAsignar()) {
+            throw new SolicitudException(
+                    "Acceso denegado: solo el COORDINADOR puede asignar responsables." +
+                            (coordinador != null ? " Rol actual: " + coordinador.getRol() : ""));
+        }
+        if (responsableAsignado == null || !responsableAsignado.puedeAtenderSolicitud()) {
+            throw new SolicitudException(
+                    "Acceso denegado: el responsable asignado debe poder atender solicitudes." +
+                            (responsableAsignado != null ? " Rol actual: " + responsableAsignado.getRol() : ""));
+        }
+        if (!this.estado.equals(EstadoSolicitud.CLASIFICADA)) {
+            throw new SolicitudException(
+                    "para poder asignar un responsable, la solicitud debe de estar en estado de clasificada"
+                           );
+        }
+        this.estado = EstadoSolicitud.EN_ATENCION;
+        this.crearHistoria(EstadoSolicitud.EN_ATENCION, TipoAccion.ASIGNACION, responsableAsignado, descripcion);
+    }
+
     /**
      * RF-05: Verifica si un usuario puede atender esta solicitud.
      * Confirma que el usuario haya participado previamente en el historial.

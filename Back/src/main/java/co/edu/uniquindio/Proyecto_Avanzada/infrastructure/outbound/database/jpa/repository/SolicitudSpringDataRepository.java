@@ -23,6 +23,7 @@ public interface SolicitudSpringDataRepository extends JpaRepository<SolicitudJP
     Page<SolicitudJPAEntity> findByEstado(EstadoSolicitud estado, Pageable pageable);
     Page<SolicitudJPAEntity> findByTipo(TipoSolicitud tipo, Pageable pageable);
     Page<SolicitudJPAEntity> findByPrioridadNivel(NivelPrioridad nivel, Pageable pageable);
+    Page<SolicitudJPAEntity> findByUsuarioSolicitanteIdentificacion(String identificacion, Pageable pageable);
 
     @Query("""
             select distinct s
@@ -30,6 +31,7 @@ public interface SolicitudSpringDataRepository extends JpaRepository<SolicitudJP
             join s.historial h
             join h.responsable r
             where r.identificacion = :identificacion
+            and h.accion = co.edu.uniquindio.Proyecto_Avanzada.domain.valueobjects.TipoAccion.ASIGNACION
             """)
-    Page<SolicitudJPAEntity> findByResponsableIdentificacion(@Param("identificacion") String identificacion, Pageable pageable);
+    Page<SolicitudJPAEntity> findAsignadasByResponsableIdentificacion(@Param("identificacion") String identificacion, Pageable pageable);
 }

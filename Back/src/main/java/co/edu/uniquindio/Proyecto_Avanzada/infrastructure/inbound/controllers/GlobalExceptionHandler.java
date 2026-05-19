@@ -49,11 +49,14 @@ public class GlobalExceptionHandler {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
+        String message = validationErrors.isEmpty()
+                ? "La solicitud contiene datos invalidos."
+                : validationErrors.values().iterator().next();
 
         ErrorResponse body = mapper.toErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "La solicitud contiene datos invalidos." + ex.getMessage(),
+                message,
                 request.getRequestURI(),
                 validationErrors);
 
@@ -142,6 +145,21 @@ public class GlobalExceptionHandler {
                 null);
 
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(body);
+    }
+
+    @ExceptionHandler(org.springframework.dao.InvalidDataAccessResourceUsageException.class)
+    public ResponseEntity<ErrorResponse> handleDatabaseResourceErrors(
+            org.springframework.dao.InvalidDataAccessResourceUsageException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse body = mapper.toErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                "Error de base de datos: verifique que las tablas requeridas existan y que el backend este conectado a la base correcta.",
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 
     // Fallback global para excepciones no controladas; responde 500.

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
 
 @Component({
   selector: 'app-solicitud-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './detalle.html',
   styleUrls: ['./detalle.css'],
 })
