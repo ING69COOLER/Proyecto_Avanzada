@@ -1,22 +1,37 @@
 <div class="crear-solicitud">
   <h2>Crear Solicitud</h2>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <form (ngSubmit)="submit()">
+  @if (mensaje()) {
+    <div class="mensaje">{{ mensaje() }}</div>
+  }
+  <form [formGroup]="solicitudForm" (ngSubmit)="submit()" novalidate>
     <label>Tipo</label>
-    <select [(ngModel)]="tipoSolicitud" name="tipo">
+    <select formControlName="tipoSolicitud">
       <option value="">-- Seleccione --</option>
-      <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+      @for (t of tipos; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
     </select>
+    @if (solicitudForm.controls.tipoSolicitud.touched && solicitudForm.controls.tipoSolicitud.errors?.['required']) {
+      <small class="field-error">El tipo es obligatorio.</small>
+    }
 
     <label>Canal</label>
-    <select [(ngModel)]="canalOrigen" name="canal">
+    <select formControlName="canalOrigen">
       <option value="">-- Seleccione --</option>
-      <option *ngFor="let c of canales" [value]="c">{{ c }}</option>
+      @for (c of canales; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
     </select>
+    @if (solicitudForm.controls.canalOrigen.touched && solicitudForm.controls.canalOrigen.errors?.['required']) {
+      <small class="field-error">El canal es obligatorio.</small>
+    }
 
-    <label>Descripción</label>
-    <textarea [(ngModel)]="descripcion" name="descripcion" rows="4"></textarea>
+    <label>Descripcion</label>
+    <textarea formControlName="descripcion" rows="4"></textarea>
+    @if (solicitudForm.controls.descripcion.touched && solicitudForm.controls.descripcion.errors) {
+      <small class="field-error">La descripcion debe tener entre 5 y 500 caracteres.</small>
+    }
 
-    <button type="button" (click)="submit()">Crear</button>
+    <button type="submit">Crear</button>
   </form>
 </div>

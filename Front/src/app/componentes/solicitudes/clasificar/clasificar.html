@@ -1,12 +1,26 @@
 <div class="form">
   <h3>Clasificar Solicitud #{{ codigo }}</h3>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <label>Tipo</label>
-  <select [(ngModel)]="tipo" name="tipo">
-    <option value="">-- Seleccione --</option>
-    <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
-  </select>
-  <label>Observación</label>
-  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
-  <button (click)="submit()">Clasificar</button>
+  @if (mensaje()) {
+    <div class="mensaje">{{ mensaje() }}</div>
+  }
+  <form [formGroup]="clasificarForm" (ngSubmit)="submit()" novalidate>
+    <label>Tipo</label>
+    <select formControlName="tipo">
+      <option value="">-- Seleccione --</option>
+      @for (t of tipos; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+    @if (clasificarForm.controls.tipo.touched && clasificarForm.controls.tipo.errors?.['required']) {
+      <small class="field-error">Seleccione un tipo.</small>
+    }
+
+    <label>Observacion</label>
+    <textarea formControlName="observacion"></textarea>
+    @if (clasificarForm.controls.observacion.touched && clasificarForm.controls.observacion.errors) {
+      <small class="field-error">La observacion debe tener entre 5 y 500 caracteres.</small>
+    }
+
+    <button type="submit">Clasificar</button>
+  </form>
 </div>

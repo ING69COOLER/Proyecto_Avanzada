@@ -1,7 +1,15 @@
 <div class="form">
   <h3>Cerrar Solicitud #{{ codigo }}</h3>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <label>Observación de cierre</label>
-  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
-  <button (click)="submit()">Cerrar</button>
+  @if (mensaje()) {
+    <div class="mensaje">{{ mensaje() }}</div>
+  }
+  <form [formGroup]="cerrarForm" (ngSubmit)="submit()" novalidate>
+    <label>Observacion de cierre</label>
+    <textarea formControlName="observacion"></textarea>
+    @if (cerrarForm.controls.observacion.touched && cerrarForm.controls.observacion.errors) {
+      <small class="field-error">La observacion debe tener entre 5 y 500 caracteres.</small>
+    }
+
+    <button type="submit">Cerrar</button>
+  </form>
 </div>

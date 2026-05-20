@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
 import { AuthService, UserRole } from '../../../services/auth.service';
@@ -17,35 +17,41 @@ interface DashboardTabOption {
 @Component({
   selector: 'app-solicitudes-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './list.html',
   styleUrls: ['./list.css'],
 })
 export class SolicitudesList {
-  solicitudes: any[] = [];
-  responsables: UsuarioResumen[] = [];
-  selectedSolicitud: any = null;
-  selectedTab: DashboardTab = 'registrar';
-  mensaje = '';
-  successMessage = '';
-  loading = false;
+  private fb = inject(FormBuilder);
+
+  solicitudes = signal<any[]>([]);
+  responsables = signal<UsuarioResumen[]>([]);
+  selectedSolicitud = signal<any | null>(null);
+  selectedTab = signal<DashboardTab>('registrar');
+  mensaje = signal('');
+  successMessage = signal('');
+  loading = signal(false);
 
   tipos = ['HOMOLOGACION', 'SOLICITUD_CUPOS', 'CONSULTA_ACADEMICA', 'REGISTRO_ASIGNATURA'];
   canales = ['PORTAL_WEB', 'SAC'];
   niveles = ['ALTA', 'MEDIA', 'BAJA'];
 
-  crearForm = {
-    tipoSolicitud: '',
-    canalOrigen: 'PORTAL_WEB',
-    descripcion: '',
-  };
+  crearForm = this.fb.group({
+    tipoSolicitud: ['', [Validators.required]],
+    canalOrigen: ['PORTAL_WEB', [Validators.required]],
+    descripcion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
+  });
 
-  actionForm = {
-    tipoSolicitud: '',
-    nivelPrioridad: '',
-    identificacionResponsable: '',
-    observacion: '',
-  };
+  selectionForm = this.fb.group({
+    codigo: [''],
+  });
+
+  actionForm = this.fb.group({
+    tipoSolicitud: [''],
+    nivelPrioridad: [''],
+    identificacionResponsable: [''],
+    observacion: ['', [Validators.minLength(5), Validators.maxLength(500)]],
+  });
 
   constructor(
     private route: ActivatedRoute,
@@ -53,7 +59,8 @@ export class SolicitudesList {
     private usuarioService: UsuarioService,
     public authService: AuthService
   ) {
-    this.selectedTab = this.getInitialTab();
+    this.selectedTab.set(this.getInitialTab());
+    this.selectionForm.controls.codigo.valueChanges.subscribe((codigo) => this.selectSolicitudByCodigo(codigo || ''));
     if (this.authService.canConsultSolicitudes()) {
       this.load();
     }
@@ -98,36 +105,37 @@ export class SolicitudesList {
   }
 
   load(): void {
-    this.loading = true;
-    this.mensaje = '';
+    this.loading.set(true);
+    this.mensaje.set('');
     const params = this.authService.canManageSolicitudes()
       ? { size: 30 }
       : { size: 30, identificacionResponsable: this.authService.getIdentification() || '' };
 
     this.solicitudService.listar(params).subscribe({
       next: (res) => {
-        this.solicitudes = res?.content || res || [];
-        if (!this.selectedSolicitud && this.solicitudes.length) {
-          this.selectSolicitud(this.solicitudes[0], false);
+        const solicitudes = res?.content || res || [];
+        this.solicitudes.set(solicitudes);
+        if (!this.selectedSolicitud() && solicitudes.length) {
+          this.selectSolicitud(solicitudes[0], false);
         }
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err) => {
-        this.loading = false;
-        this.mensaje = this.getErrorMessage(err, 'Error cargando solicitudes');
+        this.loading.set(false);
+        this.mensaje.set(this.getErrorMessage(err, 'Error cargando solicitudes'));
       },
     });
   }
 
   loadResponsables(): void {
     this.usuarioService.listarResponsables().subscribe({
-      next: (res) => (this.responsables = res || []),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error cargando responsables')),
+      next: (res) => this.responsables.set(res || []),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error cargando responsables')),
     });
   }
 
   selectTab(tab: DashboardTab): void {
-    this.selectedTab = tab;
+    this.selectedTab.set(tab);
     this.clearMessages();
   }
 
@@ -140,10 +148,15 @@ export class SolicitudesList {
   }
 
   selectSolicitud(solicitud: any, loadDetail = true): void {
-    this.selectedSolicitud = solicitud;
-    this.actionForm.observacion = '';
-    this.actionForm.tipoSolicitud = this.rawCodigo(solicitud?.tipoSolicitud || solicitud?.tipo);
-    this.actionForm.nivelPrioridad = this.rawCodigo(solicitud?.prioridad?.nivel || solicitud?.prioridad);
+    this.selectedSolicitud.set(solicitud);
+    this.selectionForm.patchValue({ codigo: solicitud?.codigo ? String(solicitud.codigo) : '' }, { emitEvent: false });
+    this.actionForm.patchValue({
+      observacion: '',
+      tipoSolicitud: this.rawCodigo(solicitud?.tipoSolicitud || solicitud?.tipo),
+      nivelPrioridad: this.rawCodigo(solicitud?.prioridad?.nivel || solicitud?.prioridad),
+      identificacionResponsable: '',
+    });
+    this.actionForm.markAsUntouched();
 
     if (loadDetail && solicitud?.codigo) {
       this.loadDetalle(solicitud.codigo);
@@ -151,7 +164,7 @@ export class SolicitudesList {
   }
 
   selectSolicitudByCodigo(codigo: string): void {
-    const solicitud = this.solicitudes.find((item) => String(item.codigo) === String(codigo));
+    const solicitud = this.solicitudes().find((item) => String(item.codigo) === String(codigo));
     if (solicitud) {
       this.selectSolicitud(solicitud);
     }
@@ -159,24 +172,29 @@ export class SolicitudesList {
 
   submitCrear(): void {
     this.clearMessages();
-    if (!this.crearForm.tipoSolicitud || !this.crearForm.canalOrigen || !this.crearForm.descripcion.trim()) {
-      this.mensaje = 'Completa tipo, canal y descripcion antes de registrar.';
+    if (this.crearForm.invalid) {
+      this.crearForm.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-    this.solicitudService.crear({ ...this.crearForm, descripcion: this.crearForm.descripcion.trim() }).subscribe({
+    const formValue = this.crearForm.getRawValue();
+    this.loading.set(true);
+    this.solicitudService.crear({
+      tipoSolicitud: formValue.tipoSolicitud || '',
+      canalOrigen: formValue.canalOrigen || '',
+      descripcion: (formValue.descripcion || '').trim(),
+    }).subscribe({
       next: (res) => {
-        this.loading = false;
-        this.successMessage = `Solicitud #${res?.codigo || ''} registrada correctamente.`;
-        this.crearForm = { tipoSolicitud: '', canalOrigen: 'PORTAL_WEB', descripcion: '' };
+        this.loading.set(false);
+        this.successMessage.set(`Solicitud #${res?.codigo || ''} registrada correctamente.`);
+        this.crearForm.reset({ tipoSolicitud: '', canalOrigen: 'PORTAL_WEB', descripcion: '' });
         if (this.authService.canConsultSolicitudes()) {
           this.load();
         }
       },
       error: (err) => {
-        this.loading = false;
-        this.mensaje = this.getErrorMessage(err, 'Error al crear solicitud');
+        this.loading.set(false);
+        this.mensaje.set(this.getErrorMessage(err, 'Error al crear solicitud'));
       },
     });
   }
@@ -185,20 +203,24 @@ export class SolicitudesList {
     if (!this.ensureSelection()) {
       return;
     }
-    if (!this.actionForm.tipoSolicitud) {
-      this.mensaje = 'Selecciona un tipo.';
+    if (!this.actionForm.controls.tipoSolicitud.value) {
+      this.actionForm.controls.tipoSolicitud.markAsTouched();
+      this.mensaje.set('Selecciona un tipo.');
       return;
     }
     if (!this.ensureObservation('La observacion de clasificacion')) {
       return;
     }
 
-    this.solicitudService.clasificar(this.selectedSolicitud.codigo, {
-      tipoSolicitud: this.actionForm.tipoSolicitud,
-      observacion: this.actionForm.observacion.trim(),
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    const formValue = this.actionForm.getRawValue();
+    this.solicitudService.clasificar(selected.codigo, {
+      tipoSolicitud: formValue.tipoSolicitud,
+      observacion: (formValue.observacion || '').trim(),
     }).subscribe({
       next: () => this.afterAction('Solicitud clasificada correctamente.'),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error al clasificar')),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error al clasificar')),
     });
   }
 
@@ -206,20 +228,24 @@ export class SolicitudesList {
     if (!this.ensureSelection()) {
       return;
     }
-    if (!this.actionForm.nivelPrioridad) {
-      this.mensaje = 'Selecciona un nivel de prioridad.';
+    if (!this.actionForm.controls.nivelPrioridad.value) {
+      this.actionForm.controls.nivelPrioridad.markAsTouched();
+      this.mensaje.set('Selecciona un nivel de prioridad.');
       return;
     }
     if (!this.ensureObservation('La justificacion')) {
       return;
     }
 
-    this.solicitudService.priorizar(this.selectedSolicitud.codigo, {
-      nivelPrioridad: this.actionForm.nivelPrioridad,
-      justificacion: this.actionForm.observacion.trim(),
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    const formValue = this.actionForm.getRawValue();
+    this.solicitudService.priorizar(selected.codigo, {
+      nivelPrioridad: formValue.nivelPrioridad,
+      justificacion: (formValue.observacion || '').trim(),
     }).subscribe({
       next: () => this.afterAction('Prioridad actualizada correctamente.'),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error al priorizar')),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error al priorizar')),
     });
   }
 
@@ -227,24 +253,30 @@ export class SolicitudesList {
     if (!this.ensureSelection()) {
       return;
     }
-    if (!this.actionForm.identificacionResponsable.trim()) {
-      this.mensaje = 'Indica la identificacion del responsable.';
+    const formValue = this.actionForm.getRawValue();
+    const identificacion = (formValue.identificacionResponsable || '').trim();
+    if (!identificacion) {
+      this.actionForm.controls.identificacionResponsable.markAsTouched();
+      this.mensaje.set('Indica la identificacion del responsable.');
       return;
     }
-    if (this.actionForm.identificacionResponsable.trim().length < 5) {
-      this.mensaje = 'La identificacion del responsable debe tener al menos 5 caracteres.';
+    if (identificacion.length < 5) {
+      this.actionForm.controls.identificacionResponsable.markAsTouched();
+      this.mensaje.set('La identificacion del responsable debe tener al menos 5 caracteres.');
       return;
     }
     if (!this.ensureObservation('La observacion de asignacion')) {
       return;
     }
 
-    this.solicitudService.asignar(this.selectedSolicitud.codigo, {
-      identificacionResponsable: this.actionForm.identificacionResponsable.trim(),
-      observacion: this.actionForm.observacion.trim(),
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    this.solicitudService.asignar(selected.codigo, {
+      identificacionResponsable: identificacion,
+      observacion: (formValue.observacion || '').trim(),
     }).subscribe({
       next: () => this.afterAction('Responsable asignado correctamente.'),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error al asignar')),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error al asignar')),
     });
   }
 
@@ -256,12 +288,15 @@ export class SolicitudesList {
       return;
     }
 
-    this.solicitudService.cambiarEstado(this.selectedSolicitud.codigo, {
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    const formValue = this.actionForm.getRawValue();
+    this.solicitudService.cambiarEstado(selected.codigo, {
       nuevoEstado: 'ATENDIDA',
-      observacion: this.actionForm.observacion.trim(),
+      observacion: (formValue.observacion || '').trim(),
     }).subscribe({
       next: () => this.afterAction('Solicitud marcada como atendida.'),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error al atender la solicitud')),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error al atender la solicitud')),
     });
   }
 
@@ -273,11 +308,14 @@ export class SolicitudesList {
       return;
     }
 
-    this.solicitudService.cerrar(this.selectedSolicitud.codigo, {
-      observacionCierre: this.actionForm.observacion.trim(),
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    const formValue = this.actionForm.getRawValue();
+    this.solicitudService.cerrar(selected.codigo, {
+      observacionCierre: (formValue.observacion || '').trim(),
     }).subscribe({
       next: () => this.afterAction('Solicitud cerrada correctamente.'),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error al cerrar')),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error al cerrar')),
     });
   }
 
@@ -300,45 +338,67 @@ export class SolicitudesList {
 
   private loadDetalle(codigo: number): void {
     this.solicitudService.detalle(codigo).subscribe({
-      next: (res) => (this.selectedSolicitud = res),
-      error: (err) => (this.mensaje = this.getErrorMessage(err, 'Error cargando detalle')),
+      next: (res) => this.selectedSolicitud.set(res),
+      error: (err) => this.mensaje.set(this.getErrorMessage(err, 'Error cargando detalle')),
     });
   }
 
   private afterAction(message: string): void {
-    this.successMessage = message;
-    this.mensaje = '';
-    this.actionForm.observacion = '';
-    this.loadDetalle(this.selectedSolicitud.codigo);
+    this.successMessage.set(message);
+    this.mensaje.set('');
+    this.actionForm.patchValue({ observacion: '' });
+    this.actionForm.markAsUntouched();
+    const selected = this.selectedSolicitud();
+    if (!selected) return;
+    this.loadDetalle(selected.codigo);
     this.load();
   }
 
   private ensureSelection(): boolean {
     this.clearMessages();
-    if (!this.selectedSolicitud?.codigo) {
-      this.mensaje = 'Selecciona una solicitud.';
+    if (!this.selectedSolicitud()?.codigo) {
+      this.mensaje.set('Selecciona una solicitud.');
       return false;
     }
     return true;
   }
 
   private clearMessages(): void {
-    this.mensaje = '';
-    this.successMessage = '';
+    this.mensaje.set('');
+    this.successMessage.set('');
   }
 
   responsableLabel(responsable: UsuarioResumen): string {
     return `${responsable.nombre} - ${responsable.identificacion}`;
   }
 
+  usuarioLabel(usuario: any): string {
+    if (!usuario) return 'Sin asignar';
+    const nombre = usuario.nombre || 'Usuario';
+    const identificacion = usuario.identificacion ? ` - ${usuario.identificacion}` : '';
+    return `${nombre}${identificacion}`;
+  }
+
+  responsableActual(solicitud: any): string {
+    const historial = solicitud?.historial || [];
+    const asignacion = [...historial]
+      .reverse()
+      .find((evento) => this.rawCodigo(evento?.accion) === 'ASIGNACION');
+
+    return this.usuarioLabel(asignacion?.responsable);
+  }
+
   private ensureObservation(label: string): boolean {
-    const value = this.actionForm.observacion.trim();
+    const control = this.actionForm.controls.observacion;
+    const value = (control.value || '').trim();
     if (!value) {
-      this.mensaje = `${label} es obligatoria.`;
+      control.markAsTouched();
+      this.mensaje.set(`${label} es obligatoria.`);
       return false;
     }
     if (value.length < 5 || value.length > 500) {
-      this.mensaje = `${label} debe tener entre 5 y 500 caracteres.`;
+      control.markAsTouched();
+      this.mensaje.set(`${label} debe tener entre 5 y 500 caracteres.`);
       return false;
     }
     return true;

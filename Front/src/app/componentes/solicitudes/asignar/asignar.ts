@@ -1,31 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
 
 @Component({
   selector: 'app-asignar-solicitud',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './asignar.html',
   styleUrls: ['./asignar.css'],
 })
 export class AsignarSolicitud {
+  private fb = inject(FormBuilder);
   codigo = 0;
-  identificacion = '';
-  observacion = '';
-  mensaje = '';
+  mensaje = signal('');
+
+  asignarForm = this.fb.group({
+    identificacion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+    observacion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
+  });
 
   constructor(private route: ActivatedRoute, private solicitudService: SolicitudService, private router: Router) {
     this.codigo = Number(this.route.snapshot.paramMap.get('codigo'));
   }
 
-  submit() {
-    if (!this.identificacion) { this.mensaje = 'Identificación del responsable requerida'; return }
-    this.solicitudService.asignar(this.codigo, { identificacionResponsable: this.identificacion, observacion: this.observacion }).subscribe({
+  submit(): void {
+    if (this.asignarForm.invalid) {
+      this.asignarForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.asignarForm.getRawValue();
+    this.solicitudService.asignar(this.codigo, {
+      identificacionResponsable: (formValue.identificacion || '').trim(),
+      observacion: (formValue.observacion || '').trim(),
+    }).subscribe({
       next: () => this.router.navigate(['/solicitudes', this.codigo]),
-      error: (err) => (this.mensaje = err?.error?.message || 'Error al asignar'),
-    })
+      error: (err) => this.mensaje.set(err?.error?.message || 'Error al asignar'),
+    });
   }
 }

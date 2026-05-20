@@ -1,12 +1,26 @@
 <div class="form">
   <h3>Cambiar Estado - Solicitud #{{ codigo }}</h3>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <label>Estado</label>
-  <select [(ngModel)]="estado" name="estado">
-    <option value="">-- Seleccione --</option>
-    <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
-  </select>
-  <label>Observación</label>
-  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
-  <button (click)="submit()">Cambiar</button>
+  @if (mensaje()) {
+    <div class="mensaje">{{ mensaje() }}</div>
+  }
+  <form [formGroup]="estadoForm" (ngSubmit)="submit()" novalidate>
+    <label>Estado</label>
+    <select formControlName="estado">
+      <option value="">-- Seleccione --</option>
+      @for (e of estados; track e) {
+        <option [value]="e">{{ e }}</option>
+      }
+    </select>
+    @if (estadoForm.controls.estado.touched && estadoForm.controls.estado.errors?.['required']) {
+      <small class="field-error">Seleccione un estado.</small>
+    }
+
+    <label>Observacion</label>
+    <textarea formControlName="observacion"></textarea>
+    @if (estadoForm.controls.observacion.touched && estadoForm.controls.observacion.errors) {
+      <small class="field-error">La observacion debe tener entre 5 y 500 caracteres.</small>
+    }
+
+    <button type="submit">Cambiar</button>
+  </form>
 </div>

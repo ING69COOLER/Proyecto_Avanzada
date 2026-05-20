@@ -258,12 +258,123 @@ a {
   font-weight: 650;
 }
 
+.field-error {
+  display: block;
+  margin-top: 4px;
+  color: #fecaca;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.selected-detail {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(94, 234, 212, 0.24);
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(37, 99, 235, 0.08)),
+    rgba(2, 6, 23, 0.34);
+}
+
+.selected-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.selected-detail h3 {
+  margin: 4px 0 0;
+  color: #f8fafc;
+  font-size: 1.45rem;
+}
+
+.current-status {
+  margin-top: 2px;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-grid div,
+.detail-description,
+.inline-history-item {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.detail-grid span,
+.detail-description span {
+  display: block;
+  color: #8ea4bd;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.detail-grid strong {
+  display: block;
+  margin-top: 5px;
+  color: #f8fafc;
+  text-transform: capitalize;
+}
+
+.detail-description {
+  margin-top: 12px;
+}
+
+.detail-description p,
+.inline-history-item p {
+  margin: 6px 0 0;
+  color: #dbeafe;
+}
+
+.inline-history {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.inline-history-item {
+  border-left: 3px solid #14b8a6;
+}
+
+.inline-history-item span {
+  color: #8ea4bd;
+  font-size: 0.82rem;
+}
+
+.inline-history-item strong {
+  display: block;
+  margin-top: 4px;
+  color: #f8fafc;
+  text-transform: capitalize;
+}
+
 .password-toggle {
   cursor: pointer;
 }
 
 .password-toggle:hover {
   color: var(--color-primary-light);
+}
+
+@media (max-width: 860px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .selected-detail-header {
+    display: grid;
+  }
 }
 
 @keyframes fadeInUp {

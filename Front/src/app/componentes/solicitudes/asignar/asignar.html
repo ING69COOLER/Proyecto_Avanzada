@@ -1,9 +1,21 @@
 <div class="form">
   <h3>Asignar Responsable - Solicitud #{{ codigo }}</h3>
-  <div *ngIf="mensaje" class="mensaje">{{ mensaje }}</div>
-  <label>Identificación Responsable</label>
-  <input [(ngModel)]="identificacion" name="identificacion" />
-  <label>Observación</label>
-  <textarea [(ngModel)]="observacion" name="observacion"></textarea>
-  <button (click)="submit()">Asignar</button>
+  @if (mensaje()) {
+    <div class="mensaje">{{ mensaje() }}</div>
+  }
+  <form [formGroup]="asignarForm" (ngSubmit)="submit()" novalidate>
+    <label>Identificacion Responsable</label>
+    <input formControlName="identificacion" />
+    @if (asignarForm.controls.identificacion.touched && asignarForm.controls.identificacion.errors) {
+      <small class="field-error">La identificacion debe tener entre 5 y 20 caracteres.</small>
+    }
+
+    <label>Observacion</label>
+    <textarea formControlName="observacion"></textarea>
+    @if (asignarForm.controls.observacion.touched && asignarForm.controls.observacion.errors) {
+      <small class="field-error">La observacion debe tener entre 5 y 500 caracteres.</small>
+    }
+
+    <button type="submit">Asignar</button>
+  </form>
 </div>
